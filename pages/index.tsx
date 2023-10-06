@@ -26,6 +26,7 @@ export default function Home({allLatestPostsData}: {
 
                 {/* Latest */}
                 {allLatestPostsData.map(({posts}) => (
+                    <div key={posts.toString()}>
                     <Showcase>
                         {posts.map(({id, date, title}) => (
                             <div key={id}>
@@ -36,6 +37,7 @@ export default function Home({allLatestPostsData}: {
                             </div>
                         ))}
                     </Showcase>
+                    </div>
                 ))}
             </div>
         </Layout>
