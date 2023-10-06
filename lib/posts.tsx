@@ -1,16 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-// import {remark} from "remark";
+import {remark} from "remark";
 import html from 'remark-html';
 import {Sections} from "./enums";
-// import md2html from "../lib/md2html"
-import {remark} from 'https://esm.sh/remark@15'
+
 import rehypeKatex from 'rehype-katex'
 import rehypeStringify from 'rehype-stringify'
 import remarkMath from 'remark-math'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import remarkGfm from 'remark-gfm';
 import {unified} from 'unified'
 
 const postsDirectory = path.join(process.cwd(), 'posts');
@@ -63,11 +63,16 @@ export async function getPostData(id: string) {
     const fileContents = fs.readFileSync(fullPath, 'utf-8');
 
     const matterResult = matter(fileContents);
-    // const processedContent = await remark().use(html).use(remarkParse).use(remarkMath).
+    const processedContent = await remark().use(html).process(matterResult.content);
+    // const processedContent = await unified().use(remarkParse).use(remarkMath).
     //     use(remarkRehype).use(rehypeKatex).use(rehypeStringify).process(matterResult.content);
-        const processedContent = await unified().use(remarkParse).use(remarkMath).
-            use(remarkRehype).use(rehypeKatex).use(rehypeStringify).process(matterResult.content);
-    console.log(processedContent.toString());
+    // const processedContent = await unified()
+    //     .use(remarkParse)
+    //     .use(remarkGfm)
+    //     .use(remarkRehype)
+    //     .use(rehypeStringify)
+    //     .process('# Hi\n\n*Hello*, world!')
+    // console.log(processedContent.toString());
     // const processedContent = await unified()
     //     .use(remarkParse)
     //     .use(remarkMath)
@@ -90,7 +95,8 @@ export function getLatestPostsData() {
 
     const allLatestPostsData = sections.map((section) => {
         const sortedPostData = getSortedPostsData();
-        const latestPostsData = sortedPostData.slice(0, 3);
+        // const latestPostsData = sortedPostData.slice(0, 3);
+        const latestPostsData = sortedPostData;
 
         return {
             section,

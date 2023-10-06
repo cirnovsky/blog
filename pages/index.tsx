@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Layout, {siteTitle} from '../components/Layout'
-import {getLatestPostsData} from '../lib/posts.js'
+import {getLatestPostsData} from '../lib/posts'
 import {GetStaticProps} from 'next'
 import React from "react";
 import Showcase from '../components/Showcase'
