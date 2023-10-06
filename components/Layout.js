@@ -2,35 +2,31 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { ReactNode } from "react";
-import { Sections } from "../lib/enums";
+import { Sections, SectionFunc } from "../lib/enums";
 import Script from 'next/script';
 
 export const name = 'Carnicero Irnobkowski';
 export const siteTitle = "cirnovsky's blog";
 
-export default function Layout({ children, section }: {
-    children: ReactNode,
-    section?: Sections,
-}) {
+export default function Layout({ children, section }) {
 
     const profileButton = (section === Sections.PROFILE) ?
-        <div className={"navi-selected navibutton-wide"}>{Sections.getName(Sections.PROFILE)}</div> :
+        <div>{SectionFunc.getName(Sections.PROFILE)}</div> :
         <Link href={"/profile"}>
-            <div
-                className={"navi-unselected hover:navi-selected navibutton-wide"}>{Sections.getName(Sections.PROFILE)}</div>
+            <div>{SectionFunc.getName(Sections.PROFILE)}</div>
         </Link>
 
     const nightButton =
-        <div className={"navibutton hover:navi-selected"}><Image src={"/icons/night.svg"} className={"cursor-pointer"}
+        <div><Image src={"/icons/night.svg"}
             width={"20"} height={"20"} alt={"night"}></Image></div>
 
     return (
-        <div className={"grid gap-10"}>
+        <div>
             <Head>
                 <link rel="icon" href="/favicon.svg" />
                 <meta
                     name="description"
-                    content="Isaac Jin's personal blog"
+                    content="cirnovsky's blog"
                 />
                 {/* TODO: update og image after the repo is public */}
                 <meta
@@ -41,25 +37,21 @@ export default function Layout({ children, section }: {
                 />
                 <meta name="og:title" content={siteTitle} />
                 <meta name="twitter:card" content="summary_large_image" />
-                <link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"></link>
             </Head>
 
             {/* navigator bar */}
             <div
-                className={"flex"}>
-                <div className={"flex justify-end grow"}>
-                    <div className={"flex items-center grow"}>
+                style={{ "display": "flex" }}>
+                <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
+                    <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
                         <Link href={"/"}>
-                            <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>
+                            <div style={{ "display": "flex", "gap": "0.5rem", "color": "#000000", ":hover": { "color": "#996E5C" } }}>
                                 <Image src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}></Image>
-                                <div className={"font-extrabold text-2xl"}>{siteTitle}</div>
+                                <div style={{ "fontSize": "1.5rem", "lineHeight": "2rem", "fontWeight": 800 }}>{siteTitle}</div>
                             </div>
                         </Link>
                     </div>
-                    <div className={"flex flex-none gap-x-8"}>
-                        <div className={"flex gap-x-2"}>
-                            {nightButton}
-                        </div>
+                    <div style={{ "display": "flex", "flex": "right", "columnGap": "2rem" }}>
                         {profileButton}
                     </div>
 
@@ -67,12 +59,11 @@ export default function Layout({ children, section }: {
 
             </div>
 
-            <div className={"flex"}>
-                <div className={"grid-cols-5 grid grow"}>
-                    {/* Brief information on the right */}
-                    <div className={"col-span-4"}>
-                        <main>{children}</main>
-                    </div>
+            <div>
+                {/* Brief information on the right */}
+                <br />
+                <div>
+                    <main>{children}</main>
                 </div>
             </div>
 

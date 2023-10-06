@@ -1,0 +1,12 @@
+/* @tailwind components;
+@tailwind base;
+@tailwind utilities; */
+/* @layer components { */
+    .light-text {
+        /* @apply text-gray-400 text-sm */
+        font-size: 0.875rem;
+        line-height: 1.25rem; 
+        color: #9CA3AF;
+        font-family: 'Courier New', Courier, monospace;
+    }
+/* } */

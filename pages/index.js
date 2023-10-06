@@ -1,28 +1,19 @@
 import Head from 'next/head'
 import Layout, {siteTitle} from '../components/Layout'
 import {getLatestPostsData} from '../lib/posts'
-import {GetStaticProps} from 'next'
 import React from "react";
 import Showcase from '../components/Showcase'
 import SmallCard from "../components/SmallCard";
-import {Sections} from "../lib/enums";
+import {Sections, SectionFunc} from "../lib/enums";
 
-export default function Home({allLatestPostsData}: {
-    allLatestPostsData: {
-        posts: {
-            id: string,
-            date: string,
-            title: string,
-        }[]
-    }[]
-}) {
+export default function Home({allLatestPostsData}) {
     return (
         <Layout section={Sections.HOME}>
             <Head>
                 <title>{siteTitle}</title>
-                <link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"></link>
+                {/* <link href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" rel="stylesheet"></link> */}
             </Head>
-            <div className={"grid gap-y-8"}>
+            <div>
 
                 {/* Latest */}
                 {allLatestPostsData.map(({posts}) => (
@@ -32,7 +23,7 @@ export default function Home({allLatestPostsData}: {
                             <div key={id}>
                                 <SmallCard
                                     title={title}
-                                    dateString={date} sectionPath={Sections.getPath(Sections.POSTS)}
+                                    dateString={date} sectionPath={SectionFunc.getPath(Sections.POSTS)}
                                     id={id}/>
                             </div>
                         ))}
@@ -44,7 +35,7 @@ export default function Home({allLatestPostsData}: {
     );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps = async () => {
     const allLatestPostsData = getLatestPostsData()
     return {
         props: {
