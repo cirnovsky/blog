@@ -10,10 +10,10 @@ export const siteTitle = "cirnovsky's blog";
 
 export default function Layout({ children, section }) {
 
-    const profileButton = (section === Sections.PROFILE) ?
-        <div>{SectionFunc.getName(Sections.PROFILE)}</div> :
-        <Link href={"/profile"}>
-            <div>{SectionFunc.getName(Sections.PROFILE)}</div>
+    const aboutButton = (section === Sections.ABOUT) ?
+        <div>{SectionFunc.getName(Sections.ABOUT)}</div> :
+        <Link href={"/about"}>
+            <div>{SectionFunc.getName(Sections.ABOUT)}</div>
         </Link>
 
     const nightButton =
@@ -52,7 +52,7 @@ export default function Layout({ children, section }) {
                         </Link>
                     </div>
                     <div style={{ "display": "flex", "flex": "right", "columnGap": "2rem" }}>
-                        {profileButton}
+                        {aboutButton}
                     </div>
 
                 </div>

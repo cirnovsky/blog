@@ -5,9 +5,9 @@ import {Sections, SectionFunc} from "../lib/enums";
 import React from 'react';
 import Link from 'next/link';
 
-const section = Sections.PROFILE;
+const section = Sections.ABOUT;
 
-export default function Profile() {
+export default function About() {
     return (
         <Layout section={section}>
             <Head>
