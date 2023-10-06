@@ -2,11 +2,29 @@
 @tailwind base;
 @tailwind utilities; */
 /* @layer components { */
-    .light-text {
-        /* @apply text-gray-400 text-sm */
-        font-size: 0.875rem;
-        line-height: 1.25rem; 
-        color: #9CA3AF;
-        font-family: 'Courier New', Courier, monospace;
-    }
+.light-text {
+    /* @apply text-gray-400 text-sm */
+    font-size: 0.875rem;
+    line-height: 1.25rem; 
+    color: #9CA3AF;
+    font-family: 'Courier New', Courier, monospace;
+}
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+  }
+  blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+  }
+  blockquote p {
+    display: inline;
+  }
 /* } */
