@@ -23,6 +23,10 @@ blockquote:before {
     vertical-align: -0.4em;
 }
 
+blockquote:after {
+    content: no-close-quote;
+}
+
 blockquote>p {
     margin: 0;
     /* Reset margin for p elements */
