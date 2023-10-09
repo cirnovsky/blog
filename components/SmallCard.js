@@ -10,7 +10,7 @@ export default function SmallCard({ title, dateString, sectionPath, id }) {
             <div className="light-text" style={{"width":"118px"}}
             ><Date dateString={dateString} /></div>
             <Link href={blogURL}>
-                <div>{title}</div>
+                <div dangerouslySetInnerHTML={{__html: title}}/>
             </Link>
         </div>
     )

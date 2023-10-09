@@ -8,11 +8,11 @@ export default function Post({postData}) {
     let curPostData = postData.content;
     return (<Layout>
         <Head>
-            <title>{curPostData.title}</title>
+            <title>{curPostData.rawTitle}</title>
         </Head>
         <div>
             <div>
-                <h1>{curPostData.title}</h1>
+                <h1><div dangerouslySetInnerHTML={{__html: curPostData.title}}/></h1>
                 <div className="light-text" style={{"width":"118px"}}>
                     <Date dateString={postData.date}/>
                 </div>
