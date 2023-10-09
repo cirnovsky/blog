@@ -3,12 +3,23 @@ import localFont from 'next/font/local'
 import '../styles/global.css'
 
 const myFont = localFont({
-    src: './french-script-mt.ttf'
+    src: [
+        {
+            path: './french-script-mt.ttf',
+            weight: '400',
+            style: 'normal'
+        },
+        {
+            path: 'Inkfree.ttf',
+            weight: '400',
+            style: 'normal'
+        }
+    ]
 })
 
 function MyApp({Component, pageProps}) {
     return (
-        <main className={myFont.className}>
+        <main>
             <Component {...pageProps}/>
         </main>
     )
