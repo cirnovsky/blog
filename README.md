@@ -1,9 +1,9 @@
-Hi there, it's @cirnovsky, Carnicero "cirnovsky" Irnobkowski.
+Hi there, it's @cirnovsky, Carnicero "cirnovsky" Irnobkowski. I am
 
-- 💻 Competitive programmer.
-- 🌐 Interested in front-end tech.
+- 💻 A Competitive programmer.
+- 🌐 Interested in front-end tech (but not good at it).
 - 👨‍🎓 Under education.
-- ♿ Counter-Strike mania.
-- 📙 English, Chinese, Japanese. Looking a way into French.
+- ♿ A Counter-Strike mania.
+- 📙 An English, Chinese, Japanese speaker. Looking for a way into French.
 
 Have a nice day!
