@@ -5,7 +5,7 @@ title: 'Solutoin -「BZOJ 4231」回忆树'
 
 ## Desc.
 
-&emsp;&emsp;[Link.](https://hydro.ac/d/bzoj/p/4231)
+[Link.](https://hydro.ac/d/bzoj/p/4231)
 
 &emsp;&emsp;树 $T=(V,E)$, 询问 $Q=\{q_i\}$，每次询问:
 

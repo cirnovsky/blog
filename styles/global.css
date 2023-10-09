@@ -40,5 +40,17 @@ blockquote>p:first-child {
 /* Display as grid for multiple <p> inside <blockquote> */
 blockquote>p {
     display: grid;
-    text-indent: 42px; /* Add text indent for automatic indentation */
+    text-indent: 42px;
+    /* Add text indent for automatic indentation */
+}
+
+@font-face {
+    font-family: 'FrenchScriptMT';
+    src: url('/fonts/french-script-mt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.custom-font {
+    font-family: 'FrenchScriptMT', sans-serif;
 }
