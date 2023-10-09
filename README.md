@@ -9,6 +9,6 @@ Hi there, it's @cirnovsky, Carnicero "cirnovsky" Irnobkowski. I am
 - 🎼 A Vocaloid & V-Singers lover. Especially VocaRock. COP, Ichinose Yuu, Haniwa, Okame-P, Yuyoyuppe.
 - 🎸 A freshman in guitar.
 - ⚽ Once a student semi-professional soccer player as a Goalkeeper. Quit for severe knee injuries. But now I also play badminton, basketball, table tennis for fun. Really love tennis and ice hockey.
-- 📚 A reader that have not read that much.
+- 📚 A reader that does not read that much.
 
 Have a nice day!
