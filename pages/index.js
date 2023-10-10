@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import Layout, {siteTitle} from '../components/Layout'
-import {getLatestPostsData} from '../lib/posts'
+import {getAllPostsData} from '../lib/posts'
 import React from "react";
 import Showcase from '../components/Showcase'
 import SmallCard from "../components/SmallCard";
 import {Sections, SectionFunc} from "../lib/enums";
 
-export default function Home({allLatestPostsData}) {
+export default function Home({allPostsData}) {
     return (
         <Layout section={Sections.HOME}>
             <Head>
@@ -14,8 +14,8 @@ export default function Home({allLatestPostsData}) {
             </Head>
             <div>
 
-                {/* Latest */}
-                {allLatestPostsData.map(({posts}) => (
+                {/* All */}
+                {allPostsData.map(({posts}) => (
                     <div key={posts.toString()}>
                     <Showcase>
                         {posts.map(({id, date, title}) => (
@@ -35,10 +35,10 @@ export default function Home({allLatestPostsData}) {
 }
 
 export const getStaticProps = async () => {
-    const allLatestPostsData = getLatestPostsData()
+    const allPostsData = getAllPostsData()
     return {
         props: {
-            allLatestPostsData
+            allPostsData
         }
     }
 }

@@ -1,6 +1,7 @@
 ---
 date: '2023-10-09'
 title: 'Solution -「CF 710F」String Set Queries'
+category: 'Note'
 ---
 
 ## Desc.
