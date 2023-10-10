@@ -1,9 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { ReactNode } from "react";
-import { Sections, SectionFunc } from "../lib/enums";
-import Script from 'next/script';
+import { Sections, Categories } from "../lib/enums";
 
 export const name = 'Carnicero Irnobkowski';
 export const siteTitle = "cirnovsky's blog";
@@ -11,14 +9,22 @@ export const siteTitle = "cirnovsky's blog";
 export default function Layout({ children, section }) {
 
     const aboutButton = (section === Sections.ABOUT) ?
-        <div>{SectionFunc.getName(Sections.ABOUT)}</div> :
+        <div>{"ABOUT"}</div> :
         <Link href={"/about"}>
-            <div>{SectionFunc.getName(Sections.ABOUT)}</div>
+            <div>{"ABOUT"}</div>
         </Link>
 
-    const nightButton =
-        <div><Image src={"/icons/night.svg"}
-            width={"20"} height={"20"} alt={"night"}></Image></div>
+    const notesButton = (section === Categories.NOTES) ?
+        <div>{"NOTES"}</div> :
+        <Link href={"/notes"}>
+            <div>{"NOTES"}</div>
+        </Link>
+
+    const articlesButton = (section === Categories.ARTICLES) ?
+        <div>{"ARTICLES"}</div> :
+        <Link href={"/articles"}>
+            <div>{"ARTICLES"}</div>
+        </Link>
 
     return (
         <div>
@@ -41,7 +47,7 @@ export default function Layout({ children, section }) {
 
             {/* navigator bar */}
             <div
-                style={{ "display": "flex" }}>
+                style={{ "display": "flex", "flex": "right", "columnGap": ".5rem" }}>
                 <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
                     <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
                         <Link href={"/"}>
@@ -51,8 +57,10 @@ export default function Layout({ children, section }) {
                             </div>
                         </Link>
                     </div>
-                    <div style={{ "display": "flex", "flex": "right", "columnGap": "2rem" }}>
+                    <div style={{ "display": "flex", "flex": "right", "columnGap": ".5rem" }}>
                         {aboutButton}
+                        {notesButton}
+                        {articlesButton}
                     </div>
 
                 </div>

@@ -1,7 +1,7 @@
 ---
 date: '2023-10-09'
 title: 'Solutoin -「BZOJ 4231」回忆树'
-category: 'Note'
+category: 'Notes'
 ---
 
 ## Desc.

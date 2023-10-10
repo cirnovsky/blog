@@ -1,7 +1,7 @@
 ---
 date: '2022-06-12'
 title: 'Solution Set -「NOI Online R1」'
-category: 'Note'
+category: 'Notes'
 ---
 
 

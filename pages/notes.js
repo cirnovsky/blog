@@ -1,20 +1,20 @@
 import Head from 'next/head'
 import Layout, {siteTitle} from '../components/Layout'
-import {getAllPostsData} from '../lib/posts'
+import {getCertainPostsData} from '../lib/posts'
 import React from "react";
 import Showcase from '../components/Showcase'
 import SmallCard from "../components/SmallCard";
-import {Sections, SectionFunc} from "../lib/enums";
+import {Sections, SectionFunc, Categories} from "../lib/enums";
 
-export default function Home({allPostsData}) {
+export default function Home({certainPostsData}) {
     return (
-        <Layout section={Sections.HOME}>
+        <Layout section={Sections.POSTS}>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
             <div>
                 <Showcase>
-                    {allPostsData.map(({id, date, title}) => (
+                    {certainPostsData.map(({id, date, title}) => (
                         <div key={id}>
                             <SmallCard
                                 title={title}
@@ -30,12 +30,10 @@ export default function Home({allPostsData}) {
 }
 
 export const getStaticProps = async () => {
-    const allPostsData = getAllPostsData()
+    const certainPostsData = getCertainPostsData(Categories.NOTES)
     return {
         props: {
-            allPostsData
+            certainPostsData
         }
     }
 }
-
-
