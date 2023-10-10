@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import Layout, {siteTitle} from '../components/Layout'
-import {getAllPostsData} from '../lib/posts'
+import {getLatestPostsData} from '../lib/posts'
 import React from "react";
 import Showcase from '../components/Showcase'
 import SmallCard from "../components/SmallCard";
 import {Sections, SectionFunc} from "../lib/enums";
 
-export default function Home({allPostsData}) {
+export default function Home({latestPostsData}) {
     return (
         <Layout section={Sections.HOME}>
             <Head>
@@ -14,7 +14,7 @@ export default function Home({allPostsData}) {
             </Head>
             <div>
                 <Showcase>
-                    {allPostsData.map(({id, date, title}) => (
+                    {latestPostsData.map(({id, date, title}) => (
                         <div key={id}>
                             <SmallCard
                                 title={title}
@@ -25,17 +25,17 @@ export default function Home({allPostsData}) {
                     ))}
                 </Showcase>
             </div>
+            {/* <br/> */}
+            <div style={{"text-align": "center"}}>... For more, dive into sections in the navbar.</div>
         </Layout>
     );
 }
 
 export const getStaticProps = async () => {
-    const allPostsData = getAllPostsData()
+    const latestPostsData = getLatestPostsData()
     return {
         props: {
-            allPostsData
+            latestPostsData
         }
     }
 }
-
-
