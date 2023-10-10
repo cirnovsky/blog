@@ -8,7 +8,7 @@ import {Sections, SectionFunc, Categories} from "../lib/enums";
 
 export default function Home({certainPostsData}) {
     return (
-        <Layout section={Sections.POSTS}>
+        <Layout section={Categories.NOTES}>
             <Head>
                 <title>{siteTitle}</title>
             </Head>
