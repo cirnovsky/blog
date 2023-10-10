@@ -11,13 +11,13 @@ export default function Post({postData}) {
             <title>{curPostData.rawTitle}</title>
         </Head>
         <div>
-            <div>
+            <div className="content">
                 <h1><div dangerouslySetInnerHTML={{__html: curPostData.title}}/></h1>
                 <div className="light-text" style={{"width":"118px"}}>
                     <Date dateString={postData.date}/>
                 </div>
             </div>
-            <div dangerouslySetInnerHTML={{__html: curPostData.contentHtml}}/>
+            <div className="content" dangerouslySetInnerHTML={{__html: curPostData.contentHtml}}/>
         </div>
     </Layout>)
 }

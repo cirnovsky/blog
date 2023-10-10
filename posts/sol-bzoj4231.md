@@ -1,12 +1,12 @@
 ---
 date: '2023-10-09'
-title: 'Solutoin -「BZOJ 4231」回忆树'
+title: 'Solution -「BZOJ 4231」回忆树'
 category: 'Notes'
 ---
 
 ## Desc.
 
-[Link.](https://hydro.ac/d/bzoj/p/4231)
+&emsp;&emsp;[Link.](https://hydro.ac/d/bzoj/p/4231)
 
 &emsp;&emsp;树 $T=(V,E)$, 询问 $Q=\{q_i\}$，每次询问:
 

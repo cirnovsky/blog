@@ -47,30 +47,31 @@ export default function Layout({ children, section }) {
 
             {/* navigator bar */}
             <div
-                style={{ "display": "flex", "flex": "right", "columnGap": ".5rem" }}>
-                <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
-                    <div style={{ "display": "flex", "justifyContent": "flex-end" }}>
+                className={"backdrop-blur-lg border-gray-700/20 fixed h-10 inset-x-0 z-10 flex justify-center bg-gray-300/10"}>
+                <div className={"flex justify-end grow max-w-[1200px]"}>
+                    <div className={"flex items-center grow"}>
                         <Link href={"/"}>
-                            <div style={{ "display": "flex", "gap": "0.5rem", "color": "#000000", ":hover": { "color": "#996E5C" } }}>
-                                <Image src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}></Image>
-                                <div style={{ "fontSize": "1.5rem", "lineHeight": "2rem", "fontWeight": 800 }}>{siteTitle}</div>
+                            <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>
+                                <div style={{"img": "unset"}}><Image src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}></Image></div>
+                                <div className={"font-extrabold text-2xl"}>{siteTitle}</div>
                             </div>
                         </Link>
                     </div>
-                    <div style={{ "display": "flex", "flex": "right", "columnGap": ".5rem" }}>
+                    <div className={"flex flex-none gap-x-8"} style={{"line-height": "2em"}}>
                         {aboutButton}
                         {notesButton}
                         {articlesButton}
                     </div>
 
                 </div>
-
             </div>
 
             <div>
                 {/* Brief information on the right */}
                 <br />
-                <div>
+                <br />
+                <br />
+                <div className={"col-span-4 ml-20"}>
                     <main>{children}</main>
                 </div>
             </div>
