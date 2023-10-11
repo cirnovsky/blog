@@ -4,8 +4,6 @@ title: 'Solution -「CF 1610G」AmShZ Wins a Bet'
 category: 'Notes'
 ---
 
-<iframe src="//music.163.com/outchain/player?type=2&id=1858585278&height=66"></iframe>
-
 ## Desc.
 
 &emsp;&emsp;[Link.](http://codeforces.com/problemset/problem/1610/G)
