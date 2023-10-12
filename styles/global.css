@@ -39,8 +39,7 @@ blockquote>p:first-child {
 
 /* Display as grid for multiple <p> inside <blockquote> */
 blockquote>p {
-    display: grid;
-    text-indent: 42px;
+    text-indent: 48px;
     /* Add text indent for automatic indentation */
 }
 

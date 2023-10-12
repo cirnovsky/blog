@@ -112,4 +112,5 @@ int main()
 >
 >/ 一笑而过继续坚强 /
 >
->——[孤寂code - *逆光* ft. 洛天依](https://vocadb.net/S/167707)
+> —— [孤寂code - *逆光* ft. 洛天依](https://vocadb.net/S/167707)
+>
