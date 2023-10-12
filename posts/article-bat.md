@@ -1,6 +1,6 @@
 ---
 date: '2020-01-12'
-title: 'Article -「常用 Bat 脚本」'
+title: '常用 Bat 脚本'
 category: 'Articles'
 ---
 

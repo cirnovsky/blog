@@ -1,6 +1,6 @@
 ---
 date: '2020-08-18'
-title: 'Solution -「红灯须硬闯 马路要横穿」'
+title: '红灯须硬闯 马路要横穿'
 category: 'Articles'
 ---
 

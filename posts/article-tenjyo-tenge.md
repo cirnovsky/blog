@@ -1,6 +1,6 @@
 ---
 date: '2020-08-18'
-title: 'Article -「てんじょうてんげ」'
+title: 'てんじょうてんげ'
 category: 'Articles'
 ---
 

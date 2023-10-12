@@ -1,6 +1,6 @@
 ---
 date: '2020-01-16'
-title: 'Article -「VS Code 配置指北」'
+title: 'VS Code 配置指北'
 category: 'Articles'
 ---
 
@@ -102,7 +102,7 @@ upd:真的挂了，我直接贴一个原作者的link吧：[某盘](https://pan.
       }
     ]
   }
-  ```
+```
 
 把你的MinGW的bin文件夹添加进环境变量，就可以按下F6编译运行你的C++文件了
 
