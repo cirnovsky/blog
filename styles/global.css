@@ -124,7 +124,16 @@ html {
     /* 5 */
     font-variation-settings: normal;
     /* 6 */
+    background-color: white;
 }
+
+/* TODO: Add dark mode (fuck this shit) */
+/* html, img {
+    filter: invert(1) hue-rotate(.5turn);
+}
+img {
+    opacity: .75;    
+} */
 
 /*
 1. Remove the margin in all browsers.
