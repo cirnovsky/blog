@@ -1,6 +1,6 @@
 ---
 date: '2020-08-04'
-title: 'Article -「こんなツンデレが俺の妹なわけない」'
+title: 'こんなツンデレが俺の妹なわけない'
 category: 'Articles'
 ---
 
