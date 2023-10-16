@@ -32,7 +32,7 @@ $$
 &emsp;&emsp;具体转移的路径是从 $f_{l, r}$ 转移到 $f_{i, r}$, 其中 $X[i, i+r-l) = X[l, r]$ 且 $i+r-l \leqslant l$. 令 $cnt$ 表示 $X[i, r)$ 中最多可选出的子串个数, 使得这些子串都等于 $X[l, r)$ 且互相不交, 则转移的方程可以写为:
 
 $$
-f_{l, r} + B + cnt \times C + (r - i - cnt * (r - l)) * A \rightarrow f_{i, r}
+f_{l, r} + B + cnt \times C + (r - i - cnt \times (r - l)) \times A \rightarrow f_{i, r}
 $$
 
 &emsp;&emsp;这样的复杂度最坏可以达到 $\mathcal O(n^3)$. 接下来引出一个优化复杂度的重要性质:
@@ -97,4 +97,4 @@ int main() {
 >
 >/ Possibly, all three /
 >
->—— [American Football - *The Summer Ends*](https://www.youtube.com/watch?v=KSgOVfvauhY)
+>—— [American Football - *The Summer Ends*](https://www.youtube.com/watch?v=GNITmXTI5-Y)
