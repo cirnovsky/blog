@@ -10,20 +10,20 @@ export default function Layout({ children, section }) {
 
     const aboutButton = (section === Sections.ABOUT) ?
         <div>{"ABOUT"}</div> :
-        <Link href={"/about"}>
-            <div>{"ABOUT"}</div>
+        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/about"}>
+            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ABOUT"}</div>
         </Link>
 
     const notesButton = (section === Categories.NOTES) ?
         <div>{"NOTES"}</div> :
-        <Link href={"/notes"}>
-            <div>{"NOTES"}</div>
+        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/notes"}>
+            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"NOTES"}</div>
         </Link>
 
     const articlesButton = (section === Categories.ARTICLES) ?
         <div>{"ARTICLES"}</div> :
-        <Link href={"/articles"}>
-            <div>{"ARTICLES"}</div>
+        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/articles"}>
+            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ARTICLES"}</div>
         </Link>
 
     return (
