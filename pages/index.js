@@ -26,7 +26,7 @@ export default function Home({latestPostsData}) {
                 </Showcase>
             </div>
             {/* <br/> */}
-            <div style={{"text-align": "center"}}>... For more, dive into sections in the navbar.</div>
+            <div style={{"textAlign": "center"}}>... For more, dive into sections in the navbar.</div>
         </Layout>
     );
 }

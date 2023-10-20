@@ -4,24 +4,24 @@ import Link from 'next/link';
 import { Sections, Categories } from "../lib/enums";
 
 export const name = 'Carnicero Irnobkowski';
-export const siteTitle = "cirnovsky's blog";
+export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
 
 export default function Layout({ children, section }) {
 
     const aboutButton = (section === Sections.ABOUT) ?
-        <div>{"ABOUT"}</div> :
+        <div className="caonima">{"ABOUT"}</div> :
         <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/about"}>
             <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ABOUT"}</div>
         </Link>
 
     const notesButton = (section === Categories.NOTES) ?
-        <div>{"NOTES"}</div> :
+        <div className='caonima'>{"NOTES"}</div> :
         <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/notes"}>
             <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"NOTES"}</div>
         </Link>
 
     const articlesButton = (section === Categories.ARTICLES) ?
-        <div>{"ARTICLES"}</div> :
+        <div className='caonima'>{"ARTICLES"}</div> :
         <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/articles"}>
             <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ARTICLES"}</div>
         </Link>
@@ -50,7 +50,7 @@ export default function Layout({ children, section }) {
                 className={"backdrop-blur-lg border-gray-700/20 fixed h-10 inset-x-0 z-10 flex justify-center bg-gray-300/10"}>
                 <div className={"flex justify-end grow max-w-[1200px]"}>
                     <div className={"flex items-center grow"}>
-                        <Link href={"/"}>
+                        <Link style={{"textDecoration": "none"}} href={"/"}>
                             <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>
                                 <div style={{"img": "unset"}}><Image src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}></Image></div>
                                 <div className={"font-extrabold text-2xl"}>{siteTitle}</div>

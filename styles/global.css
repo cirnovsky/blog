@@ -1,3 +1,7 @@
+.caonima {
+    margin-top: 0.3em;
+}
+
 .light-text {
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -55,7 +59,7 @@ blockquote>p {
 }
 
 .entry {
-    margin-left: auto;
+    margin-left: 30%;
     margin-right: auto;
     width: 40em;
 }
@@ -699,6 +703,13 @@ video {
 
 .text-black {
     --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity))
+}
+
+.text-iiswis {
+    --tw-text-opacity: 1;
+    text-decoration: underline 0.5px black;
+    /* text-underline-offset: 3px; */
     color: rgb(0 0 0 / var(--tw-text-opacity))
 }
 
