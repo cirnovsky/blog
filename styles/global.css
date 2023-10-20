@@ -1,5 +1,13 @@
+body::-webkit-scrollbar{
+    display: none;
+  }
+
 .caonima {
     margin-top: 0.3em;
+}
+
+.rinimabi {
+    text-decoration: underline;
 }
 
 .light-text {
