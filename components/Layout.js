@@ -6,6 +6,10 @@ import { Sections, Categories } from "../lib/enums";
 export const name = 'Carnicero Irnobkowski';
 export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
 
+const imageStyle = {
+    border: 'none !important',
+  }
+
 export default function Layout({ children, section }) {
 
     const aboutButton = (section === Sections.ABOUT) ?
@@ -52,12 +56,12 @@ export default function Layout({ children, section }) {
                     <div className={"flex items-center grow"}>
                         <Link style={{"textDecoration": "none"}} href={"/"}>
                             <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>
-                                <div style={{"img": "unset"}}><Image src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}></Image></div>
+                                <div><Image style={imageStyle} src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}/></div>
                                 <div className={"font-extrabold text-2xl"}>{siteTitle}</div>
                             </div>
                         </Link>
                     </div>
-                    <div className={"flex flex-none gap-x-8"} style={{"line-height": "2em"}}>
+                    <div className={"flex flex-none gap-x-8"} style={{"lineHeight": "1.8em"}}>
                         {aboutButton}
                         {notesButton}
                         {articlesButton}
