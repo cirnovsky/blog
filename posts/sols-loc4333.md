@@ -1,10 +1,8 @@
 ---
 date: '2023-10-20'
-title: 'Solution Set -「20231019」'
+title: 'Solution Set -「LOC 4333」'
 category: 'Notes'
 ---
-
-
 
 &emsp;&emsp;[Link.](http://222.180.160.110:1024/contest/4333)
 

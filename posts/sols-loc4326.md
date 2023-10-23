@@ -1,6 +1,6 @@
 ---
 date: '2023-10-16'
-title: 'Solution Set -「20231016」'
+title: 'Solution Set -「LOC 4326」'
 category: 'Notes'
 ---
 
