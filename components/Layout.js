@@ -52,7 +52,7 @@ export default function Layout({ children, section }) {
             {/* navigator bar */}
             <div
                 className={"backdrop-blur-lg border-gray-700/20 fixed h-10 inset-x-0 z-10 flex justify-center bg-gray-300/10"}>
-                <div className={"flex justify-end grow max-w-[1200px]"}>
+                <div className={"flex justify-end grow max-w-[50em]"}>
                     <div className={"flex items-center grow"}>
                         <Link style={{"textDecoration": "none"}} href={"/"}>
                             <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>

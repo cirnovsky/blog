@@ -38,20 +38,8 @@ category: 'Articles'
 
 ---
 
-> 当万木俱焚 别走近我
+> / 当万木俱焚 别走近我 /
 >
-> 就 让所有的梦境 不坠落
+> / 就 让所有的梦境 不坠落 /
 >
 > —— [Kide - *404 Not Found* ft. 赤羽](https://vocadb.net/S/243873)
-
-&emsp;&emsp;
-
-&emsp;&emsp;
-
-&emsp;&emsp;
-
-&emsp;&emsp;
-
-&emsp;&emsp;
-
-&emsp;&emsp;
