@@ -1,5 +1,6 @@
 import React from "react";
 import Date from "./Date";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function SmallCard({ title, dateString, sectionPath, id }) {
@@ -13,6 +14,9 @@ export default function SmallCard({ title, dateString, sectionPath, id }) {
                     <div dangerouslySetInnerHTML={{__html: title}}/>
                 </div>
             </Link>
+            {/* <Link href={blogURL}>
+                <div dangerouslySetInnerHTML={{__html: title}}/>
+            </Link> */}
         </div>
     )
 }
