@@ -1,6 +1,6 @@
 ---
 date: '2023-10-29'
-title: 'Solution Set -「JOISC 2021」'
+title: 'Solution -「JOISC 2021」ビーバーの会合 2'
 category: 'Notes'
 ---
 
@@ -74,7 +74,7 @@ int main() {
 >
 > / 我不過是一朵花。 /
 > 
-> / "<span class="font-variant:small-caps">We</span>, the rustling leaves, have a voice that answers the storms, but who are you so silent?" /
+> / "<span style="font-variant:small-caps">We</span>, the rustling leaves, have a voice that answers the storms, but who are you so silent?" /
 > 
 > / "I am a mere flower." /
 >
