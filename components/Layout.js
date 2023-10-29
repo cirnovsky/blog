@@ -7,7 +7,12 @@ export const name = 'Carnicero Irnobkowski';
 export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
 
 export default function Layout({ children, section }) {
-
+    const homeButton = (section === Sections.HOME) ?
+        <div className="caonima dark:text-gray-300">{"首页"}</div> :
+        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/"}>
+            <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"首页"}</div>
+        </Link>
+    
     const aboutButton = (section === Sections.ABOUT) ?
         <div className="caonima dark:text-gray-300">{"关于"}</div> :
         <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/about"}>
@@ -53,13 +58,14 @@ export default function Layout({ children, section }) {
                                 <div className="font-extrabold text-2xl">{siteTitle}</div>
                         </Link>
                         <div className="flex gap-x-8 items-center">
+                            {homeButton}
                             {aboutButton}
                             {notesButton}
                             {articlesButton}
                         </div>
                     </div>
                 </div>
-                <hr className="h-px -my-2 bg-black border-0 dark:bg-white"></hr>
+                <hr className="h-px -my-1.5 bg-black border-0 dark:bg-white"></hr>
                 <main className="my-20">{children}</main>
             </div>
         </div>
