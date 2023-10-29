@@ -30,7 +30,7 @@
         @apply dark:text-gray-400
     }
     body {
-        @apply dark:bg-gray-800;
+        @apply dark:bg-[#212529];
         font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'Source Han Serif CN', serif;
     }
 }
@@ -63,20 +63,11 @@
 }
 html {
     line-height: 1.5;
-    /* 1 */
     -webkit-text-size-adjust: 100%;
-    /* 2 */
     -moz-tab-size: 4;
-    /* 3 */
     tab-size: 4;
-    /* 3 */
-    font-family: "Times New Roman", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    /* 4 */
     font-feature-settings: normal;
-    /* 5 */
     font-variation-settings: normal;
-    /* 6 */
-    background-color: white;
 }
 :root {
     --prism-padding: 20px;
@@ -121,6 +112,7 @@ blockquote {
     margin: 1.5em 10px;
     padding: 0.5em 10px;
     quotes: "\201C" "\201D" "\2018" "\2019";
+    font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'kaiti', 'Source Han Serif CN', serif;
 }
 blockquote:before {
     color: #ccc;
@@ -143,6 +135,6 @@ blockquote>p:first-child {
 }
 /* Display as grid for multiple <p> inside <blockquote> */
 blockquote>p {
-    text-indent: 50px;
+    text-indent: 52px;
     /* Add text indent for automatic indentation */
 }
