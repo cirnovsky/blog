@@ -18,7 +18,7 @@ export default function Post({postData}) {
                 cirnovsky / <Date dateString={postData.date}/>
                 </div>
             </div>
-            <div className="content dark:text-gray-300" dangerouslySetInnerHTML={{__html: curPostData.contentHtml}}/>
+            <div className="content dark:text-gray-300 first-letter:font-extrabold" dangerouslySetInnerHTML={{__html: curPostData.contentHtml}}/>
         </div>
     </Layout>)
 }

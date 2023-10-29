@@ -40,7 +40,7 @@
         font-family: 'Courier New', Courier, monospace;
     }
     .caonima {
-        @apply mt-[0.3em] underline decoration-[4px] underline-offset-[6px]
+        @apply mt-[0.3em] underline decoration-[4px] underline-offset-[0.35em]
     }
     @font-face {
         font-family: 'FrenchScriptMT';
