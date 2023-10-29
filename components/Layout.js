@@ -6,28 +6,24 @@ import { Sections, Categories } from "../lib/enums";
 export const name = 'Carnicero Irnobkowski';
 export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
 
-const imageStyle = {
-    border: 'none !important',
-  }
-
 export default function Layout({ children, section }) {
 
     const aboutButton = (section === Sections.ABOUT) ?
-        <div className="caonima">{"ABOUT"}</div> :
-        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/about"}>
-            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ABOUT"}</div>
+        <div className="caonima dark:text-gray-300">{"关于"}</div> :
+        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/about"}>
+            <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"关于"}</div>
         </Link>
 
     const notesButton = (section === Categories.NOTES) ?
-        <div className='caonima'>{"NOTES"}</div> :
-        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/notes"}>
-            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"NOTES"}</div>
+        <div className='caonima dark:text-gray-300'>{"笔记"}</div> :
+        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/notes"}>
+            <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"笔记"}</div>
         </Link>
 
     const articlesButton = (section === Categories.ARTICLES) ?
-        <div className='caonima'>{"ARTICLES"}</div> :
-        <Link style={{"textDecoration": "dashed", "marginTop": "0.3em"}} href={"/articles"}>
-            <div className="cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-extrabold">{"ARTICLES"}</div>
+        <div className='caonima dark:text-gray-300'>{"文章"}</div> :
+        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/articles"}>
+            <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"文章"}</div>
         </Link>
 
     return (
@@ -49,37 +45,23 @@ export default function Layout({ children, section }) {
                 <meta name="twitter:card" content="summary_large_image" />
             </Head>
 
-            {/* navigator bar */}
-            <div
-                className={"backdrop-blur-lg border-gray-700/20 fixed h-10 inset-x-0 z-10 flex justify-center bg-gray-300/10"}>
-                <div className={"flex justify-end grow max-w-[1200px]"}>
-                    <div className={"flex items-center grow"}>
-                        <Link style={{"textDecoration": "none"}} href={"/"}>
-                            <div className={"cursor-pointer flex gap-2 text-black hover:text-[#996E5C]"}>
-                                <div><Image style={imageStyle} src={"/favicon.svg"} width={"28"} height={"28"} alt={"icon"}/></div>
-                                <div className={"font-extrabold text-2xl"}>{siteTitle}</div>
-                            </div>
+            <div className='flex flex-col justify-between mx-auto max-w-[50em]'>
+                <div className='mt-20'>
+                    <div className="flex mx-auto justify-between h-10">
+                        <Link className="no-underline text-black dark:text-gray-300 hover:text-[#996E5C]" href={"/"}>
+                                {/* <div className="-mt-11"><Image src={"/avatar.png"} width={"75"} height={"75"} alt={"icon"} /></div> */}
+                                <div className="font-extrabold text-2xl">{siteTitle}</div>
                         </Link>
+                        <div className="flex gap-x-8 items-center">
+                            {aboutButton}
+                            {notesButton}
+                            {articlesButton}
+                        </div>
                     </div>
-                    <div className={"flex flex-none gap-x-8"} style={{"lineHeight": "1.8em"}}>
-                        {aboutButton}
-                        {notesButton}
-                        {articlesButton}
-                    </div>
-
                 </div>
+                <hr className="h-px -my-2 bg-black border-0 dark:bg-white"></hr>
+                <main className="my-20">{children}</main>
             </div>
-
-            <div>
-                {/* Brief information on the right */}
-                <br />
-                <br />
-                <br />
-                <div className={"col-span-4 ml-20"}>
-                    <main>{children}</main>
-                </div>
-            </div>
-
         </div>
     );
 }

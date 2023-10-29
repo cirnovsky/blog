@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+    dl,
+    dd,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    figure,
+    p,
+    pre,
+    a,
+    ol,
+    ul {
+        all: revert;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply text-center font-medium
+    }
+    a {
+        @apply dark:text-gray-400
+    }
+    body {
+        @apply dark:bg-gray-800;
+        font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'Source Han Serif CN', serif;
+    }
+}
+@layer components {
+    .light-text {
+        @apply text-gray-400 text-sm;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .caonima {
+        @apply mt-[0.3em] underline decoration-[4px] underline-offset-[5px]
+    }
+    @font-face {
+        font-family: 'FrenchScriptMT';
+        src: url('/fonts/french-script-mt.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    .custom-font {
+        font-family: 'FrenchScriptMT', sans-serif;
+    }
+    .content {
+        margin-left: auto;
+        margin-right: auto;
+        width: 50em
+    }
+    .text-iiswis {
+        --tw-text-opacity: 1;
+        color: rgb(0 0 0 / var(--tw-text-opacity))
+    }
+}
+html {
+    line-height: 1.5;
+    /* 1 */
+    -webkit-text-size-adjust: 100%;
+    /* 2 */
+    -moz-tab-size: 4;
+    /* 3 */
+    tab-size: 4;
+    /* 3 */
+    font-family: "Times New Roman", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* 4 */
+    font-feature-settings: normal;
+    /* 5 */
+    font-variation-settings: normal;
+    /* 6 */
+    background-color: white;
+}
+:root {
+    --prism-padding: 20px;
+    --margin: 1.62em;
+    --box-shadow-size: 6px;
+    --box-shadow: var(--box-shadow-size) var(--box-shadow-size) var(--primary-color);
+    --box-shadow-hover: 10px 10px var(--primary-color);
+    --easing: .2s ease-in-out;
+    --primary-color: #bd93f9;
+    --secondary-color: #9547b7;
+    --background-color-1: white;
+    --background-color-2: #bd93f917;
+    --header-link-color: #4e1e86;
+}
+body::-webkit-scrollbar {
+    display: none;
+}
+code,
+kbd,
+samp,
+pre {
+    font-family: "Consolas", monospace;
+    /* 1 */
+    font-size: 1em;
+    /* 2 */
+}
+.post-image {
+    @apply mx-auto;
+    max-width: 80%;
+    display: block;
+    border: 4px solid;
+    box-shadow: var(--box-shadow);
+}
+.inline-image {
+    display: inline;
+    height: 1em;
+}
+
+blockquote {
+    @apply bg-[#fbf0f0] dark:bg-[#fbfff0] dark:text-gray-500;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+blockquote:after {
+    content: no-close-quote;
+}
+blockquote>p {
+    margin: 0;
+    /* Reset margin for p elements */
+}
+/* Display as inline for a single <p> inside <blockquote> */
+blockquote>p:first-child {
+    display: inline;
+}
+/* Display as grid for multiple <p> inside <blockquote> */
+blockquote>p {
+    text-indent: 50px;
+    /* Add text indent for automatic indentation */
+}

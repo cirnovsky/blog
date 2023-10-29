@@ -2,6 +2,6 @@ import React, { ReactNode } from "react";
 
 export default function Showcase({ children }) {
     return (
-        <div>{children}</div>
+        <div className="flex flex-col gap-y-5">{children}</div>
     )
 }
