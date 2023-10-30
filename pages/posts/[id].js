@@ -33,7 +33,6 @@ export default function Post({ postData }) {
             input-position="top"
             theme="transparent_dark"
             lang="en"
-            loading="lazy"
             crossorigin="anonymous"
             async>
         </Giscus>
