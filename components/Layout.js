@@ -9,26 +9,32 @@ export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
 export default function Layout({ children, section }) {
     const homeButton = (section === Sections.HOME) ?
         <div className="caonima dark:text-gray-300">{"首页"}</div> :
-        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/"}>
+        <Link className="no-underline mt-[0.3rem]" href={"/"}>
             <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"首页"}</div>
         </Link>
     
     const aboutButton = (section === Sections.ABOUT) ?
         <div className="caonima dark:text-gray-300">{"关于"}</div> :
-        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/about"}>
+        <Link className="no-underline mt-[0.3rem]" href={"/about"}>
             <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"关于"}</div>
         </Link>
 
     const notesButton = (section === Categories.NOTES) ?
         <div className='caonima dark:text-gray-300'>{"笔记"}</div> :
-        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/notes"}>
+        <Link className="no-underline mt-[0.3rem]" href={"/notes"}>
             <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"笔记"}</div>
         </Link>
 
     const articlesButton = (section === Categories.ARTICLES) ?
         <div className='caonima dark:text-gray-300'>{"文章"}</div> :
-        <Link style={{ "textDecoration": "dashed", "marginTop": "0.3em" }} href={"/articles"}>
+        <Link className="no-underline mt-[0.3rem]" href={"/articles"}>
             <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"文章"}</div>
+        </Link>
+
+    const friendsButton = (section === Sections.FRIENDS) ?
+        <div className='caonima dark:text-gray-300'>{"友链"}</div> :
+        <Link className="no-underline mt-[0.3rem]" href={"/friends"}>
+            <div className="cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium">{"友链"}</div>
         </Link>
 
     return (
@@ -62,6 +68,7 @@ export default function Layout({ children, section }) {
                             {aboutButton}
                             {notesButton}
                             {articlesButton}
+                            {friendsButton}
                         </div>
                     </div>
                 </div>
