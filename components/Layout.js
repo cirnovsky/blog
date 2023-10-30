@@ -72,7 +72,7 @@ export default function Layout({ children, section }) {
                         </div>
                     </div>
                 </div>
-                <hr className="h-px -my-[0.375rem] bg-black border-0 dark:bg-white"></hr>
+                <hr className="h-[0.07em] -my-[0.375em] bg-black border-0 dark:bg-white"></hr>
                 <main className="my-20">{children}</main>
             </div>
         </div>
