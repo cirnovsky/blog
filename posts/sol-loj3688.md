@@ -6,42 +6,42 @@ category: 'Notes'
 
 ## Desc.
 
-&emsp;&emsp;[Link.](https://loj.ac/p/3688)
+[Link.](https://loj.ac/p/3688)
 
-&emsp;&emsp;你有两个字符串 $S$ 和 $T$, 初始为空. 每次你可以进行以下三种操作中的一种:
+你有两个字符串 $S$ 和 $T$, 初始为空. 每次你可以进行以下三种操作中的一种:
 
 1.  选定**小写字母** $c$, 令 $S := S+c$;
 2. 令 $T := S$, 令 $S:=\texttt{""}$;
 3. 令 $S := S+T$.
 
-&emsp;&emsp;三种操作分别花费 $A, B, C$, 现要求你将 $S$ 转化为目标串 $X$, 求最小花费.
+三种操作分别花费 $A, B, C$, 现要求你将 $S$ 转化为目标串 $X$, 求最小花费.
 
-&emsp;&emsp;$1\leqslant |X| \leqslant 2.5\times 10^{3}$, $\Sigma = \{\texttt{a}, \dots, \texttt{z}\}$.
+$1\leqslant |X| \leqslant 2.5\times 10^{3}$, $\Sigma = \{\texttt{a}, \dots, \texttt{z}\}$.
 
 ## Sol.
 
-&emsp;&emsp;今天真调了一天 RE, 人麻了. 😅
+今天真调了一天 RE, 人麻了. 😅
 
-&emsp;&emsp;考虑区间 DP, 设 $f_{l, r}$ 表示达成 $X[l, r)$ 的最小花费. 操作 1 的转移很简单:
+考虑区间 DP, 设 $f_{l, r}$ 表示达成 $X[l, r)$ 的最小花费. 操作 1 的转移很简单:
 $$
 f_{l, r}+A \rightarrow f_{l-1, r} \\
 f_{l, r}+A \rightarrow f_{l, r+1}
 $$
-&emsp;&emsp;其中 $\rightarrow$ 表示更新, 即取最小值. 可以发现操作 2 比较有性质, 因为每次执行操作 2 都可以「刷新」当前字符串的状态. 设当前这次操作 2 后, $T$ 变成了 $Y$, 那么后面若干次操作中, 我们会使用操作 2&3, 来使 $S$ 变成类似 $\texttt{...}Y\texttt{...}YY\texttt{...}Y\texttt{...}$ 的形状, 其中省略号代表操作 1 插入的字母. 所以如果考虑从 $f_{l, r}$ 转移到 $f_{x, y}$ ($x \leqslant l <r \leqslant y$), 那么有 $X[x, x+r-l)=X_[y-r+l, y) = X[l, r)$. 并且这三个部分无交. 我们可以这样钦定 $X[x, y)$ 的两端一定等于 $X[l, r)$ 的原因是, 上述形式两边多出来的字母可以通过第一种操作转移到.
+其中 $\rightarrow$ 表示更新, 即取最小值. 可以发现操作 2 比较有性质, 因为每次执行操作 2 都可以「刷新」当前字符串的状态. 设当前这次操作 2 后, $T$ 变成了 $Y$, 那么后面若干次操作中, 我们会使用操作 2&3, 来使 $S$ 变成类似 $\texttt{...}Y\texttt{...}YY\texttt{...}Y\texttt{...}$ 的形状, 其中省略号代表操作 1 插入的字母. 所以如果考虑从 $f_{l, r}$ 转移到 $f_{x, y}$ ($x \leqslant l <r \leqslant y$), 那么有 $X[x, x+r-l)=X_[y-r+l, y) = X[l, r)$. 并且这三个部分无交. 我们可以这样钦定 $X[x, y)$ 的两端一定等于 $X[l, r)$ 的原因是, 上述形式两边多出来的字母可以通过第一种操作转移到.
 
-&emsp;&emsp;具体转移的路径是从 $f_{l, r}$ 转移到 $f_{i, r}$, 其中 $X[i, i+r-l) = X[l, r]$ 且 $i+r-l \leqslant l$. 令 $cnt$ 表示 $X[i, r)$ 中最多可选出的子串个数, 使得这些子串都等于 $X[l, r)$ 且互相不交, 则转移的方程可以写为:
+具体转移的路径是从 $f_{l, r}$ 转移到 $f_{i, r}$, 其中 $X[i, i+r-l) = X[l, r]$ 且 $i+r-l \leqslant l$. 令 $cnt$ 表示 $X[i, r)$ 中最多可选出的子串个数, 使得这些子串都等于 $X[l, r)$ 且互相不交, 则转移的方程可以写为:
 
 $$
 f_{l, r} + B + cnt \times C + (r - i - cnt \times (r - l)) \times A \rightarrow f_{i, r}
 $$
 
-&emsp;&emsp;这样的复杂度最坏可以达到 $\mathcal O(n^3)$. 接下来引出一个优化复杂度的重要性质:
+这样的复杂度最坏可以达到 $\mathcal O(n^3)$. 接下来引出一个优化复杂度的重要性质:
 
 - 若存在两个下标 $i$ 和 $j$, 满足可以从 $f_{l, r}$ 转移到 $f_{i, r}$ 和 $f_{j, r}$, 并且 $i+r-l > j$ (即有交), 那么我们**只需要**转移到 $j$ 即可!
 
-&emsp;&emsp;为什么? 因为 $f_{i, r}$ 可以被 $f_{j, r}$ 以同样的代价更新 (注意从 $f_{j, r}$ 到 $f_{i, r}$ 的更新能且仅能使用操作 1)! 比如 $X = \texttt{ababaccaba}$, 取最右边的 $\texttt{aba}$ 作为当前的模式串, 花费 $\texttt{ba}$ 到 $\texttt{aba}$ 和从 $\texttt{aba}$ 花费 $\texttt{ab}$ 都可以以同样的代价到达 $\texttt{aba}$.
+为什么? 因为 $f_{i, r}$ 可以被 $f_{j, r}$ 以同样的代价更新 (注意从 $f_{j, r}$ 到 $f_{i, r}$ 的更新能且仅能使用操作 1)! 比如 $X = \texttt{ababaccaba}$, 取最右边的 $\texttt{aba}$ 作为当前的模式串, 花费 $\texttt{ba}$ 到 $\texttt{aba}$ 和从 $\texttt{aba}$ 花费 $\texttt{ab}$ 都可以以同样的代价到达 $\texttt{aba}$.
 
-&emsp;&emsp;那么我们每次转移就只剩下 $\mathcal O(\frac{l}{r-l})$ 次了, 加起来就是调和级数. 预处理 $p_{l, r}$ 表示 $X[0, l)$ 中最后出现的 $X[l, r)$ 位置即可.
+那么我们每次转移就只剩下 $\mathcal O(\frac{l}{r-l})$ 次了, 加起来就是调和级数. 预处理 $p_{l, r}$ 表示 $X[0, l)$ 中最后出现的 $X[l, r)$ 位置即可.
 
 ```cpp
 int main() {

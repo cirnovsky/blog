@@ -6,27 +6,27 @@ category: 'Notes'
 
 ## Desc.
 
-&emsp;&emsp;[Link.](https://hydro.ac/d/bzoj/p/4231)
+[Link.](https://hydro.ac/d/bzoj/p/4231)
 
-&emsp;&emsp;树 $T=(V,E)$, 询问 $Q=\{q_i\}$，每次询问:
+树 $T=(V,E)$, 询问 $Q=\{q_i\}$，每次询问:
 
 - $u~v~s$, 问从 $u$ 到 $v$ 的简单路径上的字符拼接起来字符串中, $s$ 出现了多少次.
 
 ## Sol.
 
-&emsp;&emsp;真毒瘤... 😅
+真毒瘤... 😅
 
-&emsp;&emsp;$s$ 对询问 $q_i$ 的贡献可以分为三种:
+$s$ 对询问 $q_i$ 的贡献可以分为三种:
 
 - 在 $\lang u,lca(u,v)\rang$ 上出现;
 - 在 $\lang lca(u,v),v\rang$ 上出现;
 - 跨过 $lca(u, v)$.
 
-&emsp;&emsp;其中第三种贡献可能的情况不超过 $\mathcal O(2|s|)$ 种, 拉出来跑哈希或者 KMP 即可.
+其中第三种贡献可能的情况不超过 $\mathcal O(2|s|)$ 种, 拉出来跑哈希或者 KMP 即可.
 
-&emsp;&emsp;对于剩下两种的情况, 我们以模式串的正反串建立 ACAM, 然后对原树 DFS, 那么从根节点到当前节点的树链上组成的字符串即为文本串.
+对于剩下两种的情况, 我们以模式串的正反串建立 ACAM, 然后对原树 DFS, 那么从根节点到当前节点的树链上组成的字符串即为文本串.
 
-&emsp;&emsp;代码太难打了, 打了一半就跑路了.
+代码太难打了, 打了一半就跑路了.
 
 ```cpp
 using pii = pair<int, int>;

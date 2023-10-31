@@ -6,21 +6,21 @@ category: 'Notes'
 
 ## Desc.
 
-&emsp;&emsp;[Link.](https://codeforces.com/problemset/problem/710/F)
+[Link.](https://codeforces.com/problemset/problem/710/F)
 
-&emsp;&emsp;维护一个字符串集合，支持三种操作：
+维护一个字符串集合，支持三种操作：
 
 1. 加字符串;
 2. 删字符串;
 3. 查询集合中的所有字符串在给出的模板串中出现的次数.
 
-&emsp;&emsp;强制在线.
+强制在线.
 
 ## Sol.
 
-&emsp;&emsp;アメリカ民謡研究会非常🐂🍺. 开始理解 AC 自动机了...
+アメリカ民謡研究会非常🐂🍺. 开始理解 AC 自动机了...
 
-&emsp;&emsp;题面容易让人想到根号分治, 然而实际上本题可以进行二进制拆分. 这样我们一共维护了 $\mathcal O(log_2 n)$ 个 AC 自动机, 查询的总复杂均摊应该比较明显是 $\mathcal O(m\log_2n)$, 而修改操作, 每个点只会被合并不超过 $\mathcal O(log_2n)$ 次, 因此也是对的.
+题面容易让人想到根号分治, 然而实际上本题可以进行二进制拆分. 这样我们一共维护了 $\mathcal O(log_2 n)$ 个 AC 自动机, 查询的总复杂均摊应该比较明显是 $\mathcal O(m\log_2n)$, 而修改操作, 每个点只会被合并不超过 $\mathcal O(log_2n)$ 次, 因此也是对的.
 
 ```cpp
 const int N = 3e5;

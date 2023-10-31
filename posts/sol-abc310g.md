@@ -6,23 +6,23 @@ category: 'Notes'
 
 ## Desc.
 
-&emsp;&emsp;[Link.](https://atcoder.jp/contests/abc310/tasks/abc310_g)
+[Link.](https://atcoder.jp/contests/abc310/tasks/abc310_g)
 
-&emsp;&emsp;有 $n$ 个二元组, 用 $(a_i, t_i)$ 描述. 等概率在 $[1, k] \bigcap \mathbb{N}^*$ 中选取一个 $x$, 执行以下操作 $x$ 次:
+有 $n$ 个二元组, 用 $(a_i, t_i)$ 描述. 等概率在 $[1, k] \bigcap \mathbb{N}^*$ 中选取一个 $x$, 执行以下操作 $x$ 次:
 
 - 取一空数组 $\{b_n\}$, 令 $\displaystyle b_i = \sum_{t_j = i} a_j$, 然后再用 $b_i$ 替换每个 $a_i$;
 
-&emsp;&emsp;问最终 $a_i$ 的期望值对 $\mathbf{998244353}$ 取模的结果;
+问最终 $a_i$ 的期望值对 $\mathbf{998244353}$ 取模的结果;
 
-&emsp;&emsp;$1\leqslant n \leqslant 2 \times 10^5$, $1 \leqslant k \leqslant 10^{18}$, $k$ is not a multiple of $\mathbf{998244353}$.
+$1\leqslant n \leqslant 2 \times 10^5$, $1 \leqslant k \leqslant 10^{18}$, $k$ is not a multiple of $\mathbf{998244353}$.
 
 ## Sol.
 
-&emsp;&emsp;令 $\mathbf A = \left( \begin{matrix} a_1, \dots, a_n \end{matrix}\right)$, $\mathbf T = \left (\begin{matrix} 0/1 & \cdots  & 0/1 \\ \vdots & \ddots & \vdots \\ 0/1 & \cdots & 0/1 \end{matrix}\right)$, 其中 $\mathbf T_{i, t_i} = 1$, 其余为 $0$. 则答案为 (以下均省去 $\frac 1k$ 不写):
+令 $\mathbf A = \left( \begin{matrix} a_1, \dots, a_n \end{matrix}\right)$, $\mathbf T = \left (\begin{matrix} 0/1 & \cdots  & 0/1 \\ \vdots & \ddots & \vdots \\ 0/1 & \cdots & 0/1 \end{matrix}\right)$, 其中 $\mathbf T_{i, t_i} = 1$, 其余为 $0$. 则答案为 (以下均省去 $\frac 1k$ 不写):
 $$
 f(\mathbf A, \mathbf T, k) = \sum_{i=1}^k \mathbf A \times \mathbf T^i
 $$
-&emsp;&emsp;进行分治处理 (以下忽略 $\frac 1k$ 的系数).
+进行分治处理 (以下忽略 $\frac 1k$ 的系数).
 
 $$
 \begin{aligned}
@@ -31,14 +31,14 @@ $$
 ={} & f(\mathbf A\mathbf T+\mathbf A\mathbf T^2, \mathbf T^2, m)
 \end{aligned}
 $$
-&emsp;&emsp;对于 $k$ 为奇数的情况：
+对于 $k$ 为奇数的情况：
 $$
 \begin{aligned}
 &f(\mathbf A, \mathbf T, k)\\
 ={}& \mathbf A+f(\mathbf A \mathbf T, \mathbf T, k-1)
 \end{aligned}
 $$
-&emsp;&emsp;于是我们用 $\mathcal O(n\log k)$ 的时间解决了问题. 当然亦可以建出内向基环树.
+于是我们用 $\mathcal O(n\log k)$ 的时间解决了问题. 当然亦可以建出内向基环树.
 
 ```cpp
 int main()
