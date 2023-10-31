@@ -1,7 +1,7 @@
 ---
 date: '2020-08-07'
 title: 'Solution -「CF 1043F」Make It One'
-category: 'Notes'
+
 ---
 
 ## 题意简述

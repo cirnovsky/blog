@@ -1,7 +1,7 @@
 ---
 date: '2020-01-05'
 title: "Note -「Mo's Algorithm」"
-category: 'Notes'
+
 ---
 
 # 0x01

@@ -1,7 +1,7 @@
 ---
 date: '2023-10-14'
 title: 'Solution -「JOISC 2022」刑務所'
-category: 'Notes'
+
 ---
 
 ## Desc.

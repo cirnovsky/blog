@@ -1,7 +1,7 @@
 ---
 date: '2020-09-10'
 title: 'Solution -「CF 959E」Mahmoud and Ehab and the xor-MST'
-category: 'Notes'
+
 ---
 
 ##  题意简述

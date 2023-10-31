@@ -1,7 +1,7 @@
 ---
 date: '2021-05-11'
 title: 'Solution -「CF 1520F2」	Guess the K-th Zero (Hard version)'
-category: 'Notes'
+
 ---
 
 来个暴力点的。

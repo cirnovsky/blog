@@ -1,7 +1,7 @@
 ---
 date: '2021-11-18'
 title: 'Solution Set -「容斥」1'
-category: 'Notes'
+
 ---
 
 感谢教练布置任务让我有动力写东西！。21）

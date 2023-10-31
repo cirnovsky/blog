@@ -1,7 +1,7 @@
 ---
 date: '2019-12-13'
 title: 'Note -「Splay Tree」'
-category: 'Notes'
+
 ---
 
 ## 本文参考资料:

@@ -1,7 +1,7 @@
 ---
 date: '2022-08-14'
 title: 'Solution -「CF 888G」Xor-MST'
-category: 'Notes'
+
 ---
 
 给一种不一样的写法，避开了常数较大的函数式字典树 ~~并获得了更大的其他常数~~。

@@ -1,7 +1,7 @@
 ---
 date: '2021-12-10'
 title: '大常数 Dinic，背后是什么？'
-category: 'Notes'
+
 ---
 
 看向这样一份 Dinic 的实现：

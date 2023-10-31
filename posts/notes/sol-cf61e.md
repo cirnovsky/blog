@@ -1,7 +1,7 @@
 ---
 date: '2020-04-04'
 title: 'Solution -「CF 61E」Enemy is weak'
-category: 'Notes'
+
 ---
 
 ## 题意简述

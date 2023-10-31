@@ -1,7 +1,7 @@
 ---
 date: '2020-08-02'
 title: 'Solution -「CF 522D」Closest Equals'
-category: 'Notes'
+
 ---
 
 ## 题意简述

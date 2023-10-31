@@ -1,7 +1,7 @@
 ---
 date: '2023-01-18'
 title: 'Note -「Taylor Expansion & Polynomial Operations」'
-category: 'Notes'
+
 ---
 
 Hi，各位……

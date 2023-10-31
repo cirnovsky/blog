@@ -1,7 +1,7 @@
 ---
 date: '2023-10-13'
 title: 'Solution Set -「Nhk R2」'
-category: 'Notes'
+
 ---
 
 ## A

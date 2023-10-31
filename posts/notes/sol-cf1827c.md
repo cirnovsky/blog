@@ -1,7 +1,7 @@
 ---
 date: '2023-10-18'
 title: 'Solution -「CF 1827C」Palindrome Partition'
-category: 'Notes'
+
 ---
 
 ## Desc.

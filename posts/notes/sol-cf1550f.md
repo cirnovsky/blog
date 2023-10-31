@@ -1,7 +1,7 @@
 ---
 date: '2022-06-27'
 title: 'Solution -「CF 1550F」Jumping Around'
-category: 'Notes'
+
 ---
 
 题不错，但是花了很久啊，完全比不过贺题怪。

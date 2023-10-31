@@ -1,7 +1,7 @@
 ---
 date: '2021-05-15'
 title: 'Note -「Li Chao Tree」'
-category: 'Notes'
+
 ---
 
 用来维护单点点值最优线段的东西。

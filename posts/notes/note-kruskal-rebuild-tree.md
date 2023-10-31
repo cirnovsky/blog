@@ -1,7 +1,7 @@
 ---
 date: '2020-09-01'
 title: 'Note -「Kruskal Rebuild Tree」'
-category: 'Notes'
+
 ---
 
 ## 0x01 正题

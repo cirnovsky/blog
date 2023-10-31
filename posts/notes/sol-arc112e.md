@@ -1,7 +1,7 @@
 ---
 date: '2023-10-14'
 title: 'Solution -「ARC 112E」Cigar Box'
-category: 'Notes'
+
 ---
 
 ## Desc.

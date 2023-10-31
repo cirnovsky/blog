@@ -1,7 +1,7 @@
 ---
 date: '2020-01-11'
 title: 'Article -「推荐 VSC 插件」'
-category: 'Notes'
+
 ---
 
 # Extensions

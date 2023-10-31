@@ -1,7 +1,7 @@
 ---
 date: '2021-08-13'
 title: 'Solution -「CF 990G」GCD Counting'
-category: 'Notes'
+
 ---
 
 构造函数 $ans(x)$，$f(x)$ 分别表示 $\gcd$ 为 $x$ 的链数和链 $\gcd$ 有 $x$ 因子的链数，于是 $f(x)=\sum\limits_{d\mid x}ans(d)$，由莫比乌斯反演得 $ans(x)=\sum\limits_{x|d}f(d)\mu(\frac{d}{x})$。

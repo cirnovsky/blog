@@ -1,7 +1,7 @@
 ---
 date: '2022-11-19'
 title: 'Solution -「GYM 102331H」Honorable Mention'
-category: 'Notes'
+
 ---
 
 [link．](https://codeforces.com/gym/102331/problem/H)

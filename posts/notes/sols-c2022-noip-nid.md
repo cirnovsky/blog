@@ -1,7 +1,7 @@
 ---
 date: '2019-10-06'
 title: 'Solution Set -「新初二 NOIP 国庆热身水题赛」'
-category: 'Notes'
+
 ---
 
 ### 今天的热身赛的题很有质量!

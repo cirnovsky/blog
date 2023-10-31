@@ -1,7 +1,7 @@
 ---
 date: '2020-08-04'
 title: 'Note -「Meet in the Middle」'
-category: 'Notes'
+
 ---
 
 ## 0x01 算法

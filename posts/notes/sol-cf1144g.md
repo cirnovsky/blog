@@ -1,7 +1,7 @@
 ---
 date: '2022-07-07'
 title: 'Solution -「CF 1144G」Two Merged Sequences'
-category: 'Notes'
+
 ---
 
 给一个 much simpler 的做法，main idea 是动态维护严格递增子序列和严格递减子序列。

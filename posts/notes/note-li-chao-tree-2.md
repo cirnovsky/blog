@@ -1,7 +1,7 @@
 ---
 date: '2022-07-14'
 title: 'Note -「Li Chao Tree」2'
-category: 'Notes'
+
 ---
 
 一年前写过一篇 [note-li-chao-tree](https://www.luogu.com.cn/blog/161849/note-li-chao-tree)。现在来看，写的什么激霸。

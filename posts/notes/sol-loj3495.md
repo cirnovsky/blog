@@ -1,7 +1,7 @@
 ---
 date: '2023-10-29'
 title: 'Solution -「JOISC 2021」ビーバーの会合 2'
-category: 'Notes'
+
 ---
 
 ## Desc.

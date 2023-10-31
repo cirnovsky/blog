@@ -1,7 +1,7 @@
 ---
 date: '2020-01-13'
 title: 'Note -「Möbius Inversion」'
-category: 'Notes'
+
 ---
 
 定义数论函数

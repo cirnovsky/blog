@@ -1,7 +1,7 @@
 ---
 date: '2020-08-23'
 title: 'Solution -「CF 888E」Maximum Subsequence'
-category: 'Notes'
+
 ---
 
 ## 题意简述

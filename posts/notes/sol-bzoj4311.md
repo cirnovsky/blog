@@ -1,7 +1,7 @@
 ---
 date: '2022-11-16'
 title: 'Solution -「BZOJ 4311」向量'
-category: 'Notes'
+
 ---
 
 [link．](https://hydro.ac/d/bzoj/p/4311)

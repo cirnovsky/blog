@@ -1,7 +1,7 @@
 ---
 date: '2023-10-11'
 title: 'Solution -「CF 1610G」AmShZ Wins a Bet'
-category: 'Notes'
+
 ---
 
 ## Desc.

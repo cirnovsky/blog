@@ -1,7 +1,7 @@
 ---
 date: '2021-08-21'
 title: "Note -「The Construction of Chinese Remainer Theorem」"
-category: 'Notes'
+
 ---
 
 原来的标题是：『「水」CRT 的构造本质』。

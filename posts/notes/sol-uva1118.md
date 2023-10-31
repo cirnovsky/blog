@@ -1,7 +1,7 @@
 ---
 date: '2020-11-23'
 title: 'Solution -「UVA 1118」Binary Stirling Numbers'
-category: 'Notes'
+
 ---
 
 ## 题意简述

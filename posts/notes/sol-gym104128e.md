@@ -1,7 +1,7 @@
 ---
 date: '2023-10-13'
 title: 'Solution -「GYM 104128E」Color the Tree'
-category: 'Notes'
+
 ---
 
 ## Desc.

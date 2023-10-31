@@ -1,7 +1,7 @@
 ---
 date: '2020-04-11'
 title: 'Note -「Efficient Segment Tree」'
-category: 'Notes'
+
 ---
 
 # 0x00 前言

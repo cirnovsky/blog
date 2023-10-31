@@ -1,7 +1,7 @@
 ---
 date: '2019-12-01'
 title: 'Solution Set -「CSP-J 2019」'
-category: 'Notes'
+
 ---
 
 这次的CSP是十分伤心的，考试的状态不好，导致分数不理想。

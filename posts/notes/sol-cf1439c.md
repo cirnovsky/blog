@@ -1,7 +1,7 @@
 ---
 date: '2022-07-06'
 title: 'Solution -「CF 1439C」Greedy Shopping'
-category: 'Notes'
+
 ---
 
 给一个比较无脑但慢得起飞的写法。

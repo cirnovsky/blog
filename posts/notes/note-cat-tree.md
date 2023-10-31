@@ -1,7 +1,7 @@
 ---
 date: '2020-02-10'
 title: 'Note -「Cat Tree」'
-category: 'Notes'
+
 ---
 
 # 0x01 引子

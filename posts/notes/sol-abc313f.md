@@ -1,7 +1,7 @@
 ---
 date: '2023-10-12'
 title: 'Solution -「ABC 313F」Flip Machines'
-category: 'Notes'
+
 ---
 
 ## Desc.

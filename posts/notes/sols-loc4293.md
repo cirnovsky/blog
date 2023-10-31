@@ -1,7 +1,7 @@
 ---
 date: '2023-10-08'
 title: 'Solution Set -「LOC 4293」'
-category: 'Notes'
+
 ---
 
 [Link.](http://222.180.160.110:1024/contest/4293/)

@@ -1,7 +1,7 @@
 ---
 date: '2021-08-06'
 title: 'Solution -「AGC 005D」~K Perm Counting'
-category: 'Notes'
+
 ---
 
 做一步容斥让 $\forall i,|p(i)-i|\neq k$ 的限制弱化成大于等于，即设 $f(x)$ 为排列中至少有 $x$ 个索引 $i$ 满足 $|p(i)-i|=k$ 的方案数，答案即 $\sum\limits_{i=0}^n(-1)^if(i)$。接下来考虑如何求解 $f(x)$。

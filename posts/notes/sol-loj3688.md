@@ -1,7 +1,7 @@
 ---
 date: '2023-10-15'
 title: 'Solution -「JOISC 2022」コピー & ペースト 3'
-category: 'Notes'
+
 ---
 
 ## Desc.

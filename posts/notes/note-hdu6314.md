@@ -1,7 +1,7 @@
 ---
 date: '2021-11-17'
 title: 'Solution -「HDU 6314」Matrix'
-category: 'Notes'
+
 ---
 
 对多步容斥不熟练啊，我建议我自己看看[这个](https://blog.csdn.net/werkeytom_ftd/article/details/74701513)。

@@ -1,7 +1,7 @@
 ---
 date: '2021-07-31'
 title: 'Solution -「CF 1555F」Good Graph'
-category: 'Notes'
+
 ---
 
 来一个不用 HLD / LCT 的做法。~~其实没有什么本质上的差别~~

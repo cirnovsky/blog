@@ -1,7 +1,7 @@
 ---
 date: '2021-08-25'
 title: 'Note -「Object Oriented Segment Tree」'
-category: 'Notes'
+
 ---
 
 没想到吧。

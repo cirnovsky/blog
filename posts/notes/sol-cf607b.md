@@ -1,7 +1,7 @@
 ---
 date: '2020-04-01'
 title: 'Solution -「CF 607B」Zuma'
-category: 'Notes'
+
 ---
 
 ## 前言

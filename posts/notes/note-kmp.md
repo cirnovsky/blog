@@ -1,7 +1,7 @@
 ---
 date: '2020-01-23'
 title: 'Note -「KMP」'
-category: 'Notes'
+
 ---
 
 # 0x00 前言

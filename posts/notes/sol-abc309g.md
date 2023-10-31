@@ -1,7 +1,7 @@
 ---
 date: '2023-10-22'
 title: 'Solution -「ABC 309G」Ban Permutation'
-category: 'Notes'
+
 ---
 
 ## Desc.

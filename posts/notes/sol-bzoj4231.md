@@ -1,7 +1,7 @@
 ---
 date: '2023-10-09'
 title: 'Solution -「BZOJ 4231」回忆树'
-category: 'Notes'
+
 ---
 
 ## Desc.

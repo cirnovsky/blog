@@ -1,7 +1,7 @@
 ---
 date: '2023-10-20'
 title: 'Solution -「ABC 310G」Takahashi And Pass-The-Ball Game'
-category: 'Notes'
+
 ---
 
 ## Desc.

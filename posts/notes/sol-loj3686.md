@@ -1,7 +1,7 @@
 ---
 date: '2023-10-23'
 title: 'Solution -「JOISC 2022」京都観光'
-category: 'Notes'
+
 ---
 
 ## Desc.
