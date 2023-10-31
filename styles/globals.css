@@ -33,6 +33,9 @@
         @apply dark:bg-[#212529];
         font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'Source Han Serif CN', serif;
     }
+    .post-wrapper>p:first-child:first-letter {
+        initial-letter: 3;
+    }
 }
 @layer components {
     .light-text {
@@ -50,11 +53,6 @@
     }
     .custom-font {
         font-family: 'FrenchScriptMT', sans-serif;
-    }
-    .content {
-        margin-left: auto;
-        margin-right: auto;
-        width: 50em
     }
     .text-iiswis {
         --tw-text-opacity: 1;

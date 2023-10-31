@@ -13,13 +13,11 @@ export default function Post({ postData }) {
             <title className="text-left"> {curPostData.rawTitle}</title>
         </Head>
         <div>
-            <div className="content">
-                <><div className="text-[40px] dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.title }} /></>
-                <div className="light-text">
-                    cirnovsky / <Date dateString={postData.date} />
-                </div>
+            <div className="text-[40px] dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.title }} />
+            <div className="light-text">
+                cirnovsky / <Date dateString={postData.date} />
             </div>
-            <div className="content dark:text-gray-300 first-letter:font-extrabold" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
+            <div className="post-wrapper content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
         </div>
         <Giscus src="https://giscus.app/client.js"
             repo="cirnovsky/blog-comments"
