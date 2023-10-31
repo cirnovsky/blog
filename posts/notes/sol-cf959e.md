@@ -1,0 +1,86 @@
+---
+date: '2020-09-10'
+title: 'Solution -「CF 959E」Mahmoud and Ehab and the xor-MST'
+category: 'Notes'
+---
+
+##  题意简述
+
+翻译挺简洁的.
+
+## 题解
+
+先从递推的层面考虑.
+
+我们定义 $F(n)$ 表示结点数为 $n$ 的答案，也就是最小生成树的边权和.
+
+首先边界条件为 $F(0)=0,F(1)=1$.
+
+然后我们考虑如何从 $F(n-1)$ 推到 $F(n)$.
+
+每当我们新加入一个结点 $n-1$（题目结点编号从 0 开始），它的点权为其本身，也就是 $n-1$，那么此时我们就要从之前的 $n-1$ 个结点中选出一个点与 $n-1$ 相连构成当前的最小生成树.
+
+因为边 $(u,v)$ 的边权 $w(u,v)=u\ \mathrm{xor}\ v$ 且图为完全图，所以我们每加入一个新结点 $n-1$ 时，所有我们之前的 $0\cdots n-2$ 号结点都可以被选择.
+
+那么问题转化为：对于一个数 $n-1$，我们需要选出一个整数 $x\in[0,n-1)$ 使得 $(n-1)\ \mathrm{xor}\ x$ 最小.
+
+考虑异或运算的定义：每一位相同为零，不同为一.
+
+那么我们选出的 $x$，需要满足二进制意义下每一位和 $n-1$ 尽量相同，并且从右到左（也就是二进位从低到高）的第一个不同的位置尽量低.
+
+那么结论就摆在眼前了，我们选择的这个 $x$ 为 $(n-1)-\mathrm{lowbit}(n-1)$.
+
+为什么？想想 $\mathrm{lowbit(x)}$ 操作的定义：二进制下 $x$ 最低的 1 和后面的 0 组成的二进制数.
+
+这样结论的正确性就显然了.
+
+我们 $F(n)$ 的递推公式为 $F(n)=F(n-1)+(n\ \mathrm{xor}\ (n\ \mathrm{xor}\ \mathrm{lowbit}(n)))$.
+
+那么暴力递推的代码如下：
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+long long f[100005];
+signed main()
+{
+    long long n;
+    scanf("%lld",&n);
+    f[0]=0;
+    f[1]=1;
+    for(long long i=2;i<n;++i)   f[i]=f[i-1]+(i^(i^(i&-i)));
+    printf("%lld\n",f[n-1]);
+    return 0;
+}
+```
+
+仔细观察一下递推式，$n\ \mathrm{xor}\ (n\ \mathrm{xor}\ \mathrm{lowbit}(n))$ 不就是 $\mathrm{lowbit}(n)$ 嘛！
+
+那么为题转化为求 $\mathrm{lowbit}$ 前缀和.
+
+通过打一个 $\mathrm{lowbit}$ 表的方法，我们发现 $\mathrm{lowbit}$ 的值十分有规律，就像这种形式：
+
+$$
+\texttt{1 2 1 4 1 2 1 8 1 2 1 4 1 2 1 16 1 2 1 4 1 2 1 8 1 2 1 4 1 2 1 32}\cdots
+$$
+
+其实这种规律要证明也很方便，只要根据二进制数末尾的情况即可得知.
+
+虽然这个规律没啥用，但是启发了我们按位统计贡献的方法在 $\Theta(1)$ 空间 $\Theta(\log_{2}n)$ 的时间内计算出了 $\mathrm{lowbit}$ 前缀和.
+
+具体方法请参考代码.
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+signed main()
+{
+    LL n;
+    scanf("%lld",&n);
+    LL ans=0,app=1,low=n;
+    while(low>1)  ans+=app*(low>>1),low-=(low>>1),app<<=1;
+    printf("%lld\n",ans);
+    return 0;
+}
+```

@@ -43,7 +43,7 @@
         font-family: 'Courier New', Courier, monospace;
     }
     .caonima {
-        @apply mt-[0.3em] underline decoration-[0.3em] underline-offset-[0.35em]
+        @apply  underline decoration-[0.3em] underline-offset-[0.35em]
     }
     @font-face {
         font-family: 'FrenchScriptMT';
