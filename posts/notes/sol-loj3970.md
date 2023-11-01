@@ -119,4 +119,4 @@ int main() {
 
 >/ 板斜尿流急，坑深屎落迟。/
 >
->—— [梁实秋 - *忆清华*](https://zh.wikipedia.org/wiki/%E6%A2%81%E5%AE%9E%E7%A7%8B)
+>—— [梁实秋 - *忆清华 [上]*](https://s.bailushuyuan.org/novel/traditional/chapters/123805)
