@@ -19,7 +19,7 @@ export default function Post({ postData }) {
             <div className="light-text">
                 cirnovsky / <Date dateString={postData.date} />
             </div>
-            <div className="post-wrapper content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
+            <div className="content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
         </div>
         <Giscus src="https://giscus.app/client.js"
             repo="cirnovsky/blog-comments"
