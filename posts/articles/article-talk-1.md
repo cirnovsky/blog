@@ -1,6 +1,6 @@
 ---
 date: '2022-11-16'
-title: '想随便说说话，会成为奢侈吗？'
+title: '闲话·其一'
 category: 'Articles'
 ---
 
