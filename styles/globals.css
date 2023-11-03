@@ -136,3 +136,6 @@ blockquote>p {
     text-indent: 52px;
     /* Add text indent for automatic indentation */
 }
+.sr-only {
+    display: none;
+}

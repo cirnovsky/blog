@@ -15,4 +15,4 @@ title: '闲话·其四'
 
 日本独立音乐人 4s4ki 将自己的编曲风格称为「Hyper new punk」，我个人认为这印证着朋克乐在多年迭代后，少了一些最直率的反抗表达，反而多了一些花哨的名头，这不得不说是让人有些悲伤的．
 
-[^1]: [Punk Wiki | Fandom](https://punk.fandom.com)', 0, 1, NULL, 'post', 'publish', NULL, 0, '1', '1', '1', 0),
+[^1]: [Punk Wiki | Fandom](https://punk.fandom.com)
