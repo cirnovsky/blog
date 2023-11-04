@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Link from "next/link";
-import path from "path";
 import { SectionFunc, Sections } from "../lib/enums";
 
 export const name = "Carnicero Irnobkowski";
@@ -38,7 +37,7 @@ export default function Layout({ children, section }) {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-      <div className="flex flex-col justify-between mx-auto max-w-[50em]">
+      <div className="flex flex-col justify-between my-3 mx-auto max-w-[50em] px-[2em] rounded-lg border-solid active:border-dotted border-2 border-gray-200 dark:border-slate-900">
         <div className="mt-20">
           <div className="flex mx-auto justify-between h-10">
             <Link
