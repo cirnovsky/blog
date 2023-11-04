@@ -2,140 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
-    dl,
-    dd,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    figure,
-    p,
-    pre,
-    a,
-    ol,
-    ul {
-        all: revert;
-    }
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        @apply text-center font-medium
-    }
-    a {
-        @apply text-fuchsia-700 dark:text-gray-400
-    }
-    body {
-        @apply dark:bg-[#212529];
-        font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'Source Han Serif CN', serif;
-    }
-    .post-wrapper>p:first-child:first-letter {
-        initial-letter: 3;
-    }
+  dl,
+  dd,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  figure,
+  p,
+  pre,
+  a,
+  ol,
+  ul {
+    all: revert;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-center font-medium;
+  }
+  a {
+    @apply text-fuchsia-700 dark:text-gray-400;
+  }
+  body {
+    @apply dark:bg-[#212529];
+    font-family: Palatino, "Palatino Linotype", "Palatino LT STD",
+      "Latin Modern Roman", "Source Han Serif CN", serif;
+  }
+  .post-wrapper > p:first-child:first-letter {
+    initial-letter: 3;
+  }
 }
 @layer components {
-    .light-text {
-        @apply text-gray-400 text-sm;
-        font-family: 'Courier New', Courier, monospace;
-    }
-    .caonima {
-        @apply  underline decoration-[0.3em] underline-offset-[0.35em]
-    }
-    @font-face {
-        font-family: 'FrenchScriptMT';
-        src: url('/fonts/french-script-mt.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-    .custom-font {
-        font-family: 'FrenchScriptMT', sans-serif;
-    }
-    .text-iiswis {
-        --tw-text-opacity: 1;
-        color: rgb(0 0 0 / var(--tw-text-opacity))
-    }
+  .light-text {
+    @apply text-gray-400 text-sm;
+    font-family: "Courier New", Courier, monospace;
+  }
+  .caonima {
+    @apply underline decoration-[0.3em] underline-offset-[0.35em];
+  }
+  @font-face {
+    font-family: "FrenchScriptMT";
+    src: url("/fonts/french-script-mt.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+  .custom-font {
+    font-family: "FrenchScriptMT", sans-serif;
+  }
+  .text-iiswis {
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity));
+  }
 }
+@import "./prism/ghcolors.css";
+@import "./prism/plugins/line-numbers.css";
+@import "./prism/plugins/treeview.css";
+/* @import "./prism/coldark-dark.css"; */
 html {
-    line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    -moz-tab-size: 4;
-    tab-size: 4;
-    font-feature-settings: normal;
-    font-variation-settings: normal;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
 }
 :root {
-    --prism-padding: 20px;
-    --margin: 1.62em;
-    --box-shadow-size: 6px;
-    --box-shadow: var(--box-shadow-size) var(--box-shadow-size) var(--primary-color);
-    --box-shadow-hover: 10px 10px var(--primary-color);
-    --easing: .2s ease-in-out;
-    --primary-color: #bd93f9;
-    --secondary-color: #9547b7;
-    --background-color-1: white;
-    --background-color-2: #bd93f917;
-    --header-link-color: #4e1e86;
+  --prism-padding: 20px;
+  --margin: 1.62em;
+  --box-shadow-size: 6px;
+  --box-shadow: var(--box-shadow-size) var(--box-shadow-size)
+    var(--primary-color);
+  --box-shadow-hover: 10px 10px var(--primary-color);
+  --easing: 0.2s ease-in-out;
+  --primary-color: #bd93f9;
+  --secondary-color: #9547b7;
+  --background-color-1: white;
+  --background-color-2: #bd93f917;
+  --header-link-color: #4e1e86;
 }
 body::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 code,
 kbd,
 samp,
 pre {
-    font-family: "Consolas", monospace;
-    /* 1 */
-    font-size: 1em;
-    /* 2 */
+  font-family: "Couri", monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
 }
 .post-image {
-    @apply mx-auto;
-    max-width: 80%;
-    display: block;
-    border: 4px solid;
-    box-shadow: var(--box-shadow);
+  @apply mx-auto;
+  max-width: 80%;
+  display: block;
+  border: 4px solid;
+  box-shadow: var(--box-shadow);
 }
 .inline-image {
-    display: inline;
-    height: 1em;
+  display: inline;
+  height: 1em;
 }
 
 blockquote {
-    @apply bg-[#fbf0f0] dark:bg-[#fbfff0] dark:text-gray-500;
-    border-left: 10px solid #ccc;
-    margin: 1.5em 10px;
-    padding: 0.5em 10px;
-    quotes: "\201C" "\201D" "\2018" "\2019";
-    font-family: Palatino, 'Palatino Linotype', 'Palatino LT STD', 'Latin Modern Roman', 'kaiti', 'Source Han Serif CN', serif;
+  @apply bg-[#fbf0f0] dark:bg-[#fbfff0] dark:text-gray-500;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+  font-family: Palatino, "Palatino Linotype", "Palatino LT STD",
+    "Latin Modern Roman", "kaiti", "Source Han Serif CN", serif;
 }
 blockquote:before {
-    color: #ccc;
-    content: open-quote;
-    font-size: 4em;
-    line-height: 0.1em;
-    margin-right: 0.25em;
-    vertical-align: -0.4em;
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
 }
 blockquote:after {
-    content: no-close-quote;
+  content: no-close-quote;
 }
-blockquote>p {
-    margin: 0;
-    /* Reset margin for p elements */
+blockquote > p {
+  margin: 0;
+  /* Reset margin for p elements */
 }
 /* Display as inline for a single <p> inside <blockquote> */
-blockquote>p:first-child {
-    display: inline;
+blockquote > p:first-child {
+  display: inline;
 }
 /* Display as grid for multiple <p> inside <blockquote> */
-blockquote>p {
-    text-indent: 52px;
-    /* Add text indent for automatic indentation */
+blockquote > p {
+  text-indent: 52px;
+  /* Add text indent for automatic indentation */
 }
 .sr-only {
-    display: none;
+  display: none;
 }

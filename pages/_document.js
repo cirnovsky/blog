@@ -1,17 +1,17 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import Script from 'next/script';
+// import "../styles/prism/ghcolors.css"
 
 export default function Document() {
   return (
     <Html>
       <Head>
         <link
-          rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+          rel="stylesheet"
         />
         <link
-          href={`https://unpkg.com/prism-themes@1.6.0/themes/prism-ghcolors.css`}
-          rel="stylesheet"
+          href="https://unpkg.com/prismjs@1.9.0/plugins/line-numbers/prism-line-numbers.css"
+          ref="stylesheet"
         />
       </Head>
       <body>
