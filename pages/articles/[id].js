@@ -2,7 +2,7 @@ import Layout from "../../components/Layout";
 import { getAllPostIds, getPostData } from "../../lib/posts";
 import Head from "next/head";
 import Date from "../../components/Date";
-import React from "react";
+import React, { useEffect } from 'react';
 import { Sections } from "../../lib/enums";
 import Giscus from "@giscus/react";
 
@@ -21,22 +21,23 @@ export default function Post({ postData }) {
             </div>
             <div className="post-wrapper content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
         </div>
-        <Giscus src="https://giscus.app/client.js"
-            repo="cirnovsky/blog-comments"
-            repo-id="R_kgDOKmz0Wg"
-            category="[ENTER CATEGORY NAME HERE]"
-            category-id="[ENTER CATEGORY ID HERE]"
-            mapping="pathname"
-            strict="0"
-            reactions-enabled="1"
-            emit-metadata="0"
-            input-position="top"
-            theme="transparent_dark"
-            lang="en"
-            loading="lazy"
-            crossorigin="anonymous"
-            async>
-        </Giscus>
+        <Giscus
+          src="https://giscus.app/client.js"
+          repo="cirnovsky/blog-comments"
+          repo-id="R_kgDOKmz0Wg"
+          category="General"
+          category-id="DIC_kwDOKmz0Ws4Caiud"
+          mapping="pathname"
+          strict="0"
+          reactions-enabled="1"
+          emit-metadata="0"
+          input-position="top"
+          theme="transparent_dark"
+          lang="en"
+          loading="lazy"
+          crossorigin="anonymous"
+          async
+        />
     </Layout>)
 }
 
