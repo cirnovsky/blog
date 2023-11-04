@@ -27,7 +27,7 @@
         @apply text-center font-medium
     }
     a {
-        @apply dark:text-gray-400
+        @apply text-fuchsia-700 dark:text-gray-400
     }
     body {
         @apply dark:bg-[#212529];
