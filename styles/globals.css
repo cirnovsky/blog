@@ -1,6 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "./prism/ghcolors.css";
+@import "./prism/plugins/line-numbers.css";
+@import "./prism/plugins/treeview.css";
+@import "./prism/plugins/toolbar.css";
+/* @import "./prism/coldark-dark.css"; */
 @layer base {
   dl,
   dd,
@@ -46,12 +51,6 @@
   .caonima {
     @apply underline decoration-[0.3em] underline-offset-[0.35em];
   }
-  @font-face {
-    font-family: "FrenchScriptMT";
-    src: url("/fonts/french-script-mt.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-  }
   .custom-font {
     font-family: "FrenchScriptMT", sans-serif;
   }
@@ -60,10 +59,6 @@
     color: rgb(0 0 0 / var(--tw-text-opacity));
   }
 }
-@import "./prism/ghcolors.css";
-@import "./prism/plugins/line-numbers.css";
-@import "./prism/plugins/treeview.css";
-/* @import "./prism/coldark-dark.css"; */
 html {
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
