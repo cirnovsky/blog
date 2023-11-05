@@ -43,7 +43,7 @@ $$
 
 那么我们每次转移就只剩下 $\mathcal O(\frac{l}{r-l})$ 次了, 加起来就是调和级数. 预处理 $p_{l, r}$ 表示 $X[0, l)$ 中最后出现的 $X[l, r)$ 位置即可.
 
-```cpp
+```cpp[class="line-numbers"]
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(nullptr);

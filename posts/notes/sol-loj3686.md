@@ -14,7 +14,7 @@ title: 'Solution -「JOISC 2022」京都観光'
 
 把步数拆到恰好拐一个弯的形状, 设从 $(i, j)$ 走到 $(i', j')$. 有两种方式, 其中一种是 $(i, j) \rightarrow (i', j) \rightarrow (i', j')$. 整理得到一个斜率形式. 合并两者凸包. (赶着回家, 写得比较草率...)
 
-```cpp
+```cpp[class="line-numbers"]
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(nullptr);

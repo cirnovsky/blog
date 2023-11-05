@@ -42,7 +42,7 @@ $n$ 的范围是 35，是过不了的，我们可以考虑折半搜索。
 
 （flag：动态开点不加引用就【】）
 
-```cpp
+```cpp[class="line-numbers"]
 #include<bits/stdc++.h>
 using namespace std;
 const int N=35+5;

@@ -28,7 +28,7 @@ title: 'Solution Set -「新初二 NOIP 国庆热身水题赛」'
 
 ### 代码:
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -94,7 +94,7 @@ signed main()
 
 ### 代码
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -171,7 +171,7 @@ signed main()
 
 
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -288,7 +288,7 @@ dp[i + 1][j] = max(dp[i + 1][j], dp[i][j] - qq + A[i].life_num);
 
 
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -360,7 +360,7 @@ signed main()
 
 ### 代码
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -499,7 +499,7 @@ T7只是在泥泞的牧场上加了一个判断而已
 
 ### 代码
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -595,7 +595,7 @@ signed main()
 
 
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>

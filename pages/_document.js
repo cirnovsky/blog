@@ -12,7 +12,6 @@ export default function Document() {
         />
       </Head>
       <body>
-        <Script href="https://unpkg.com/prismjs@1.29.0/plugins/toolbar/prism-toolbar.min.js"/>
         <Main />
         <NextScript />
       </body>

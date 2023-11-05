@@ -40,7 +40,7 @@ $$
 
 最终答案就是 $dp_{1,n}$
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>

@@ -11,7 +11,7 @@ title: 'Solution -「CF 1422F」Boring Queries'
 
 反正，大于根号的就一个，跑个 hh 的项链，小于根号就那么几个，开个 ST 表维护极值就好。
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cassert>
 #include <cstdio>
 #include <algorithm>

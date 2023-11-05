@@ -2,7 +2,7 @@ import Layout from "../../components/Layout";
 import { getAllPostIds, getPostData } from "../../lib/posts";
 import Head from "next/head";
 import Date from "../../components/Date";
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Sections } from "../../lib/enums";
 import Giscus from "@giscus/react";
 

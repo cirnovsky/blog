@@ -19,7 +19,7 @@ $1 \leqslant n, q \leqslant 10^5$.
 
 复杂度不会算, 但是跑得飞快.
 
-```cpp
+```cpp[class="line-numbers"]
 struct RMQ {
     const int n;
     int t;

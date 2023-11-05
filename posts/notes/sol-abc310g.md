@@ -40,7 +40,7 @@ $$
 $$
 于是我们用 $\mathcal O(n\log k)$ 的时间解决了问题. 当然亦可以建出内向基环树.
 
-```cpp
+```cpp[class="line-numbers"]
 int main()
 {
     ios::sync_with_stdio(0);

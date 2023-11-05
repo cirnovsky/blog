@@ -39,7 +39,7 @@ $$
 
 其中比较操作可以转化为求 LCP (Longest Common Prefix). 求解 LCP 的一个常见方式是二分 + Hash. 然而这样我们需要维护一个字符串的所有前缀 Hash 值, 显然不如直接比较. 我们是否可以不维护所有前缀呢? 当然可以, 我们仅存储 $h_{s, j}$ 表示字符串 $s$ 前 $2^j$ 位的 Hash 值即可. 那么二分就变成了倍增. 具体来说, 维护 $g_i$ 第 $2^j$ 位在原串中的位置和前缀 Hash 值即可.
 
-```cpp
+```cpp[class="line-numbers"]
 /*=cirnovsky=*/
 #include <bits/stdc++.h>
 using namespace std;

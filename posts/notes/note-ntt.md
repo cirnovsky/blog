@@ -74,7 +74,7 @@ NTT的模数通常来说只能是988244353。
 
 ~~这次甚至开O2都稳如泰山~~
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>

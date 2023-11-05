@@ -9,7 +9,7 @@ title: 'Solution -「NOI 2022」众数'
 
 具体到维护，使用链表维护所有链的形态，使用动态开点权值线段树维护每条链上各个数的出现次数即可．
 
-```cpp
+```cpp[class="line-numbers"]
 #include <list>
 #include <cstdio>
 #define rep(i,a,b) for (int i(a); i<=(b); ++i)

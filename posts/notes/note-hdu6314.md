@@ -16,7 +16,7 @@ title: 'Solution -「HDU 6314」Matrix'
 
 但实际上这个题还有一些常数的优化，具体可以看看 Siyuan 的博客。
 
-```cpp
+```cpp[class="line-numbers"]
 #include<bits/stdc++.h>
 #define il __inline__ __attribute__((always_inline))
 constexpr int kMod=998244353;

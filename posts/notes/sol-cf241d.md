@@ -24,7 +24,7 @@ title: 'Solution -「CF 241D」Numbers'
 
 于是我们就可以 $\Theta(2^{S})$ 次方暴搜，直接搜出答案。
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <vector>
 

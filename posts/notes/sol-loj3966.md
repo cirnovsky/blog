@@ -21,7 +21,7 @@ $1\leqslant n, q \leqslant 10^5$。
 
 最后要注意，离散化的时候要让相同权值的收费站占据不同的编号，而不能直接合并，原因很简单，你可能终止在相同的收费站之间。
 
-```cpp[class="line-numbers"]
+```cpp[class="line-numbers"][class="line-numbers"]
 // test: https://www.luogu.com.cn/
 int n, m, q, rt[100100], tot;
 int e[100100][2];

@@ -13,7 +13,7 @@ title: 'Solution -「LOC 47725」nomod'
 
 然后就可以直接 wqs 二分了．
 
-```cpp
+```cpp[class="line-numbers"]
 #include <iomanip>
 #include <iostream>
 using std::cin;

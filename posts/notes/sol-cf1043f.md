@@ -42,7 +42,7 @@ title: 'Solution -「CF 1043F」Make It One'
 
 最后的答案就是 $\min\{i\},dp_{i,1}>0$。
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 
 const int Maxn = 3e5 + 5, Maxv = Maxn - 5, Mod = 1e9 + 7;

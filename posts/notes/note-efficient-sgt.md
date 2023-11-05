@@ -24,7 +24,7 @@ title: 'Note -「Efficient Segment Tree」'
 
 首先我们考虑建树，先给出建树的代码实现：
 
-```cpp
+```cpp[class="line-numbers"]
 void build() {
 	for (int i = n - 1; i >= 1; --i) t[i] = t[i << 1] + t[i << 1 | 1];
 }
@@ -34,7 +34,7 @@ void build() {
 
 然后是单点修改，先给代码：
 
-```cpp
+```cpp[class="line-numbers"]
 void modify(int pos, int val) {
 	for (t[pos += n] = val; pos > 1; pos >>= 1) t[pos >> 1] = t[pos] + t[pos ^ 1];
 }
@@ -44,7 +44,7 @@ void modify(int pos, int val) {
 
 再来考虑区间查询，同样先给代码再讲解。
 
-```cpp
+```cpp[class="line-numbers"]
 int queryf(int l, int r) {
 	int res = 0;
 	for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
@@ -66,7 +66,7 @@ int queryf(int l, int r) {
 
 代码和上面差不多，我直接给了：
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 
 const int N = 5e5 + 5;
@@ -124,7 +124,7 @@ signed main() {
 
 代码大同小异：
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 
 const int N = 5e5 + 5;
@@ -170,14 +170,14 @@ signed main() {
 
 先给代码：
 
-```cpp
+```cpp[class="line-numbers"]
 const int N = 5e5 + 5;
 int n, m, h, t[N << 1], d[N];
 ```
 
 变量解释，$n,m$ 不解释。$h$ 表示树的高度，即 $\log_{2}n$。$t$ 数组的意义是我们维护的东西。$d$ 可以理解为我们的LazyTag。之所以只用 $\Theta(n)$ 的空间是因为叶子节点不需要LazyTag，因为他们没有需要维护的子节点。
 
-```cpp
+```cpp[class="line-numbers"]
 void apply(int p, int val) {
     t[p] += val;
     if (p < n) d[p] += val;
@@ -186,7 +186,7 @@ void apply(int p, int val) {
 
 这段是在修改的节点值，意味易得，不赘述。
 
-```cpp
+```cpp[class="line-numbers"]
 void update(int p) {
     while (p > 1) p >>= 1, t[p] = max(t[p << 1], t[p << 1 | 1]) + d[p];
 }
@@ -198,7 +198,7 @@ void update(int p) {
 
 以上图为例，手玩一下意味易得，下一个。
 
-```cpp
+```cpp[class="line-numbers"]
 void push(int p) {
     for (int bit = h; bit > 0; --bit) {
         int i = (p >> bit);
@@ -213,7 +213,7 @@ void push(int p) {
 
 相当于普通线段树的pushdown。从根节点开始，如果当前的节点的LazyTag还没更新，那么就apply到子节点去，并且清掉LazyTag。
 
-```cpp
+```cpp[class="line-numbers"]
 void modify(int l, int r, int val) {
     int L = (l += n), R = (r += n);
     for (; l < r; l >>= 1, r >>= 1) {
@@ -226,7 +226,7 @@ void modify(int l, int r, int val) {
 
 修改操作，存下叶节点的编号，更新完后update。
 
-```cpp
+```cpp[class="line-numbers"]
 int queryf(int l, int r) {
     int res = -1926081701;
     for (push((l += n)), push((r += n) - 1); l < r; l >>= 1, r >>= 1) {
@@ -241,7 +241,7 @@ int queryf(int l, int r) {
 
 以下是完整的代码：
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 

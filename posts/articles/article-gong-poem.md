@@ -65,7 +65,7 @@ category: 'Articles'
 https://darkbzoj.tk/problem/4176
 
 
-```cpp
+```cpp[class="line-numbers"]
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;

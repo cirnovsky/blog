@@ -14,7 +14,7 @@ title: 'Solution -「CF 61E」Enemy is weak'
 
 ~~真的就这么点东西不要说我说明过少啊~~
 
-```cpp
+```cpp[class="line-numbers"]
 #include <bits/stdc++.h>
 
 const int N = 1e6 + 5;

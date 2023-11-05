@@ -83,7 +83,7 @@ pattern[i]依然不等于pattern[j]，令next[i]=0，j+=1
 对了还有一个坑点，我这份代码用std::string会RE，~~鬼知道我调了一下午发现是这个原因时心里有多傻逼~~
 
 
-```cpp
+```cpp[class="line-numbers"]
 /*
  * P3375【模板】KMP字符串匹配.cpp
  * Created by boringhacker(c20220233wgy)

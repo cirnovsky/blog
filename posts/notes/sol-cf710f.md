@@ -22,7 +22,7 @@ title: 'Solution -「CF 710F」String Set Queries'
 
 题面容易让人想到根号分治, 然而实际上本题可以进行二进制拆分. 这样我们一共维护了 $\mathcal O(log_2 n)$ 个 AC 自动机, 查询的总复杂均摊应该比较明显是 $\mathcal O(m\log_2n)$, 而修改操作, 每个点只会被合并不超过 $\mathcal O(log_2n)$ 次, 因此也是对的.
 
-```cpp
+```cpp[class="line-numbers"]
 const int N = 3e5;
 int q, tot, totNode = 1, rt[N + 5], nxt[N + 5][26], cntEnd[N + 5], fail[N + 5], cntIns[N + 5], sum[N + 5];
 bool isChild[N + 5][26];

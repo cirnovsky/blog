@@ -34,7 +34,7 @@ title: 'Solution -「CF 522D」Closest Equals'
 
 做完这题后可以去做一下 CF703D。
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <algorithm>
 #include <queue>

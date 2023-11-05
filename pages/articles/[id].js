@@ -2,7 +2,7 @@ import Layout from "../../components/Layout";
 import { getAllPostIds, getPostData } from "../../lib/posts";
 import Head from "next/head";
 import Date from "../../components/Date";
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Sections } from "../../lib/enums";
 import Giscus from "@giscus/react";
 
@@ -19,7 +19,7 @@ export default function Post({ postData }) {
             <div className="light-text">
                 cirnovsky / <Date dateString={postData.date} />
             </div>
-            <div className="post-wrapper content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
+            <div className="content dark:text-gray-300" dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }} />
         </div>
         <Giscus
           src="https://giscus.app/client.js"

@@ -35,7 +35,7 @@ $T \leqslant 10^3, n \leqslant 1.2 \times 10^5, 2 \leqslant m < n$.
 
 这个代码写着太自闭了, 先是 Linux 爆栈, 用 Windows 跑比题解快一倍, 但是交上去就是过不了... 服了. 以下代码过不了, 就看个乐呵吧.
 
-```cpp
+```cpp[class="line-numbers"]
 const int N = 1.2e5;
 int n, dfn[N + 5], rev[N + 5], fa[20][N + 5], dep[N + 5], son[N + 5], top[N + 5], times;
 vvi grp, grp2;

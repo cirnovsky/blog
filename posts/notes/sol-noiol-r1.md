@@ -33,7 +33,7 @@ title: 'Solution Set -「NOI Online R1」'
 
 对于一个度数为零的点 $x$ 如果 $a_{x}=b_{x}$ 那么就是YES；
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -168,7 +168,7 @@ $$bigger_{i}=\max\{bigger_{i}-1,0\}$$
 
 于是树状数组维护即可
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -261,7 +261,7 @@ signed main() {
 
 还有 $k=0$ 的情况需要特殊处理一下
 
-```cpp
+```cpp[class="line-numbers"]
 #include <cstdio>
 #include <algorithm>
 #include <queue>
