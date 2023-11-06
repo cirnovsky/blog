@@ -15,7 +15,7 @@ export default function Friends() {
                 <title>{siteTitle}</title>
             </Head>
             <br />
-            <div className='content dark:text-gray-300'>
+            <div className='content'>
                 <p>This page is under progress.</p>
                 <ul>
                     <li>cqbzly - <Link href="https://duanyu.netlify.app/"><i>duanyu's blog</i></Link> / <Link href="https://blog.csdn.net/cqbzlydd"><i>duanyu's blog (CSDN)</i></Link></li>

@@ -32,10 +32,9 @@
     @apply text-center font-medium;
   }
   a {
-    @apply text-fuchsia-700 dark:text-gray-400;
+    @apply text-fuchsia-700;
   }
   body {
-    @apply dark:bg-[#212529];
     font-family: Palatino, "Palatino Linotype", "Palatino LT STD",
       "Latin Modern Roman", "Source Han Serif CN", serif;
   }
@@ -106,7 +105,7 @@ pre {
 }
 
 blockquote {
-  @apply bg-[#fbf0f0] dark:bg-[#fbfff0] dark:text-gray-500;
+  @apply bg-[#fbf0f0];
   border-left: 10px solid #ccc;
   margin: 1.5em 10px;
   padding: 0.5em 10px;

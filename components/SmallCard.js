@@ -9,7 +9,7 @@ export default function SmallCard({ title, dateString, sectionPath, id }) {
             <div className="light-text" style={{"width":"118px"}}
             ><Date dateString={dateString} /></div>
             <Link className="no-underline" href={blogURL}>
-                <div className={"cursor-pointer flex gap-2 text-iiswis hover:text-[#996E5C] dark:text-gray-100"}>
+                <div className={"cursor-pointer flex gap-2 text-iiswis hover:text-[#996E5C]"}>
                     <div dangerouslySetInnerHTML={{__html: title}}/>
                 </div>
             </Link>

@@ -9,10 +9,11 @@ export default function Layout({ children, section }) {
   const pages = Object.values(Sections);
   const buttons = pages.map((page) => {
     let caonima =
-      "cursor-pointer flex gap-2 text-black dark:text-gray-300 hover:text-[#996E5C] font-medium";
+      "cursor-pointer flex gap-2 text-black hover:text-[#996E5C] font-medium";
     if (page == section) caonima = "caonima " + caonima;
     return (
       <Link
+        id={Number(page)}
         className="no-underline mt-[0.3rem]"
         href={"/" + SectionFunc.getPath(page)}
       >
@@ -37,11 +38,11 @@ export default function Layout({ children, section }) {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-      <div className="flex flex-col justify-between my-3 mx-auto max-w-[50em] px-[2em] rounded-lg border-solid active:border-dotted border-2 border-gray-200 dark:border-slate-900">
+      <div className="flex flex-col justify-between my-3 mx-auto max-w-[50em] px-[2em] rounded-lg border-solid min-h-screen active:border-dotted border-2 border-gray-200">
         <div className="mt-20">
           <div className="flex mx-auto justify-between h-10">
             <Link
-              className="no-underline text-black dark:text-gray-300 hover:text-[#996E5C]"
+              className="no-underline text-black hover:text-[#996E5C]"
               href={"/"}
             >
               <div className="font-extrabold text-2xl">{siteTitle}</div>
@@ -49,7 +50,7 @@ export default function Layout({ children, section }) {
             <div className="flex gap-x-8 items-center">{buttons}</div>
           </div>
         </div>
-        <hr className="h-[0.07em] -my-[0.375em] bg-black border-0 dark:bg-white"></hr>
+        <hr className="h-[0.07em] -my-[0.375em] bg-black border-0"></hr>
         <main className="my-20">{children}</main>
       </div>
     </div>

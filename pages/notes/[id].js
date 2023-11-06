@@ -17,14 +17,14 @@ export default function Post({ postData }) {
       </Head>
       <div>
         <div
-          className="text-[40px] dark:text-gray-300"
+          className="text-[40px]"
           dangerouslySetInnerHTML={{ __html: curPostData.title }}
         />
         <div className="light-text">
           cirnovsky / <Date dateString={postData.date} />
         </div>
         <div
-          className="content dark:text-gray-300"
+          className="content"
           dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }}
         />
       </div>
