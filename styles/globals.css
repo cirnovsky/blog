@@ -103,7 +103,13 @@ pre {
   display: inline;
   height: 1em;
 }
-
+.drag-none {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
 blockquote {
   @apply bg-[#fbf0f0];
   border-left: 10px solid #ccc;
