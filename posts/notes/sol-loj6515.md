@@ -14,7 +14,7 @@ title: 'Solution -「Yali Camp 2018」贪玩蓝月'
 - `IF w v`：$\text{PUSH-FRONT}(w, v)$；
 - `IG w v`：$\text{PUSH-BACK}(w, v)$；
 - `DF`：$\text{POP-FRONT}$；
-- `DG w v`：$\text{POP-BACK}$；
+- `DG`：$\text{POP-BACK}$；
 - `QU l r`：询问在当前队列中选取若干二元组 $S$，使得 $\sum w \in S \bmod p \in [l, r]$，且 $\sum v \in S$ 最大。
 
 $m \leqslant 5 \times 10^4$，$p \leqslant 500$。
@@ -43,7 +43,7 @@ $m \leqslant 5 \times 10^4$，$p \leqslant 500$。
 
 代码很简洁。
 
-```cpp
+```cpp[class="line-numbers"]
 int __tmp, m, p, w[2][50100], v[2][50100], top[2], q[600];
 ll dp[2][50100][600];
 string op;
