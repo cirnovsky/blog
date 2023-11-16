@@ -28,6 +28,7 @@ export default function Post({ postData }) {
           dangerouslySetInnerHTML={{ __html: curPostData.contentHtml }}
         />
       </div>
+      <br/>
       <Giscus
         src="https://giscus.app/client.js"
         repo="cirnovsky/blog-comments"
