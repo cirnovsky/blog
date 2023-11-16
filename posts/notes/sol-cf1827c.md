@@ -22,7 +22,7 @@ $$
 
 我们先求出 $rad_i$ 表示以**间隔** $i$ 为中心的回文串长度, 这个可以用各种姿势求, 比如二分 & 哈希, PAM, Manacher etc. 然后发现 $f_i$ 可以用一个 $rad_j$ 来更新, 其中 $j < i, j+rad_j \geqslant i$. 我们肯定希望 $i$ 和 $j$ 靠得越近越好. 于是倒着扫描, 用并查集维护连续段, 以 $rad_i$ 更新连续段. 这个有点没说清楚, 具体可以看代码, 代码应该会更好理解.
 
-```cpp[class="line-numbers"]
+```cpp
 void solve() {
     int n; string tmp, s; cin >> n >> tmp;
     for (int i=0;i<n;++i) s.pb(tmp[i]), s.pb('|');

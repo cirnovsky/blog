@@ -26,7 +26,7 @@ f_i = \sum_{j=i}^n (-1)^{j-i} \times \binom ji \times g_j
 $$
 答案即为 $\displaystyle f_0 = \sum_{i=0}^n (-1)^i \times g_i$. 考虑怎么求 $g_i$. 设 $f_{i, j, s}$ 表示前 $i$ 个位置有 $j$ 个不合法, 其余位置**不纳入考虑**[^1], 且第 $i$ 个数的不合法区间当前的被占用情况为 $s$ 的方案数. 转移分当前数是否加入不合法讨论即可, 具体可以看代码.
 
-```cpp[class="line-numbers"]
+```cpp
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(nullptr);

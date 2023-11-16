@@ -21,7 +21,7 @@ $1\leqslant n \leqslant 10^5$.
 
 注意 $f$ 的初值, 由于同一个 $l_i$ 可以对应多个 $r_j$, 因此要取 $\min$.
 
-```cpp[class="line-numbers"]
+```cpp
 struct Interval {
     int l, r;
     Interval(int _l, int _r) : l(_l), r(_r) {}

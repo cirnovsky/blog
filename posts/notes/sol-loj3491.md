@@ -15,7 +15,7 @@ constructive method: 令 $x'_i=x_i-y_i$, $y'_i=x_i+y_i$, 然后绝对值相加�
 
 然后就排序第一个关键字, 二分答案再 check 构造答案即可.
 
-```cpp[class="line-numbers"]
+```cpp
 #include <bits/stdc++.h>
 #define pii pair<int, int>
 #define mp(x, y) make_pair(x, y)

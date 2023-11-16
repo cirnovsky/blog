@@ -57,7 +57,7 @@ $$\sum\limits_{i=1}^k c_i^2$$
 
 开一个桶，计算每个数出现的次数，所以我们可以由此计算答案的贡献，就可以写出以下的代码
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -108,7 +108,7 @@ signed main() {
 
 其实莫队是有套路的，基本上莫队的题都是这样的:
 
-```cpp[class="line-numbers"]
+```cpp
 	for (int i = 1; i <= m; ++i) {
 		while (l > Q[i].l) add(--l);
 		while (r < Q[i].r) add(++r);

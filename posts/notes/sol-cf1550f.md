@@ -13,7 +13,7 @@ title: 'Solution -「CF 1550F」Jumping Around'
 现在的问题就是如何维护（1）类点。我们在执行整体二分的时候先递归左子树，这样跑到叶子的时候把叶子加入一个数据结构（`std::set` is enough），这样我们递归到后面的结点时数据结构中存放的就是所有的（1）类点，跑完（1）类点再把值域范围内剩下的点依次判断能否间接跳出去即可。
 
 
-```cpp[class="line-numbers"]
+```cpp
 #include <bits/stdc++.h>
 using namespace std;
 using P = pair<int, int>;

@@ -14,7 +14,7 @@ title: 'Solution -「CF 888G」Xor-MST'
 
 注意删除操作必须通过打标记来实现而不是直接将后继结点的指针清空，因为这样会带来额外一个 $O(\log)$ 的空间开销。还有些细节参考给出的实现。
 
-```cpp[class="line-numbers"]
+```cpp
 int n, a[200100], _tot, pos[200100], bits;
 struct node {
   int fa, son[2], cnt, id;

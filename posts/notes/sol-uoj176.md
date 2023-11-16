@@ -9,7 +9,7 @@ title: 'Solution -「UOJ 176」新年的繁荣'
 
 先咕了，睡觉比较重要。
 
-```cpp[class="line-numbers"]
+```cpp
 #include <iostream>
 #include <numeric>
 #define rep(i,l,r) for (int i=l;i<=(r);++i)

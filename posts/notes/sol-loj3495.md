@@ -18,7 +18,7 @@ title: 'Solution -「JOISC 2021」ビーバーの会合 2'
 
 上述问题的解决方法其实很简单, 只要对 $w_s$ 做个后缀 $\max$ 即可, 即在 $\geqslant \frac{|S|}2$ 的子树中找最优解.
 
-```cpp[class="line-numbers"]
+```cpp
 int n, sz[200100], w[200100], pre[200100], ans[200100];
 bool rm[200100];
 vi grp[200100];

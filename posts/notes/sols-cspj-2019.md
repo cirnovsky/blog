@@ -13,7 +13,7 @@ title: 'Solution Set -「CSP-J 2019」'
 
 统计1的数量，字符串模拟即可
 
-```cpp[class="line-numbers"]
+```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -35,7 +35,7 @@ signed main() {
 
 模拟即可，用一个数组或vector存储优惠票，每次坐地铁的时候扫描一下。
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -86,7 +86,7 @@ signed main() {
 
 完全背包的题
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
@@ -153,7 +153,7 @@ signed main() {
 
 有一个坑点在于，若源点是独立的，也就是说若1号结点没有出入度，那么这种情况是一直输出No
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <iostream>
 #include <algorithm>

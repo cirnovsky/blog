@@ -94,7 +94,7 @@ $(0111)_{2}\ \ \ (0101)_{2}$ 也就是 $(01)_{2}$ 也就是 $1$ 号结点。
 
 代码：
 
-```cpp[class="line-numbers"]
+```cpp
 // 省略了一些头文件、快读、预处理命令等东西，完整代码请移步至https://vjudge.net/solution/24123955
 
 const int SIZE = 2e5 + 5;

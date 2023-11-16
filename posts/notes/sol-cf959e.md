@@ -38,7 +38,7 @@ title: 'Solution -「CF 959E」Mahmoud and Ehab and the xor-MST'
 
 那么暴力递推的代码如下：
 
-```cpp[class="line-numbers"]
+```cpp
 #include<bits/stdc++.h>
 using namespace std;
 long long f[100005];
@@ -70,7 +70,7 @@ $$
 
 具体方法请参考代码.
 
-```cpp[class="line-numbers"]
+```cpp
 #include<bits/stdc++.h>
 using namespace std;
 typedef long long LL;

@@ -19,7 +19,7 @@ title: 'Solution -「BZOJ 4311」向量'
 
 $O(n \log^2 n)$．
 
-```cpp[class="line-numbers"]
+```cpp
 #include <iomanip>
 #include <iostream>
 #include <algorithm>

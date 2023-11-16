@@ -66,7 +66,7 @@ $$
 答案显然。
 
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 
 int N, M;

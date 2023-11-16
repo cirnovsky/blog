@@ -17,7 +17,7 @@ $3 \leqslant n \leqslant 3\times 10^5$, $1 \leqslant m \leqslant 20$.
 
 考虑如下暴力:
 
-```cpp[class="line-numbers"][class="line-numbers"]
+```cpp
 int n, m, s[300100], cnt[30];
 int main() {
     ios::sync_with_stdio(0);
@@ -49,7 +49,7 @@ int main() {
 
 大概是, 首先求出 $S$ 的某个超集的编号, 这个可以直接用超集和. 然后以这个为初值, 求解上述的 DP. 当然, 正确的思考顺序是为了上面的 DP 构造初值, 这才是我们的 Motivation.
 
-```cpp[class="line-numbers"][class="line-numbers"]
+```cpp
 int n, m, s[300100], cnt[30];
 int f[1<<20], g[1<<20];
 int main() {

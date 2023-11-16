@@ -1,10 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "./prism/ghcolors.css";
-@import "./prism/plugins/line-numbers.css";
-@import "./prism/plugins/treeview.css";
-@import "./prism/plugins/toolbar.css";
 /* @import "./prism/coldark-dark.css"; */
 @layer base {
   dl,
@@ -145,4 +141,6 @@ blockquote > p {
 }
 .sr-only {
   display: none;
+}
+.code-spoiler {
 }

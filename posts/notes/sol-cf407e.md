@@ -11,7 +11,7 @@ title: 'Solution -「CF 407E」k-d-sequence'
 
 观察 $f_i$ 的结构，首先 $i$ 可以预处理进线段树，全程不需要动．以维护 max 为例，我们可以引入一个非严格递减的单调栈，单调栈中的每一个元素表示了原数组中一段的最大值．意即，这个单调栈中的元素充当了「哨兵」的角色，将原序列分成了若干的被统治区间．于是就可以简单维护了．
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <cassert>
 #include <map>

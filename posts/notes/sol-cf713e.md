@@ -16,7 +16,7 @@ title: 'Solution -「codeforces - 713E」Sonya Partymaker'
 
 考虑环。只需要分类讨论 bot $1$ 往左往右倒即可，比较容易。
 
-```cpp[class="line-numbers"]
+```cpp
 /*-ukpkmpkk-*/
 #include <iostream>
 #include <algorithm>

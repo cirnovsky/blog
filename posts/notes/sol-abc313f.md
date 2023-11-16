@@ -35,7 +35,7 @@ $$
 
 代码有点脑溢血, 抄了官方题解的实现.
 
-```cpp[class="line-numbers"]
+```cpp
 int main()
 {
     ios::sync_with_stdio(0);

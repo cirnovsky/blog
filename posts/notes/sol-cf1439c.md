@@ -12,7 +12,7 @@ title: 'Solution -「CF 1439C」Greedy Shopping'
 
 然后 testcase #101 是个把 $\log_2(\max y)$ 卡满的点，卡不过可以直接特判（mobai DJ）。
 
-```cpp[class="line-numbers"]
+```cpp
 #include <bits/stdc++.h>
 #define mid ((l+r)/2)
 using namespace std;

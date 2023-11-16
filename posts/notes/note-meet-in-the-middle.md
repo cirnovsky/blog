@@ -28,7 +28,7 @@ title: 'Note -「Meet in the Middle」'
 
 > 给出 Bobek 的预算和每场比赛的票价，试求：如果总票价不超过预算，他有多少种观赛方案。如果存在以其中一种方案观看某场比赛而另一种方案不观看，则认为这两种方案不同。
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <algorithm>
 #include <queue>

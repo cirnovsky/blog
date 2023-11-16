@@ -12,7 +12,7 @@ title: 'Solution -「CF 1555F」Good Graph'
 
 然后怎么实现查找是否在同一个环里之类的就用 time-stamp & BIT 解决。
 
-```cpp[class="line-numbers"]
+```cpp
 #include<bits/stdc++.h>
 using namespace std;
 const int N=300100,M=500100;

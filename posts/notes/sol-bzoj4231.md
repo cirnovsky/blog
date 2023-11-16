@@ -28,7 +28,7 @@ $s$ 对询问 $q_i$ 的贡献可以分为三种:
 
 代码太难打了, 打了一半就跑路了.
 
-```cpp[class="line-numbers"]
+```cpp
 using pii = pair<int, int>;
 using vvp = vector<vector<pii>>;
 const int SZ = 3e5;

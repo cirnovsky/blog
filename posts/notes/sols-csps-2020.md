@@ -10,7 +10,7 @@ title: 'Solution Set -「CSP-S 2020」'
 
 考场代码：
 
-```cpp[class="line-numbers"]
+```cpp
 #include<cstdio>
 namespace solveIt
 {
@@ -148,7 +148,7 @@ There are 1721387 days in BC
 
 下来重写：
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 
 typedef long long LL;
@@ -266,7 +266,7 @@ int main( ){
 
 考场代码：
 
-```cpp[class="line-numbers"]
+```cpp
 #include<cstdio>
 #include<vector>
 namespace solveIt
@@ -350,7 +350,7 @@ int main()
 
 下来改的：
 
-```cpp[class="line-numbers"]
+```cpp
 #include<cstdio>
 #include<algorithm>
 using namespace std;
@@ -483,7 +483,7 @@ int main()
 
 下来改的：
 
-```cpp[class="line-numbers"]
+```cpp
 #include <queue>
 #include <cstdio>
 #define mod ( 998244353 )
@@ -600,7 +600,7 @@ int main( ){
 
 （upd：这份代码下面是 $\texttt{70pts}$ 的代码：）
 
-```cpp[class="line-numbers"]
+```cpp
 #include<cstdio>
 #include<algorithm>
 using namespace std;
@@ -791,7 +791,7 @@ SGST - Strong-Guy Segment Tree
 
 $\texttt{70pts}$
 
-```cpp[class="line-numbers"]
+```cpp
 #include<cstdio>
 #include<algorithm>
 using namespace std;

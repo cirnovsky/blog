@@ -30,7 +30,7 @@ From yyb:[Link](https://www.cnblogs.com/cjyyb/p/7499020.html)
 
 ![img spfaed](https://i.loli.net/2019/12/13/V2N6AQUynRGvzYI.png)
 
-```cpp[class="line-numbers"]
+```cpp
 const int SIZE = 1e5 + 5;
 const int INF = 0x7fffffff;
 struct BSTNode {
@@ -129,7 +129,7 @@ $Just$ $a$ $joke$
 - $step1$:将Y节点放到X节点的w$\bigoplus$1的位置
 - $step2$:如果X的w$\bigoplus$1位置上有一颗子树，放在Y的w位置上
 
-```cpp[class="line-numbers"]
+```cpp
 inline void update(int x) { // 更新节点信息
 	T[x].siz = T[T[x].ch[0]].siz + T[T[x].ch[1]].siz + T[x].cnt;
 }
@@ -165,7 +165,7 @@ inline void rotate(int x) { // 旋转
 
 这便是splay操作
 
-```cpp[class="line-numbers"]
+```cpp
 inline void splay(int x, int goal) { //splay
 	for (; T[x].fa ^ goal; rotate(x)) { // 一直旋转到x成为goal的儿子
 		int y = T[x].fa;
@@ -200,7 +200,7 @@ inline void splay(int x, int goal) { //splay
 
 如果没有，就遍历到叶子节点，再新增一个节点就好了
 
-```cpp[class="line-numbers"]
+```cpp
 inline void insert(int x) {
 	int u = root, fa = 0; // 从根节点开始找
 	while (u && x ^ T[u].val) // 找关键码相同的节点
@@ -222,7 +222,7 @@ inline void insert(int x) {
 
 设查找节点的关键码为x，如果x大于当前节点的关键码，就往右子树跑，否则往左子树找。找到后把当前节点splay到根，保证BST的平衡
 
-```cpp[class="line-numbers"]
+```cpp
 inline void find(int x) {
 	int u = root;
 	if (!u) return ; // BST空
@@ -238,7 +238,7 @@ inline void find(int x) {
 
 以前驱为例，当前的根节点就是x的父节点，所以如果root的关键码大于x，那么root就是x的前驱。否则就跳到左儿子找，再反着跳就好了
 
-```cpp[class="line-numbers"]
+```cpp
 inline int next_bound(int x, int f) { // f=0前驱，f=1后继
 	find(x);
 	int u = root; // x的父节点
@@ -266,7 +266,7 @@ inline int next_bound(int x, int f) { // f=0前驱，f=1后继
 
 所以直接把root右幺儿的左幺儿删掉就可以了
 
-```cpp[class="line-numbers"]
+```cpp
 inline void erase(int x) {
 	int last = next_bound(x, 0);
 	int next = next_bound(x, 1);
@@ -288,7 +288,7 @@ inline void erase(int x) {
 
 否则就把k减去左子树大小再减去本身的个数，再在右子树里找就行了
 
-```cpp[class="line-numbers"]
+```cpp
 inline int kth_element(int x) {
 	int u = root;
 	if (T[u].siz < x) return 0; // 没有那么多，直接死亡
@@ -306,7 +306,7 @@ inline int kth_element(int x) {
 
 完整代码：
 
-```cpp[class="line-numbers"]
+```cpp
 #include <cstdio>
 #include <iostream>
 #include <algorithm>

@@ -10,8 +10,10 @@ export default function Document() {
           href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
           rel="stylesheet"
         />
+        <link href="../prism/themes/prism.css" rel="stylesheet" />
       </Head>
       <body>
+        <script src="../prism/prism.js" />
         <Main />
         <NextScript />
       </body>

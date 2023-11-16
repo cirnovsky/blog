@@ -16,7 +16,7 @@ $n \leqslant 10^5$.
 
 朴素做法即, 设 $f_{u, d}$ 为将子树 $u$ 中距离 $u$ 为 $d$ 的节点染为黑色的最小代价, 直接转移即可. $\mathcal O(n^2)$. 以下是朴素部分的代码:
 
-```cpp[class="line-numbers"]
+```cpp
 void dfs2(int u) {
     for (int v : grp[u]) dfs2(v);
     for (int i=0;i<=m-dep[u];++i) dp[u][i] = a[i];
@@ -31,7 +31,7 @@ void dfs2(int u) {
 
 然后可以发现, 我们对于不同深度染色最小代价的计算是独立的, 于是枚举 $d$, 我们求解将原树中深度为 $d$ 的节点染黑的最小代价. 后面的做法就很暴力了, 直接将深度为 $d$ 的节点拉出来建虚树, 跑朴素 DP 即可. $\mathcal O(n\log_2 n)$ / $\mathcal O(n)$, 根据具体实现复杂度不同.
 
-```cpp[class="line-numbers"]
+```cpp
 void solve() {
     int n; cin >> n;
     vi a(n); rds(a);

@@ -6,7 +6,7 @@ title: '大常数 Dinic，背后是什么？'
 
 看向这样一份 Dinic 的实现：
 
-```cpp[class="line-numbers"]
+```cpp
 #include<bits/stdc++.h>
 using namespace std;
 template<typename T> struct network {
@@ -78,7 +78,7 @@ signed main() {
 
 最后是
 
-```cpp[class="line-numbers"]
+```cpp
 for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 	if(!f)	break;
 	if(lev[y=e[now][i].to]==lev[now]+1 && e[now][i].w && (tt=dfs(y,min(f,e[now][i].w),t))) {
@@ -89,7 +89,7 @@ for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 
 在经过实验对比（指，摸到 loj 势力上看了下为啥神户的板子跑这么快）后，我们惊讶的发现，下面代码所呈现的跑进了 50ms
 
-```cpp[class="line-numbers"]
+```cpp
 for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 	if(lev[y=e[now][i].to]==lev[now]+1 && e[now][i].w && (tt=dfs(y,min(f,e[now][i].w),t))) {
 		e[now][i].w-=tt; e[y][e[now][i].rev].w+=tt; f-=tt; res+=tt;
@@ -102,7 +102,7 @@ for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 
 最后的怀疑是 `++i` 的效率问题
 
-```cpp[class="line-numbers"]
+```cpp
 for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 	if(lev[y=e[now][i].to]==lev[now]+1 && e[now][i].w && (tt=dfs(y,min(f,e[now][i].w),t))) {
 		e[now][i].w-=tt; e[y][e[now][i].rev].w+=tt; f-=tt; res+=tt;
@@ -115,7 +115,7 @@ for(int& i=iter[now],y; i<int(e[now].size()); ++i) {
 
 不，再看
 
-```cpp[class="line-numbers"]
+```cpp
 for(int i=iter[now],y; i<int(e[now].size()); ++i) {
 	iter[now]=i;
 	if(lev[y=e[now][i].to]==lev[now]+1 && e[now][i].w && (tt=dfs(y,min(f,e[now][i].w),t))) {

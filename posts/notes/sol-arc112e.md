@@ -34,7 +34,7 @@ $$
 
 [^1]: 为什么倒序进行 DP? 因为这样我们才能获得「当前操作是否**重要**」的信息.
 
-```cpp[class="line-numbers"]
+```cpp
 int main()
 {
     ios::sync_with_stdio(0);
