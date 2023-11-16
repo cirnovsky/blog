@@ -53,30 +53,6 @@
     --tw-text-opacity: 1;
     color: rgb(0 0 0 / var(--tw-text-opacity));
   }
-  .pre-mac {
-    position: relative;
-    margin-top: -7px;
-    top: 21px;
-    left: 10px;
-    width: 100px;
-    z-index: 99;
-  }
-  .pre-mac > span {
-    float: left;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 5px;
-  }
-  .pre-mac > span:nth-child(1) {
-    background: red;
-  }
-  .pre-mac > span:nth-child(2) {
-    background: sandybrown;
-  }
-  .pre-mac > span:nth-child(3) {
-    background: limegreen;
-  } // AndysTV https://www.bilibili.com/read/cv16947986/
 }
 html {
   line-height: 1.5;
@@ -85,7 +61,7 @@ html {
   tab-size: 4;
   font-feature-settings: normal;
   font-variation-settings: normal;
-  overflow-y:scroll;
+  overflow-y: scroll;
 }
 :root {
   --prism-padding: 20px;
