@@ -1,6 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import Script from "next/script";
-// import "../styles/prism/ghcolors.css"
+import PrismSetup from '../lib/prism';
 
 export default function Document() {
   return (
