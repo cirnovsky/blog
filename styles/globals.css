@@ -161,3 +161,14 @@ blockquote > p {
 }
 .code-spoiler {
 }
+@font-face {
+  font-family: "Source Code Pro";
+  src: url("../public/fonts/SourceCodePro.ttf")
+      format("truetype")
+}
+
+@font-face {
+  font-family: "Fira Code";
+  src: url("../public/fonts/FiraCode.ttf")
+      format("truetype")
+}
