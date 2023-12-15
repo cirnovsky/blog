@@ -25,7 +25,7 @@
   h4,
   h5,
   h6 {
-    @apply text-center font-medium;
+    @apply text-center font-semibold underline underline-offset-4 decoration-dashed;
   }
   a {
     @apply text-fuchsia-700;
