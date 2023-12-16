@@ -24,6 +24,9 @@ export default function About() {
           inspiration.
         </p>
         <p>
+          This is a testing paragraph via Neovim, LazyVim.
+        </p>
+        <p>
           If you have any questions or suggestions, write to{" "}
           <Link href={"mailto:cirnovskyv@gmail.com"}>cirnovskyv@gmail.com</Link>
           .

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { SectionFunc, Sections } from "../lib/enums";
 
 export const name = "Carnicero Irnobkowski";
-export const siteTitle = "𝒸𝒾𝓇𝓃ℴ𝓋𝓈𝓀𝓎's blog";
+export const siteTitle = "Wang Site | 汪站";
 
 export default function Layout({ children, section }) {
   const pages = Object.values(Sections);
@@ -47,12 +47,13 @@ export default function Layout({ children, section }) {
               className="no-underline text-black hover:text-[#996E5C]"
               href={"/"}
             >
-              <div className="font-extrabold text-2xl">{siteTitle}</div>
+            { /* <div className="font-extrabold text-2xl">{siteTitle}</div>*/ }
+            <Image src="/avatar.png" width={80} height={80} className="rounded-full shadow-2xl"/>
             </Link>
             <div className="flex gap-x-8 items-center">{buttons}</div>
           </div>
         </div>
-        <hr className="h-[0.07em] -my-[0.375em] bg-black border-0"></hr>
+        <hr className="ml-24 h-[0.07em] -my-[0.375em] bg-black border-0"></hr>
         <main className="my-20">{children}</main>
       </div>
     </div>
