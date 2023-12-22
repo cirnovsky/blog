@@ -5,11 +5,14 @@ import Date from "../../components/Date";
 import React from "react";
 import { Sections } from "../../lib/enums";
 import Giscus from "@giscus/react";
+import CountWords from "../../lib/words";
 
 const section = Sections.ARTICLES;
 
 export default function Post({ postData }) {
   let curPostData = postData.content;
+  const nwrd = postData.content.nw;
+  console.log(nwrd);
   return (
     <Layout section={section}>
       <Head>
@@ -22,6 +25,9 @@ export default function Post({ postData }) {
         />
         <div className="light-text">
           cirnovsky / <Date dateString={postData.date} />
+        </div>
+        <div>
+          Word count: 
         </div>
         <div
           className="content"
