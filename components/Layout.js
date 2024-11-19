@@ -47,7 +47,6 @@ export default function Layout({ children, section }) {
               className="no-underline text-black hover:text-[#996E5C]"
               href={"/"}
             >
-            { /* <div className="font-extrabold text-2xl">{siteTitle}</div>*/ }
             <Image src="/avatar.png" width={80} height={80} className="rounded-full shadow-2xl"/>
             </Link>
             <div className="flex gap-x-8 items-center">{buttons}</div>
