@@ -20,15 +20,11 @@ export default function About() {
           This website is built on{" "}
           <Link href={"https://react.dev/"}>React</Link> +{" "}
           <Link href={"https://nextjs.org/"}>Next.js</Link> with few CSS.{" "}
-          <Link href={"https://bellard.org/"}>Fabrice Bellard</Link> is my
-          inspiration.
         </p>
-        <p>
-          This is a testing paragraph via Neovim, LazyVim.
-        </p>
+	  <p>For users inaccessible to jsDelivr, a proper proxy setup would be highly advisable.</p>
         <p>
           If you have any questions or suggestions, write to{" "}
-          <Link href={"mailto:cirnovskyv@gmail.com"}>cirnovskyv@gmail.com</Link>
+          <i><Link href={"mailto:cirnovskyv@gmail.com"}>cirnovskyv at gmail dot com</Link></i>
           .
         </p>
         <br />

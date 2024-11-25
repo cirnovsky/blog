@@ -23,7 +23,6 @@ export default function Friends() {
                     <li>Isaac Jin - <Link href="https://www.whale3ye.com/"><i>CHAOS</i></Link></li>
                 </ul>
             </div>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
         </Layout>
     )
 }
