@@ -2,7 +2,6 @@
 
 DIR=~/Documents/projects/blog
 P_DIR="$DIR/posts"
-CATS=("articles" "notes")
 
 create() {
 	local cat="$1"
@@ -23,6 +22,10 @@ create() {
 	fi
 }
 
+edit() {
+	typora "$1"
+}
+
 push() {
 	local pwd = $(pwd)
 	cd $DIR
@@ -36,8 +39,21 @@ case "$1" in
 	new)
 		create "$2" "$3"
 		;;
+	edit)
+		edit "$2"
+		;;
 	push)
-		push $2
+		push "$2"
+		;;
+	help)
+		echo "Commands:"
+		echo "	new [category] [title]			Create a new post."
+		echo "	edit <ctrl>t"				Edit an existing file. Use with FZF.
+		echo "	push [message]				Create a git commit and push."
+		echo "	help					This page."
+		;;
+	*)
+		echo "Run *_blog help* for help."
 		;;
 
 esac
