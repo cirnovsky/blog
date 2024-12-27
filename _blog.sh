@@ -39,21 +39,21 @@ edit() {
 }
 
 run() {
-	local pwd = $(pwd);
+	local pwd=$(pwd);
 	cd $DIR
 	npm run dev
 	cd $pwd
 }
 
 build() {
-	local pwd = $(pwd);
+	local pwd=$(pwd);
 	cd $DIR
 	npm run build
 	cd $pwd
 }
 
 push() {
-	local pwd = $(pwd)
+	local pwd=$(pwd)
 	cd $DIR
 	git add .
 	git commit -m "$1"
