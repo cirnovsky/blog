@@ -23,7 +23,33 @@ create() {
 }
 
 edit() {
-	typora "$1"
+	read -p "1. vscode; 2. typora: " choice
+	case $choice in
+		1)
+			code "$1"
+			;;
+		2)
+			typora "$1"
+			;;
+		*)
+			echo "Invalid."
+			exit 1
+			;;
+	esac
+}
+
+run() {
+	local pwd = $(pwd);
+	cd $DIR
+	npm run dev
+	cd $pwd
+}
+
+build() {
+	local pwd = $(pwd);
+	cd $DIR
+	npm run build
+	cd $pwd
 }
 
 push() {
@@ -42,13 +68,21 @@ case "$1" in
 	edit)
 		edit "$2"
 		;;
+	run)
+		run
+		;;
+	build)
+		build
+		;;
 	push)
 		push "$2"
 		;;
 	help)
 		echo "Commands:"
 		echo "	new [category] [title]			Create a new post."
-		echo "	edit <ctrl>t"				Edit an existing file. Use with FZF.
+		echo "	edit <ctrl>t				Edit an existing file. Use with FZF. Then choose your preferred editor."
+		echo "	run					Run *npm run dev*."
+		echo "	build					Run *npm run build*."
 		echo "	push [message]				Create a git commit and push."
 		echo "	help					This page."
 		;;
