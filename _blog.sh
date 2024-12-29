@@ -18,7 +18,19 @@ create() {
 		echo "date: $(date '+%Y-%m-%d')" >> $fn
 		echo "---" >> $fn
 		echo "" >> $fn
-		typora $fn
+		read -p "1. vscode; 2. typora: " choice
+		case $choice in
+			1)
+				code "$1"
+				;;
+			2)
+				typora "$1"
+				;;
+			*)
+				echo "Invalid."
+				exit 1
+				;;
+		esac
 	fi
 }
 
@@ -79,7 +91,7 @@ case "$1" in
 		;;
 	help)
 		echo "Commands:"
-		echo "	new [category] [title]			Create a new post."
+		echo "	new [category] [title]			Create a new post. Then choose your preferred editor."
 		echo "	edit <ctrl>t				Edit an existing file. Use with FZF. Then choose your preferred editor."
 		echo "	run					Run *npm run dev*."
 		echo "	build					Run *npm run build*."
