@@ -21,10 +21,10 @@ create() {
 		read -p "1. vscode; 2. typora: " choice
 		case $choice in
 			1)
-				code "$1"
+				code "$fn"
 				;;
 			2)
-				typora "$1"
+				typora "$fn"
 				;;
 			*)
 				echo "Invalid."
