@@ -14,8 +14,8 @@ create() {
 	else
 		echo $fn
 		echo "---" > $fn
-		echo "title: " >> $fn
-		echo "date: $(date '+%Y-%m-%d')" >> $fn
+		echo "title: ''" >> $fn
+		echo "date: '$(date '+%Y-%m-%d')'" >> $fn
 		echo "---" >> $fn
 		echo "" >> $fn
 		read -p "1. vscode; 2. typora: " choice
