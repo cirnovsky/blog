@@ -11,4 +11,4 @@ You sure want to use this immature blog system? Take a look at Hexo, WordPress s
 
 ### Scripts
 
-Run `ln.sh [username]` to create symlink for `_blog.sh`. As for the usage of `_blog.sh`, run `_blog help`.
+Run `ln.sh` to create symlink for `_blog.sh`. As for the usage of `_blog.sh`, run `_blog help`.

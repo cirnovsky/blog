@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ln -s $(realpath "./blog.sh") /home/$1/bin/_blog
+ln -s $(realpath "./blog.sh") $HOME/bin/_blog
