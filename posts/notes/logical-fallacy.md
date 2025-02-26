@@ -1,5 +1,5 @@
 ---
-title: ''
+title: 'Logical Fallacies'
 date: '2025-02-14'
 ---
 
