@@ -22,9 +22,8 @@ export default function Home() {
                 reactionsEnabled="1"
                 emitMetadata="0"
                 inputPosition="top"
-                theme="transparent_dark"
+                theme="gruvbox"
                 lang="en"
-                loading="lazy"
                 crossorigin="anonymous"
                 async
             />
