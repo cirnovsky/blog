@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=~/Documents/projects/blog
+DIR=~/projects/blog
 P_DIR="$DIR/posts"
 
 create() {
@@ -12,6 +12,7 @@ create() {
 		echo "File '$fn' already exists!"
 		return
 	else
+		touch $fn
 		echo $fn
 		echo "---" > $fn
 		echo "title: ''" >> $fn

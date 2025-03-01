@@ -20,7 +20,6 @@ export default function Friends() {
                 <ul>
                     <li>cqbzly - <Link href="https://duanyu.netlify.app/"><i>duanyu's blog</i></Link> / <Link href="https://blog.csdn.net/cqbzlydd"><i>duanyu's blog (CSDN)</i></Link></li>
                     <li>Raisetsu41 - <Link href="https://iridescent41.cf/"><i>Raisetsu41's blog</i></Link></li>
-                    <li>Isaac Jin - <Link href="https://www.whale3ye.com/"><i>CHAOS</i></Link></li>
                 </ul>
             </div>
         </Layout>
