@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>其实这个的标题叫 <em>平凡线段树上二分幻术</em>，因为这是一个民科在乱叫。</p>  
+<p>如标题所言，这个东西确实非常 trivial。碍于网络上没有一个成体系的文章供参考就只能自己来炒炒冷饭。</p>  
+<p>如果出了什么 bug 就当个笑话看。</p>  
+<hr />  
+<p>我们这样来描述一类问题</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>给出一个序列 ${a_n}$ 以及函数 $\textbf{f}(x)\in{0,1}$，在 $[l,r]$ 中查找满足 $\textbf{f}(a_i)=1$ 的所有位置所组成的集合中的一个元素，该元素满足某个指定的性质。</p>  
+
+    </div>
+</div>  
+<p>网络上大部分资料对这类问题的线段树二分做法只停留在全局查询。事实上，线段树二分的做法完全可以搬到区间上，做法并不困难。</p>  
+<p>以下令 $[l,r]$ 为线段树执行时的当前区间，$[x,y]$ 为询问区间。</p>  
+<p>我们在执行线段树的时候，维护一个标记 $g\in{0,1}=[[l,r]\subseteq[x,y]]$，如果为 $0$，则继续在线段树上搜寻询问区间，否则就执行二分，因为查询的结点数为 $\Theta(\log_2 n)$ 且树的深度为 $\Theta(\log_2 n)$，所以单次复杂度 $\Theta(\log_2 n)$。</p>  
+<hr />  
+<p>例题大概是 <a href="https://codeforces.com/contest/407/problem/E">codeforces - 407E</a>，我负责给李涵口胡，然后李涵就把<a href="https://codeforces.com/contest/407/submission/122184803">代码</a>杠出来了。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

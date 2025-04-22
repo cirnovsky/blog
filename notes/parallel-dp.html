@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>不太了解这个东西的具体定义是什么，总之应该是一个用数据结构维护 DP 状态的某几个维度的 trick 吧。</p>  
+<p>~~事实上你可以把这篇 post 理解为三个题的解集。~~</p>  
+<p>先直接来看 <a href="https://loj.ac/p/3340"><em>noi2020 - Destiny</em></a> 这个题。</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>给定一棵树 $T = (V, E)$ 和点对集合 $\mathcal Q \subseteq V \times V$ ，满足对于所有 $(u, v) \in \mathcal Q$，都有 $u \neq v$，并且 $u$ 是 $v$ 在树 $T$ 上的祖先。其中 $V$ 和 $E$ 分别代表树 $T$ 的结点集和边集。求有多少个不同的函数 $f$ : $E \to {0, 1}$（将每条边 $e \in E$ 的 $f(e)$ 值置为 $0$ 或 $1$），满足对于任何 $(u, v) \in \mathcal Q$，都存在 $u$ 到 $v$ 路径上的一条边 $e$ 使得 $f(e) = 1$。由于答案可能非常大，你只需要输出结果对 $998,244,353$（一个素数）取模的结果。</p>  
+
+    </div>
+</div>  
+<p>我们略过 DP 的过程，直接给出其定义 $f(x,j)$ 表示考虑子树 $i$，限制条件的 $v\in{\rm subtree}(x)$ 且限制 $(u,v)$ 尚未被满足，$u$ 的深度最深且 $j={\rm dep}(u)$ 的不同映射 $f:E_{{\rm subtree}(x)}\rightarrow{0,1}$ 数量，以及其转移$f(x,i)= f(x,i)\sum\limits_{y\in{\rm suf}(x)}\left(\sum\limits_{j=0}^{{\rm dep}(x)}f(y,j)+\sum\limits_{j=0}^{i}f(y,j)\right)+f(y,i)\sum\limits_{j=0}^{i-1}f(x,j)$。</p>  
+<p>令 $g(x)$ 为 $f(i)$ 的前缀和，得到平方级算法。</p>  
+<p>如果我们考虑把 DP 的第二维度状态放到线段树上，那么子树的合并就可以放到线段树上去做，即使用线段树的合并 trick 来做 DP。</p>  
+<p>我们来看看合并的具体过程。贴近实现，我们令 ${\rm merge}:{(x,y,l,r,s_x,s_y)}\rightarrow{\rm node}$ 表示线段树合并的过程，其中 $s_x$ &amp; $s_y$ 表示 DP 的前缀和（即 $g$），在实现（以及下文的讲解）中，均把这两个变量视作别名。</p>  
+<p>有这样几种情形需要探讨。</p>  
+<ul>  
+<li>$l=r$：此时应该把 $f(y,l)$ 合并到 $f(x,l)$ 中，直接对线段树结点维护的 DP 值进行修改；</li>  
+<li>$x=\Omega$：此时 $f(x)$ 的 DP 值并没有意义，在本题中可以视作零。于是打乘法标记即可；</li>  
+<li>$y=\Omega$：与上一条类似。</li>  
+</ul>  
+<p>于是得到解决，<a href="https://loj.ac/s/1260484">参考实现。</a></p>  
+<p>再来看 <a href="https://loj.ac/p/2537"><em>pkuwc2018 - Minimax</em></a> 这个题。</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>给出一棵有 $n$ 的结点的二叉有根树，并给出其叶子结点的权值，对于一个非叶子结点，其权值有 $p_i$ 概率取得儿子中的最大值， $1-p_i$ 的概率取得最小值。</p>  
+<p>令 ${v_{i}}$ 表示最终根结点（$1$-th 结点）的所有可能取值（升序排列），其个数记为 $m$，每一个 $v_i$ 取得的概率记为 $r_i$，将其按照 ${\rm hash}(i)=i\times v_i\times r_i$ 的规则求出 $\sum_i{\rm hash}(i)$。</p>  
+
+    </div>
+</div>  
+<p>与上一题类（完 全）似（一 致）地，同样略过 DP 的过程，给出其定义 $f(i,j)$ 表示结点 $i$ 取得值 $j$ 的概率，以及其转移 $f(i,j)=\sum\limits_{v\in{\rm suf}(i)} f(v,j)\left(p_i\sum\limits_{1\leqslant k&lt;j}f(v',k)+(1-p_i)\sum\limits_{j&lt;k}f(v',k)\right)$，其中 $v'$ 表示 ${\rm suf}(i)\setminus{v}$ 中的唯一取值。</p>  
+<p>令 $g(i)$ 为 $f(i)$ 的前缀和（显然这里的 $\infty$ 并不是「真正的无限」），得到平方级的算法。</p>  
+<p>同样考虑把 DP 的第二维度状态放到线段树上，在线段树合并时维护 $s_x$ &amp; $s_y$ 表示 DP 的前缀和，直接维护即可。</p>  
+<p><a href="https://loj.ac/s/1261254">参考实现。</a></p>  
+<p>最后来看到 <a href="https://codeforces.com/problemset/problem/671/D"><em>codeforces - 671D / Roads in Yusland</em></a>。</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>给定一棵 $n$ 个点的以 $1$ 为根的树。有 $m$ 条路径 $(x,y)$，保证 $y$ 是 $x$ 或 $x$ 的祖先，每条路径有一个权值。你要在这些路径中选择若干条路径，使它们能覆盖每条边，同时权值和最小。</p>  
+
+    </div>
+</div>  
+<p>这题的平方 DP 都有一定难度……看了 duyi 的题解挺久才理解……不过如果做过 <em>noi2020 - Destiny</em> 的话应该会好很多。</p>  
+<p>称 ${\rm route}(u,v)$ 中的 $u$ 为起点，$v$ 为终点，在 $v$ 决策一个 route 是否被选择。参考 <em>noi2020 - Destiny</em> 的状态设计，令 $f(x,i)$ 表示在 ${\rm subtree}(x)$ 中选择了若干 routes，其中终点深度最深并且高于 ${\rm dep}(x)$ 的深度为 $i$ 的最优方案。</p>  
+<p>转移即 $f(x,i)=\min\limits_{y\in{\rm suf}(x)}{f(y,i)+\sum\limits_{z\in{\rm suf}(x)\setminus{y}}g(z)}$，其中 $g(x)=\min\limits_{1\leqslant i&lt;{\rm dep}(x)}{f(x,i)}$，还需要考虑每条 route 带来的额外转移，转移式显然不赘。这些 transforming formulae 也许带有一些构造成分在里面，至少我觉得不太自然……</p>  
+<p>然后考虑线段树合并优化，你需要支持区间增量 &amp; 全局查询最小值 &amp; 合并（与此同时区间取 $\min$）&amp; 单点取 $\min$。因为 $O((n+m)\log_2n)$ 的空间复杂度并不能通过此题。</p>  
+<p>考虑以时间换空间，我们采用权值平衡树 &amp; 启发式合并来解决（参考实现中给出的是 <code>std::set</code>）。</p>  
+<p>平衡树上每个结点维护一个 2-tuple $(i,f(x,i))$，以第一关键字排序。我们依次考虑如何支持上文的操作。</p>  
+<ul>  
+<li>区间增量：如果及时把 $i&gt;{\rm dep}(x)$ 的元素弹出，这就变成了全局增量，直接维护即可；</li>  
+<li>全局查询最小值：这个是本题最妙的地方，因为关键字的选取，平衡树无法简单地取出最小值，我们需要更多的性质。注意到 $\forall j&lt;k,s.t.f(x,j)&lt;f(x,k)$，此时的 $k$ 都是无用的，可以直接删除，<strong>这得出了此题的单调性</strong>。如此全局最小值就是平衡树上最右边的结点；</li>  
+<li>合并：启发式合并即可；</li>  
+<li>单点取 $\min$：相当于插入操作，直接来即可，需要注意一些不是特别细的细节（雾）。</li>  
+</ul>  
+<p>如此时间复杂度退成了 $O((n+m)\log_2^2n)$，但是空间复杂度优化到了 $O(n+m)$，可以通过此题。</p>  
+<p><a href="https://codeforces.com/contest/671/submission/130237842">参考实现。</a></p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

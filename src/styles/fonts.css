@@ -1,0 +1,29 @@
+@font-face {
+    font-family: Consolas;
+    src: url('../fonts/consola.ttf')
+}
+@font-face {
+    font-family: Consolas;
+    font-style: italic;
+    src: url('../fonts/consolai.ttf')
+}
+@font-face {
+    font-family: Consolas;
+    font-weight: bold;
+    src: url('../fonts/consolab.ttf')
+}
+@font-face {
+    font-family: Consolas;
+    font-style: italic;
+    font-weight: bold;
+    src: url('../fonts/consolaz.ttf')
+}
+@font-face {
+    font-family: Microsoft Yahei;
+    src: url('../fonts/msyh.ttf')
+}
+@font-face {
+    font-family: Microsoft Yahei;
+    font-weight: bold;
+    src: url('../fonts/msyhbd.ttf')
+}

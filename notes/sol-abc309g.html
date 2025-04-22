@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Desc.</h2>  
+<p><a href="https://atcoder.jp/contests/abc309/tasks/abc309_g">Link.</a></p>  
+<p>求出满足如下条件的 $1$ 到 $n$ 的排列数量 (记排列为 $P = (p_1, \dots, p_n))$:</p>  
+<ul>  
+<li>$\forall i \in [1, n]$, 有 $\mid p_i-i\mid \geqslant X$.</li>  
+</ul>  
+<p>$1 \leqslant n \leqslant 100$, $1 \leqslant X \leqslant 5$.</p>  
+<h2>Sol.</h2>  
+<p>$X$ 很小, 从这里入手. 注意到 $\geqslant X$ 的状态可能有很多, 但 $&lt; X$ 的状态比较少, 因此计算补集. 考虑容斥, 设 $g_i$ 表示有 $i$ 个数不合法, 剩余数随意放置的方案数, $f_i$ 为恰好 $i$ 个不合法, 剩余数均合法的方案数. 有:  
+$$
+g_i = \sum_{j=i}^n f_j \times \binom ji  
+$$
+由二项式反演:  
+$$
+f_i = \sum_{j=i}^n (-1)^{j-i} \times \binom ji \times g_j  
+$$
+答案即为 $\displaystyle f_0 = \sum_{i=0}^n (-1)^i \times g_i$. 考虑怎么求 $g_i$. 设 $f_{i, j, s}$ 表示前 $i$ 个位置有 $j$ 个不合法, 其余位置<strong>不纳入考虑</strong>[^1], 且第 $i$ 个数的不合法区间当前的被占用情况为 $s$ 的方案数. 转移分当前数是否加入不合法讨论即可, 具体可以看代码.</p>  
+
+
+<pre><code class="language-cpp">int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    const int MOD = 998244353;
+    using mint = modint&lt;MOD&gt;;
+    int n, X; cin &gt;&gt; n &gt;&gt; X;
+    const int LIM = 1&lt;&lt;(2*X-1), U = LIM-1;
+    vector f(n+1, vector(n+1, vector&lt;mint&gt;(LIM)));
+    f[0][0][0] = 1;
+    for (int i=0;i&lt;n;++i) {
+        for (int j=0;j&lt;=i;++j) {
+            for (int s=0;s&lt;LIM;++s) {
+                f[i+1][j][s&gt;&gt;1] += f[i][j][s];
+                for (int p=0;p&lt;2*X-1;++p)
+                    if (!((s&gt;&gt;1)&amp;(1&lt;&lt;p)) &amp;&amp; i+2-X+p &gt;= 1 &amp;&amp; i+2-X+p &lt;= n)
+                        f[i+1][j+1][(s&gt;&gt;1)|(1&lt;&lt;p)] += f[i][j][s];
+            }
+        }
+    }
+    vector&lt;mint&gt; g(n+1), facs(n+1);
+    facs[0] = 1;
+    for (int i=1;i&lt;=n;++i)
+        facs[i] = facs[i-1]*i;
+    for (int i=0;i&lt;=n;++i)
+        g[i] = accumulate(allu(f[n][i]), mint(0));
+    mint ans = 0;
+    for (int i=0;i&lt;=n;++i)
+        ans += (i&amp;1?MOD-1:1)*g[i]*facs[n-i];
+    cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<hr />  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>/ 来不及拒绝 /</p>  
+<p>/ 黑与白的纯洁 /</p>  
+<p>/ 视而不见 /</p>  
+<p>/ 假装不见 /</p>  
+<p>/ 凝望成永别 /</p>  
+<p>—— <a href="https://vocadb.net/S/147283">Zeno - <em>D!SCOLOЯ</em> ft. 星尘</a></p>  
+
+    </div>
+</div>  
+<p>[^1]: 为什么其余位置不纳入考虑? 因为随意放置的方案数可以通过乘阶乘计算, 放入 DP 的计算里会很麻烦!</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

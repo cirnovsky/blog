@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>一个被国内 oi 环境弱化至几乎不存在的概念，不过我觉得还是有学一学的必要。因为我没学过代数结构所以大部分内容都在开黄腔，欲喷从轻。</p>  
+<p>Semigroup 的定义是，$\forall a,b\in\mathbb{S}$，有 $a\cdot b\in\mathbb{S}$ 并且 $(a\cdot b)\cdot c=a\cdot(b\cdot c)$，则称 $\lang\mathbb{S},\cdot\rang$ 为一个 semigroup，称其中的二元运算 $\cdot:\mathbb{S}\cdot\mathbb{S}\rightarrow\mathbb{S}$ 为半群的乘法。</p>  
+<p>Semigroup 与 group 的区别在于有无幺（identity element），并且所有元素均有逆。</p>  
+<p>Monoid 则是在 semigroup 的基础上添加了一个幺，翻译过来即幺半群。</p>  
+<p>有了这些理论支撑，我们在解决一系列数据结构问题时的思维将得到~~几乎为零的~~简化</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

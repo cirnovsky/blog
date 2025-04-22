@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h1>1.「一本通 4.6 例 1」营业额统计</h1>  
+<p><strong>原题来自：HNOI 2002</strong></p>  
+<p>Tiger 最近被公司升任为营业部经理，他上任后接受公司交给的第一项任务便是统计并分析公司成立以来的营业情况。</p>  
+<p>Tiger 拿出了公司的账本，账本上记录了公司成立以来每天的营业额。分析营业情况是一项相当复杂的工作。由于节假日，大减价或者是其他情况的时候，营业额会出现一定的波动，当然一定的波动是能够接受的，但是在某些时候营业额突变得很高或是很低，这就证明公司此时的经营状况出现了问题。</p>  
+<p>经济管理学上定义了一种最小波动值来衡量这种情况：记该天以前某一天的营业额为 $a_i$，该天营业额为 $b$，则该天的最小波动值 $\delta=\min |a_i-b|$，当最小波动值越大时，就说明营业情况越不稳定。而分析整个公司的从成立到现在营业情况是否稳定，只需要把每一天的最小波动值加起来就可以了。</p>  
+<p>你的任务就是编写一个程序帮助 Tiger 来计算这一个值，第一天的最小波动值为第一天的营业额。</p>  
+<h4>一句话题意</h4>  
+<p>给出一个 $n$ 个数的数列 ${a_n}$，对于第 $i$ 个元素 $a_i$，定义 $f_i=\min |a_i-a_j|$，其中 $1\le j\lt i,f_1=a_1$。求 $\sum f_i$。</p>  
+<hr />  
+<p>没什么可说的，就是板子，可以用来调一下指针版splay。~~不过我发现指针版跑的飞慢是在搞嘛~~</p>  
+<p>还是正经说一下吧</p>  
+<p>这道题要查询最小波动值。我们只需要把x的前驱和后继求出来，看一下谁跟x的关系更好~~离的更近~~，再算出答案，再把这个数insert进去就好了</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#define mid (l + r &gt;&gt; 1)
+#define int long long
+
+using namespace std;
+
+const int SIZE = (1 &lt;&lt; 15) + 5;
+const int INF = 0x7fffffff;
+struct SplayNode {
+    SplayNode *son[2], *fa;
+    int val, siz;
+    SplayNode(SplayNode *fa = NULL, int val = 0) : fa(fa), val(val) {
+        *son = *(son + 1) = NULL;
+        siz = 1;
+    }
+    inline bool islyczbing() { return this == fa-&gt;son[1]; }
+    inline int rnk() { return 1 + (*son ? (*son)-&gt;siz : 0); }
+    inline void up() { siz = 1 + (*son ? (*son)-&gt;siz : 0) + ((*(son + 1)) ? (*(son + 1))-&gt;siz : 0); }
+} * root;
+
+inline void rotate(SplayNode *x) {
+    bool k = x-&gt;islyczbing();
+    SplayNode *y = x-&gt;fa, *z = y-&gt;fa, *w = x-&gt;son[!k];
+    if (root == y)
+        root = x;
+    else
+        z-&gt;son[y-&gt;islyczbing()] = x;
+    x-&gt;fa = z;
+    y-&gt;fa = x;
+    x-&gt;son[!k] = y;
+    y-&gt;son[k] = w;
+    if (w)
+        w-&gt;fa = y;
+    y-&gt;up();
+    x-&gt;up();
+}
+
+inline void cosplay(SplayNode *x) {
+    while (x != root) {
+        if (x-&gt;fa != root)
+            rotate(x-&gt;islyczbing() ^ x-&gt;fa-&gt;islyczbing() ? x : x-&gt;fa);
+        rotate(x);
+    }
+}
+
+inline void insert(int val) {
+    if (!root)
+        return (void)(root = new SplayNode(NULL, val));
+    SplayNode *p = root, *fa = NULL;
+    while (p) {
+        fa = p;
+        p = p-&gt;son[val &gt; p-&gt;val];
+    }
+    p = new SplayNode(fa, val);
+    fa-&gt;son[val &gt; fa-&gt;val] = p;
+    cosplay(p);
+}
+
+inline int getpre(int val) {
+    SplayNode *p = root, *lst = NULL;
+    while (p) {
+        if (val &gt; p-&gt;val)
+            lst = p, p = p-&gt;son[1];
+        else
+            p = p-&gt;son[0];
+    }
+    if (lst)
+        return cosplay(lst), lst-&gt;val;
+    return -INF;
+}
+
+inline int getnext(int val) {
+    SplayNode *p = root, *lst = NULL;
+    while (p) {
+        if (val &lt; p-&gt;val)
+            lst = p, p = p-&gt;son[0];
+        else
+            p = p-&gt;son[1];
+    }
+    if (lst)
+        return cosplay(lst), lst-&gt;val;
+    return INF;
+}
+
+signed main() {
+    root = NULL;
+    int n;
+    scanf(&quot;%lld&quot;, &amp;n);
+    int ans = 0;
+    for (int i = 1, x; i &lt;= n; ++i) {
+        scanf(&quot;%lld&quot;, &amp;x);
+        if (i == 1)
+            ans += x;
+        else
+            ans += min(x - getpre(x + 1), getnext(x - 1) - x);
+        insert(x);
+    }
+    printf(&quot;%lld\n&quot;, ans);
+    return 0;
+}
+</code></pre>
+<h1>2.[SHOI2013]发牌</h1>  
+<p>在一些扑克游戏里，如德州扑克，发牌是有讲究的。一般称呼专业的发牌手为荷官。荷官在发牌前，先要销牌（burn card）。所谓销牌，就是把当前在牌库顶的那一张牌移动到牌库底，它用来防止玩家猜牌而影响游戏。</p>  
+<p>假设一开始，荷官拿出了一副新牌，这副牌有N 张不同的牌，编号依次为1到N。由于是新牌，所以牌是按照顺序排好的，从牌库顶开始，依次为1, 2,……直到N，N 号牌在牌库底。为了发完所有的牌，荷官会进行N 次发牌操作，在第i 次发牌之前，他会连续进行Ri次销牌操作， Ri由输入给定。请问最后玩家拿到这副牌的顺序是什么样的？</p>  
+<p>举个例子，假设N = 4，则一开始的时候，牌库中牌的构成顺序为{1, 2, 3, 4}。</p>  
+<p>假设R1=2，则荷官应该连销两次牌，将1 和2 放入牌库底，再将3 发给玩家。目前牌库中的牌顺序为{4, 1, 2}。</p>  
+<p>假设R2=0，荷官不需要销牌，直接将4 发给玩家，目前牌库中的牌顺序为{1,2}。</p>  
+<p>假设R3=3，则荷官依次销去了1, 2, 1，再将2 发给了玩家。目前牌库仅剩下一张牌1。</p>  
+<p>假设R4=2，荷官在重复销去两次1 之后，还是将1 发给了玩家，这是因为1 是牌库中唯一的一张牌。</p>  
+<hr />  
+<h2>splay题解 by wgy</h2>  
+<p>这道题还蛮简单的，用splay找出1-x的区间，然后把它转到后面去，再删除第一个数就好了</p>  
+<p>~~需吸氧~~</p>  
+
+
+<pre><code class="language-cpp">#pragma GCC optimize(2)
+#pragma GCC optimize(3)
+#pragma GCC optimize(&quot;Ofast&quot;)
+#pragma GCC optimize(&quot;inline&quot;)
+#pragma GCC optimize(&quot;-fgcse&quot;)
+#pragma GCC optimize(&quot;-fgcse-lm&quot;)
+#pragma GCC optimize(&quot;-fipa-sra&quot;)
+#pragma GCC optimize(&quot;-ftree-pre&quot;)
+#pragma GCC optimize(&quot;-ftree-vrp&quot;)
+#pragma GCC optimize(&quot;-fpeephole2&quot;)
+#pragma GCC optimize(&quot;-ffast-math&quot;)
+#pragma GCC optimize(&quot;-fsched-spec&quot;)
+#pragma GCC optimize(&quot;unroll-loops&quot;)
+#pragma GCC optimize(&quot;-falign-jumps&quot;)
+#pragma GCC optimize(&quot;-falign-loops&quot;)
+#pragma GCC optimize(&quot;-falign-labels&quot;)
+#pragma GCC optimize(&quot;-fdevirtualize&quot;)
+#pragma GCC optimize(&quot;-fcaller-saves&quot;)
+#pragma GCC optimize(&quot;-fcrossjumping&quot;)
+#pragma GCC optimize(&quot;-fthread-jumps&quot;)
+#pragma GCC optimize(&quot;-funroll-loops&quot;)
+#pragma GCC optimize(&quot;-fwhole-program&quot;)
+#pragma GCC optimize(&quot;-freorder-blocks&quot;)
+#pragma GCC optimize(&quot;-fschedule-insns&quot;)
+#pragma GCC optimize(&quot;inline-functions&quot;)
+#pragma GCC optimize(&quot;-ftree-tail-merge&quot;)
+#pragma GCC optimize(&quot;-fschedule-insns2&quot;)
+#pragma GCC optimize(&quot;-fstrict-aliasing&quot;)
+#pragma GCC optimize(&quot;-fstrict-overflow&quot;)
+#pragma GCC optimize(&quot;-falign-functions&quot;)
+#pragma GCC optimize(&quot;-fcse-skip-blocks&quot;)
+#pragma GCC optimize(&quot;-fcse-follow-jumps&quot;)
+#pragma GCC optimize(&quot;-fsched-interblock&quot;)
+#pragma GCC optimize(&quot;-fpartial-inlining&quot;)
+#pragma GCC optimize(&quot;no-stack-protector&quot;)
+#pragma GCC optimize(&quot;-freorder-functions&quot;)
+#pragma GCC optimize(&quot;-findirect-inlining&quot;)
+#pragma GCC optimize(&quot;-fhoist-adjacent-loads&quot;)
+#pragma GCC optimize(&quot;-frerun-cse-after-loop&quot;)
+#pragma GCC optimize(&quot;inline-small-functions&quot;)
+#pragma GCC optimize(&quot;-finline-small-functions&quot;)
+#pragma GCC optimize(&quot;-ftree-switch-conversion&quot;)
+#pragma GCC optimize(&quot;-foptimize-sibling-calls&quot;)
+#pragma GCC optimize(&quot;-fexpensive-optimizations&quot;)
+#pragma GCC optimize(&quot;-funsafe-loop-optimizations&quot;)
+#pragma GCC optimize(&quot;inline-functions-called-once&quot;)
+#pragma GCC optimize(&quot;-fdelete-null-pointer-checks&quot;)
+#pragma GCC optimize(2)
+#pragma GCC optimize(3)
+#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#include &lt;utility&gt;
+#include &lt;cctype&gt;
+#define mid (l + r &gt;&gt; 1)
+
+using namespace std;
+
+const int SIZE = 7e5 + 5;
+struct SPLAY {
+    int siz;
+    int val;
+    int ch[2];
+    int fa;
+} T[SIZE];
+int root, n, R[SIZE], tot;
+
+template &lt; typename T &gt;
+inline void read ( T &amp;a ) {
+    a = 0; T f = 1; char ch;
+    while (!isdigit(ch = getchar())) if (ch == '-') f = -1;
+    while (isdigit(ch)) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ '0'), ch = getchar();
+    a *= f;
+}
+
+template &lt; typename T &gt;
+inline T read ( T _checkType, bool _Typeflag ) {
+    T f = 1, a = 0; char ch;
+    while (!isdigit(ch = getchar())) if (ch == '-') f = -1;
+    while (isdigit(ch)) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ '0'), ch = getchar();
+    return a * f;
+}
+template &lt; typename T &gt;
+inline void write ( T x, char end_, int st = 0 ) {
+    if (x &lt; 0) x = -x, putchar('-');
+    if (x &gt; 9) write(x / 10, end_, st + 1);
+    putchar(x % 10 + '0');
+    if (!st) putchar(end_);
+}
+
+inline void update(int u) {
+    T[u].siz = T[T[u].ch[0]].siz + T[T[u].ch[1]].siz + 1;
+}
+
+inline int make(int l, int r, int fa) {
+    int u = ++tot;
+    T[u].siz = 1;
+    T[u].val = mid;
+    T[u].ch[0] = T[u].ch[1] = 0;
+    T[u].fa = fa;
+    if (mid &gt; l) T[u].ch[0] = make(l, mid - 1, u);
+    if (mid &lt; r) T[u].ch[1] = make(mid + 1, r, u);
+    update(u);
+    return u;
+}
+
+inline void rotate(int x) {
+    int y = T[x].fa;
+    int z = T[y].fa;
+    int w = T[y].ch[1] == x;
+    T[z].ch[T[z].ch[1] == y] = x;
+    T[x].fa = z;
+    T[y].ch[w] = T[x].ch[w ^ 1];
+    T[T[x].ch[w ^ 1]].fa = y;
+    T[x].ch[w ^ 1] = y;
+    T[y].fa = x;
+    update(y), update(x);
+}
+
+inline void splay(int x, int goal) {
+    for (; T[x].fa ^ goal; rotate(x)) {
+        int y = T[x].fa;
+        int z = T[y].fa;
+        if (z ^ goal)
+            T[y].ch[1] ^ x ^ T[z].ch[1] ^ y ? rotate(x) : rotate(y);
+    }
+    if (!goal) root = x;
+}
+
+inline int getRank(int x) {
+    int u = root;
+    while (233) {
+        if (x &lt;= T[T[u].ch[0]].siz) u = T[u].ch[0];
+        else {
+            x -= T[T[u].ch[0]].siz + 1;
+            if (!x) return u;
+            u = T[u].ch[1];
+        }
+    }
+}
+
+inline int getcard(int x) {
+    if (x) {
+        splay(getRank(x), 0);
+        int u = root;
+        root = T[u].ch[1];
+        T[root].fa = 0;
+        T[u].ch[1] = 0;
+        update(u);
+        splay(getRank(T[root].siz), 0);
+        if (u) T[u].fa = root;
+        if (root) T[root].ch[1] = u, update(root);
+    }
+    int ranker = getRank(1);
+    int res = T[ranker].val;
+    splay(ranker, 0);
+    if (T[ranker].ch[1])
+        T[root = T[ranker].ch[1]].fa = 0;
+    return res;
+}
+
+signed main() {
+    read(n);
+    root = make(1, n, 0);
+    for (int i = 1; i &lt;= n; ++i) {
+        read(R[i]);
+        write(getcard(R[i] % T[root].siz), '\n');
+    }
+    return 0;
+}
+</code></pre>
+<h2>权值线段树题解 by lyc:</h2>  
+<p>对于这道题，平衡树 ~~常数太大~~ 不开O2基本都会超时。</p>  
+<p>所以我们用常数更小一些的线段树来解决这道题。</p>  
+<p>首先，这道题有7e5张牌，我们采用权值线段树的做法，每个节点记录它对应的区间还剩多少张牌。~~那么建树操作就很显然了对吧~~</p>  
+<p>然后我们考虑销牌操作，由于销牌后整个序列依旧按从小到大有序（1，2，3，4 -&gt;1，3，4），我们设定一个指针now，指向当前牌堆里的最后一张牌在目前牌堆中大小的排名，初始为0（n%n），每次销掉a张牌，我们就将now向右移a位，使它指向销完牌后牌堆里的最后一张，再将now加一，得到当前排队顶的牌在牌堆中的排名，根据定义，在权值线段树中查找第now个还存在的数就得到了这次删去的牌的编号。输出后还要记得把这张牌在权值线段树中删掉，再把now减一，使它重新指向牌堆里的最后一张牌。</p>  
+<p>代码：</p>  
+
+
+<pre><code>#include&lt;cstdio&gt;
+int n,nodes[80000010],now,a;
+void writing(int x)
+{
+    if(!x)  return;
+    writing(x/10);
+    putchar((x%10)+'0');
+}
+void read(int &amp;hhh)
+{
+    int x=0;
+    char c=getchar();
+    while((c&lt;'0')|(c&gt;'9'))  c=getchar();
+    x=c^'0';
+    c=getchar();
+    while((c&lt;='9')&amp;(c&gt;='0'))
+    {
+        x=(x&lt;&lt;1)+(x&lt;&lt;3)+(c^'0');
+        c=getchar();
+    }
+    hhh=x;
+}
+void build(int l,int r,int x)
+{
+    if(l==r)    nodes[x]=1;
+    else
+    {
+        int mid=(l+r)&gt;&gt;1;
+        build(l,mid,x&lt;&lt;1);
+        build(mid+1,r,(x&lt;&lt;1)+1);
+        nodes[x]=r-l+1;
+    }
+}
+int kth(int l,int r,int x,int val)
+{
+    if(l^r)
+    {
+        int mid=(l+r)&gt;&gt;1;
+        if(val&lt;=nodes[x&lt;&lt;1])    return kth(l,mid,x&lt;&lt;1,val);
+        else    return kth(mid+1,r,(x&lt;&lt;1)+1,val-nodes[x&lt;&lt;1]);
+    }
+    else    return l;
+}
+void del(int l,int r,int x,int val)
+{
+    --nodes[x];
+    if(l^r)
+    {
+        int mid=(l+r)&gt;&gt;1;
+        if(val&lt;=mid)    del(l,mid,x&lt;&lt;1,val);
+        else    del(mid+1,r,(x&lt;&lt;1)+1,val);
+    }
+}
+int main()
+{
+    read(n);
+    build(1,n,1);
+    for(int i=n;i;--i)
+    {
+        read(a);
+        now=(now+a)%i+1;
+        int cur=kth(1,n,1,now);
+        writing(cur);
+        putchar('\n');
+        del(1,n,1,cur);
+        --now;
+    }
+    return 0;
+}
+</code></pre>
+<h1>3.数列分块入门 8</h1>  
+<p>给出一个长为 $n$ 的数列，以及 $n$ 个操作，操作涉及区间询问等于一个数 $c$ 的元素，并将这个区间的所有元素改为 $c$。</p>  
+<hr />  
+<p>本题的重点在于<code>并将这个区间的所有元素改为c</code></p>  
+<p>区间推平操作！</p>  
+<p>有了区间推平，我们第一时间会想到什么？~~线段树~~|~~分块~~？</p>  
+<p>ODT！！！！</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;cctype&gt;
+#include &lt;utility&gt;
+#include &lt;set&gt;
+#define IT set&lt;TreeNode&gt;::iterator
+
+using namespace std;
+
+inline int getInt() {
+    int a = 0, f = 1; char ch;
+    while (!isdigit(ch = getchar())) if (ch == '-') f = -1;
+    while (isdigit(ch)) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ '0'), ch = getchar();
+    return a * f;
+}
+
+inline void outInt(int x) {
+    char buffer[20]; int length = 0;
+    bool minus = x &lt; 0; if (minus) x = -x;
+    do { buffer[length++] = x % 10 + '0'; x /= 10; } while (x);
+    if (minus) buffer[length++] = '-';
+    do { putchar(buffer[--length]); } while (length);
+}
+
+struct TreeNode {
+    int lef;
+    int rig;
+    mutable int val;
+
+    TreeNode(int l, int r = -1, int v = 0) : lef(l), rig(r), val(v) {}
+    friend bool operator &lt; (const TreeNode &amp;rhs) const {
+        return lef &lt; rhs.lef;
+    }
+} ;
+set&lt;TreeNode&gt; st;
+int n = getInt();
+
+inline IT split(int pos) {
+    IT it = st.lower_bound(TreeNode(pos));
+    if (it != st.end() &amp;&amp; it-&gt;lef == pos)
+        return it;
+    it--;
+    int l = it-&gt;lef, r = it-&gt;rig;
+    int v = it-&gt;val;
+    st.erase(it);
+    st.insert(TreeNode(l, pos - 1, v));
+    return st.insert(TreeNode(pos, r, v)).first;
+}
+
+inline void assign(int l, int r, int v) {
+    IT itr = split(r + 1), itl = split(l);
+    st.erase(itl, itr);
+    st.insert(TreeNode(l, r, v));
+}
+
+inline int query(int l, int r, int v) {
+    IT itr = split(r + 1), itl = split(l);
+    int res = 0;
+    for (; itl != itr; ++itl) res += (itl-&gt;rig - itl-&gt;lef + 1) * (itl-&gt;val == v);
+    return res;
+}
+
+signed main() {
+    for (int i = 1; i &lt;= n; ++i) {
+        int x = getInt();
+        st.insert(TreeNode(i, i, x));
+    }
+    for (int i = 1; i &lt;= n; ++i) {
+        int l = getInt();
+        int r = getInt();
+        int v = getInt();
+        printf(&quot;%d\n&quot;, query(l, r, v));
+        assign(l, r, v);
+    }
+    return 0;
+}
+</code></pre>
+<hr />  
+<h1>4.SP3267 DQUERY - D-query</h1>  
+<p>$Given$ $a$ $sequence$ $of$ $n$ $numbers$ $and$ $a$ $number$ $of$ $d-queries.$ $A$ $d-query$ $is$ $a$ $pair$ $(i,$ $j)$ $(1$ $≤$ $i$ $≤$ $j$ $≤$ $n).$ $For$ $each$ $d-query$ $(i,$ $j),$ $you$ $have$ $to$ $return$ $the$ $number$ $of$ $distinct$ $elements$ $in$ $the$ $subsequence$ $a_i$,$a_{i+1},\cdots,a_j$</p>  
+<hr />  
+<p>这道题的树状数组的做法是离线的。</p>  
+<p>首先按询问的右端点排序，然后用树状数组把没有出现过的值加上去，把出现过的减去，最后统计答案即可</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#define mid ((l + r) &gt;&gt; 1)
+
+using namespace std;
+
+const int SIZE = 1e6 + 5;
+int n, m, tree[SIZE], ans[SIZE];
+int list[SIZE], tag[SIZE];
+pair &lt; pair &lt; int , int &gt; , int &gt; st[SIZE];
+
+inline bool _rule(pair &lt; pair &lt; int , int &gt; , int &gt; x, pair &lt; pair &lt; int , int &gt; , int &gt; y) {
+    return x.first.second &lt; y.first.second;
+}
+
+signed main() {
+    scanf(&quot;%d&quot;, &amp;n);
+    for (int i = 1; i &lt;= n; ++i) scanf(&quot;%d&quot;, &amp;list[i]);
+    scanf(&quot;%d&quot;, &amp;m);
+    for (int i = 1; i &lt;= m; ++i) scanf(&quot;%d %d&quot;, &amp;st[i].first.first, &amp;st[i].first.second), st[i].second = i;
+    sort(st + 1, st + 1 + m, _rule);
+    int zblyc = 1;
+    for (int i = 1; i &lt;= m; ++i) {
+        for (int j = zblyc; j &lt;= st[i].first.second; ++j) {
+            if (tag[list[j]]) for (int x = tag[list[j]]; x &lt;= n; x += x &amp; -x) tree[x]--;
+            tag[list[j]] = j;
+            for (int x = j; x &lt;= n; x += x &amp; -x) tree[x]++;
+        }
+        zblyc = st[i].first.second + 1;
+        int lef = 0, rig = 0;
+        for (int x = st[i].first.second; x; x -= x &amp; -x) rig += tree[x];
+        for (int x = st[i].first.first - 1; x; x -= x &amp; -x) lef += tree[x];
+        ans[st[i].second] = rig - lef;
+    }
+    for (int i = 1; i &lt;= m; ++i) printf(&quot;%d\n&quot;, ans[i]);
+    return 0;
+}
+</code></pre>
+<h1>5.P1231 教辅的组成</h1>  
+<p><code>注：本题我已搬运到OJ，数据已经齐全，略卡时间和空间，但均在合理范围，我的代码已通过，请求公开</code> <a href="http://222.180.160.110:1024/problem/7104">Link</a></p>  
+<p>蒟蒻HansBug在一本语文书里面发现了一本答案，然而他却明明记得这书应该还包含一份练习题。</p>  
+<p>然而出现在他眼前的书多得数不胜数，其中有书，有答案，有练习册。已知一个完整的书册均应该包含且仅包含一本书、一本练习册和一份答案，然而现在全都乱做了一团。</p>  
+<p>许多书上面的字迹都已经模糊了，然而HansBug还是可以大致判断这是一本书还是练习册或答案，并且能够大致知道一本书和答案以及一本书和练习册的对应关系（即仅仅知道某书和某答案、某书和某练习册有可能相对应，除此以外的均不可能对应）。</p>  
+<p>既然如此，HansBug想知道在这样的情况下，最多可能同时组合成多少个完整的书册。</p>  
+<hr />  
+<p>虽然这并不是数据结构的题，但我觉得搬上来也不错，~~毕竟网络流是个好东西~~。</p>  
+<p>这道题我自己码了半天RE结果看了Siyuan的题解后才发现我add_edge传参传错了。~~话说为什么传参错会RE~~</p>  
+<p>大概讲一下这道题的思路吧</p>  
+<p>看到题目很容易想到跑费用流二分图匹配，但这道题不行。</p>  
+<p>为什么呢？</p>  
+<p>~~因为他有三个部分~~</p>  
+<p>那么直接跑最大流吧！</p>  
+<p>但这里还有一个问题，就是一本书作为中间的部分有可能会被重复利用~~绿色产品~~</p>  
+<p>Siyuan曾经这样说道：</p>  
+<p><code>因此我们就要引入拆点的思想。我们的目的是：即使一本书与多个联系册有关系，它流出的流量也只能是 1。所以我们把每个代表书的点拆成左右两个点，左边的点和练习册连边，右边的点和答案连边；当然左右对应点也要连一条容量为 1 的边</code></p>  
+<p>有了拆点的思想我们就可以直接跑最大流啦!</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int SIZE_N = 4e6 + 5;
+const int SIZE_M = 1e6 + 5;
+const int INF = 1 &lt;&lt; 30;
+int n1, n2, n3, m, tot = 1, s, t;
+int path[SIZE_N], ter[SIZE_M];
+int head[SIZE_N], edge[SIZE_M];
+int _next[SIZE_N], ver[SIZE_M];
+int depth[SIZE_N], cur[SIZE_N];
+
+inline int getid(int p, int x) {
+    switch (p) {
+        case 1: return x;
+        case 2: return n2 + x;
+        case 3: return n2 + n1 + x;
+        case 4: return n2 + (n1 &lt;&lt; 1) + x;
+    }
+}
+
+inline void add_edge(int from, int to, int dis) {
+    ver[++tot] = to, edge[tot] = dis, _next[tot] = head[from], head[from] = tot;
+}
+
+inline int bfs() {
+    memset(depth, 0, sizeof depth);
+    memcpy(cur, head, sizeof head);
+    queue &lt; int &gt; Q;
+    Q.push(s), depth[s] = 1;
+    while (!Q.empty()) {
+        int x = Q.front(); Q.pop();
+        for (int i = head[x]; i; i = _next[i]) {
+            if (!depth[ver[i]] &amp;&amp; edge[i]) depth[ver[i]] = depth[x] + 1, Q.push(ver[i]);
+        }
+    }
+    return depth[t];
+}
+
+inline int dfs(int x, int flow) {
+    if (x == t) return flow;
+    int res = 0;
+    for (int i = cur[x]; i &amp;&amp; res &lt; flow; i = _next[i]) {
+        cur[x] = i;
+        if (depth[ver[i]] == depth[x] + 1 &amp;&amp; edge[i]) {
+            int tmp = dfs(ver[i], min(edge[i], flow - res));
+            if (tmp) edge[i] -= tmp, edge[i ^ 1] += tmp, res += tmp;
+        }
+    }
+    if (res &lt; flow) depth[x] = -1;
+    return res;
+}
+
+inline int dinic() {
+    int res = 0;
+    for (int x; bfs(); ) while (x = dfs(s, INF)) res += x;
+    return res;
+}
+
+signed main() {
+    scanf(&quot;%d %d %d&quot;, &amp;n1, &amp;n2, &amp;n3);
+    scanf(&quot;%d&quot;, &amp;m);
+    for (int i = 1; i &lt;= m; ++i) {
+        int from, to;
+        scanf(&quot;%d %d&quot;, &amp;from, &amp;to);
+        add_edge(getid(1, to), getid(2, from), 1);
+        add_edge(getid(2, from), getid(1, to), 0);
+    }
+    scanf(&quot;%d&quot;, &amp;m);
+    for (int i = 1; i &lt;= m; ++i) {
+        int from, to;
+        scanf(&quot;%d %d&quot;, &amp;from, &amp;to);
+        add_edge(getid(3, from), getid(4, to), 1);
+        add_edge(getid(4, to), getid(3, from), 0);
+    }
+    for (int i = 1; i &lt;= n1; ++i) add_edge(getid(2, i), getid(3, i), 1), add_edge(getid(3, i), getid(2, i), 0);
+    s = 0, t = (n1 &lt;&lt; 1) + n2 + n3 + 1;
+    for (int i = 1; i &lt;= n2; ++i) add_edge(s, getid(1, i), 1), add_edge(getid(1, i), s, 0);
+    for (int i = 1; i &lt;= n3; ++i) add_edge(getid(4, i), t, 1), add_edge(t, getid(4, i), 0);
+    printf(&quot;%d\n&quot;, dinic());
+    return 0;
+}
+</code></pre>
+<h1>6.[USACO12OPEN]书架Bookshelf</h1>  
+<p>当农夫约翰闲的没事干的时候，他喜欢坐下来看书。多年过去，他已经收集了 N 本书 (1 &lt;= N &lt;= 100,000)， 他想造一个新的书架来装所有书。</p>  
+<p>每本书 i 都有宽度 W(i) 和高度 H(i)。书需要按顺序添加到一组书架上；比如说，第一层架子应该包含书籍1 ... k，第二层架子应该以第k + 1本书开始，以下如此。每层架子的总宽度最大为L（1≤L≤1,000,000,000）。每层的高度等于该层上最高的书的高度，并且整个书架的高度是所有层的高度的总和，因为它们都垂直堆叠。</p>  
+<p>请帮助农夫约翰计算整个书架的最小可能高度。</p>  
+<p>有N(1 &lt;= N &lt;= 100000)本书，每本书有一个宽度W(i)，高度H(i)，(1 &lt;= H(i) &lt;= 1,000,000; 1 &lt;= W(i) &lt;= L)。</p>  
+<p>现在有足够多的书架，书架宽度最多是L (1 &lt;= L &lt;= 1,000,000,000)，把书按顺序（先放1，再放2.....）放入书架。某个书架的高度是该书架中所放的最高的书的高度。</p>  
+<p>将所有书放入书架后，求所有书架的高度和的最小值？</p>  
+<hr />  
+<p>首先考虑$O(N^2)$的暴力DP，很好写出以下的转移方程：</p>  
+<p>$$  
+F_i=\min(F_j+\max(H_{j+1},H_{j+2},\cdots,H_i))  
+$$</p>
+<p>其中满足</p>  
+<p>$$  
+W_{j+1},W_{j+2},\cdots,W_i\le L  
+$$</p>
+<p>不难发现$W$的限制满足单调性，所以我们可以通过二分得到</p>  
+<p>也就是说</p>  
+<p>$$  
+F_i=\min(F_j+\max(H_{j+1},H_{j+2},\cdots,H_i))  
+$$</p>
+<p>满足</p>  
+<p>$$  
+left_i\le j  
+$$</p>
+<p>所以我们可以用线段树优化，维护区间赋值，区间最小值，单点修改三个操作。</p>  
+<p>但这样还不够，我们还需要开一个单调栈，当然单调队列也可以(不过我懒)</p>  
+<p>枚举每一个位置然后找出第一个大于$H_i$的位置$lef$，将$[lef+1,i]$这段区间的值赋为$H_i$</p>  
+<p>进而可以发现我们只需要每次区间修改$H$的值，查询直接在这一段区间查询就好了</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#include &lt;stack&gt;
+#define mid ((l + r) &gt;&gt; 1)
+#define lson (k &lt;&lt; 1)
+#define rson (k &lt;&lt; 1 | 1)
+
+using namespace std;
+typedef long long ull;
+
+const int SIZE = 100000 + 5;
+const ull INF = 1e18;
+stack &lt; ull &gt; S;
+ull n, limit, W[SIZE], H[SIZE], pre[SIZE];
+ull list[SIZE], dp[SIZE], val[SIZE &lt;&lt; 2];
+ull minval[SIZE &lt;&lt; 2], flag[SIZE &lt;&lt; 2];
+
+inline void make(int k, int l, int r) {
+    minval[k] = val[k] = flag[k] = INF;
+    if (l ^ r) make(lson, l, mid), make(rson, mid + 1, r);
+}
+
+inline void push(int k) {
+    if (flag[k] ^ INF) {
+        minval[lson] = val[lson] + flag[k];
+        minval[rson] = val[rson] + flag[k];
+        flag[lson] = flag[rson] = flag[k];
+        flag[k] = INF;
+    }
+}
+
+inline int update(int k, int l, int r, int x, int y, int v) {
+    if (l &gt;= x &amp;&amp; r &lt;= y) return minval[k] = val[k] + v, flag[k] = v, 0;
+    push(k);
+    if (mid &gt;= x) update(lson, l, mid, x, y, v);
+    if (mid &lt; y) update(rson, mid + 1, r, x, y, v);
+    minval[k] = min(minval[lson], minval[rson]);
+    val[k] = min(val[lson], val[rson]);
+    return 0;
+}
+
+inline void modify(int k, int l, int r, int x) {
+    if (l ^ r) {
+        push(k);
+        if (mid &gt;= x) modify(lson, l, mid, x);
+        else modify(rson, mid + 1, r, x);
+        minval[k] = min(minval[lson], minval[rson]);
+        val[k] = min(val[lson], val[rson]);
+    }
+    else minval[k] = INF, val[k] = dp[l - 1]; 
+}
+
+inline ull query(int k, int l, int r, int x, int y) {
+    if (l &gt;= x &amp;&amp; r &lt;= y) return minval[k];
+    push(k); ull res = INF;
+    if (mid &gt;= x) res = min(res, query(lson, l, mid, x, y));
+    if (mid &lt; y) res = min(res, query(rson, mid + 1, r, x, y));
+    return res;
+}
+
+signed main() {
+    scanf(&quot;%lld %lld&quot;, &amp;n, &amp;limit);
+    make(1, 1, n);
+    S.push(1);
+    for (int i = 1; i &lt;= n; ++i) scanf(&quot;%lld %lld&quot;, &amp;H[i], &amp;W[i]), list[i] = list[i - 1] + W[i];
+    for (int i = 2; i &lt;= n; ++i) {
+        while (S.size() &amp;&amp; H[i] &gt; H[S.top()]) S.pop();
+        if (S.size()) pre[i] = S.top();
+        S.push(i);
+    }
+    for (int i = 1; i &lt;= n; ++i) {
+        modify(1, 1, n, i);
+        if (pre[i] + 1 &lt;= i) update(1, 1, n, pre[i] + 1, i, H[i]);
+        int lef = lower_bound(list, list + 1 + i, list[i] - limit) - list;
+        if (lef &lt; i) dp[i] = query(1, 1, n, lef + 1, i);
+    }
+    printf(&quot;%lld\n&quot;, dp[n]);
+    return 0;
+}
+</code></pre>
+<h1>7.P1110 [ZJOI2007]报表统计</h1>  
+<p>Q的妈妈是一个出纳，经常需要做一些统计报表的工作。今天是妈妈的生日，小Q希望可以帮妈妈分担一些工作，作为她的生日礼物之一。</p>  
+<p>经过仔细观察，小Q发现统计一张报表实际上是维护一个非负整数数列，并且进行一些查询操作。</p>  
+<p>在最开始的时候，有一个长度为N的整数序列，并且有以下三种操作：</p>  
+<p>INSERT i k：在原数列的第i个元素后面添加一个新元素kk；如果原数列的第ii个元素已经添加了若干元素，则添加在这些元素的最后（见下面的例子）  
+MIN_GAP：查询相邻两个元素的之间差值（绝对值）的最小值  
+MIN_SORT_GAP：查询所有元素中最接近的两个元素的差值（绝对值）  
+例如一开始的序列为5, 3, 15,3,1。</p>  
+<p>执行操作INSERT 2 9将得到：5, 3, 9, 15,3,9,1，此时MIN_GAP为22，MIN_SORT_GAP为22。</p>  
+<p>再执行操作INSERT 2 6将得到：5, 3, 9, 6, 15,3,9,6,1</p>  
+<p>注意这个时候原序列的第22个元素后面已经添加了一个99，此时添加的66应加在99的后面。这个时候MIN_GAP为22，MIN_SORT_GAP为11。</p>  
+<p>于是小Q写了一个程序，使得程序可以自动完成这些操作，但是他发现对于一些大的报表他的程序运行得很慢，你能帮助他改进程序么？</p>  
+<hr />  
+<p>待坑，先留着</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#include &lt;utility&gt;
+#define sgt_mid ((SGT[k].l + SGT[k].r) &gt;&gt; 1)
+#define mid ((l + r) &gt;&gt; 1)
+#define U int k, int l, int r
+#define H int k, int x, int val
+#define transfer SGT[k].val = min(SGT[lson].val, SGT[rson].val)
+#define lson (k &lt;&lt; 1)
+#define rson (k &lt;&lt; 1 | 1)
+#define LRE lson, l, mid
+#define RRE rson, mid + 1, r
+#define LWA lson, x, val
+#define RWA rson, x, val
+#define int long long
+
+using namespace std;
+
+const int SIZE = 500000 + 5;
+const int INF = 0x7fffffff;
+int a[SIZE], b[SIZE], root;
+int n, m, tot, MIN_GAP, MIN_SORT_GAP;
+struct SPLAY {
+    int ch[2];
+    int val;
+    int fa;
+} SBT[SIZE];
+
+struct TREE {
+    int l;
+    int r;
+    int val;
+} SGT[SIZE];
+
+template &lt; typename T &gt;
+inline T ads(T x) { return x &gt; 0 ? x : -x; }
+
+/*****************SplayArea*****************/
+
+inline void rotate(int x) {
+    int y = SBT[x].fa;
+    int z = SBT[y].fa;
+    int w = SBT[y].ch[1] == x;
+    SBT[z].ch[SBT[z].ch[1] == y] = x;
+    SBT[x].fa = z;
+    SBT[y].ch[w] = SBT[x].ch[w ^ 1];
+    SBT[SBT[x].ch[w ^ 1]].fa = y;
+    SBT[x].ch[w ^ 1] = y;
+    SBT[y].fa = x;
+}
+
+inline void splay(int x, int goal) {
+    for (; SBT[x].fa ^ goal; rotate(x)) {
+        int y = SBT[x].fa;
+        int z = SBT[y].fa;
+        if (z ^ goal)
+            SBT[z].ch[1] ^ y ^ SBT[y].ch[1] ^ x ? rotate(x) : rotate(y);
+    }
+    if (!goal) root = x;
+}
+
+inline void insert(int x) {
+    int u = root, fa = 0;
+    while (u &amp;&amp; SBT[u].val ^ x) fa = u, u = SBT[u].ch[x &gt; SBT[u].val];
+    if (u) return ;
+    u = ++tot;
+    SBT[u].fa = fa;
+    if (fa) SBT[fa].ch[x &gt; SBT[fa].val] = u;
+    SBT[u].val = x;
+    splay(u, 0);
+}
+
+inline void find(int x) {
+    int u = root;
+    if (!u) return ;
+    while (SBT[u].ch[x &gt; SBT[u].val] &amp;&amp; SBT[u].val ^ x) u = SBT[u].ch[x &gt; SBT[u].val];
+    splay(u, 0);
+}
+
+inline int next_(int x, int f) {
+    find(x);
+    int u = root;
+    if (SBT[u].val == x) return SBT[u].val;
+    if (SBT[u].val &lt; x &amp;&amp; !f) return SBT[u].val;
+    if (SBT[u].val &gt; x &amp;&amp; f) return SBT[u].val;
+    u = SBT[u].ch[f];
+    while (SBT[u].ch[f ^ 1]) u = SBT[u].ch[f ^ 1];
+    return SBT[u].val;
+}
+
+/*****************EndSplay*****************/
+
+/*****************SegmentTreeArea*****************/
+
+inline void make(U) {
+    SGT[k].l = l, SGT[k].r = r;
+    if (l ^ r) make(LRE), make(RRE), transfer;
+    else SGT[k].val = ads(a[l] - a[l - 1]);
+}
+
+inline void modify(H) {
+    if (SGT[k].l ^ SGT[k].r)
+        if (sgt_mid &gt;= x) modify(LWA), transfer;
+        else modify(RWA), transfer;
+    else SGT[k].val = val;
+}
+
+/*****************EndSegmentTree*****************/
+
+inline void Initialize() {
+    MIN_GAP = INF, MIN_SORT_GAP = INF;
+    scanf(&quot;%d %d&quot;, &amp;n, &amp;m);
+    insert(INF), insert(-INF);
+    a[0] = INF, a[n + 1] = INF;
+    for (int i = 1; i &lt;= n; ++i) {
+        scanf(&quot;%d&quot;, &amp;a[i]);
+        if (i ^ 1) {
+            int l_limit = next_(a[i], false), r_limit = next_(a[i], true);
+            MIN_SORT_GAP = min(MIN_SORT_GAP, min(ads(l_limit - a[i]), ads(r_limit - a[i])));
+        }
+        insert(a[i]);
+        b[i] = a[i];
+    }
+    make(1, 1, n);
+    for (int i = 1; i &lt;= m; ++i) {
+        char S[SIZE];
+        scanf(&quot;%s&quot;, S);
+        if (*S == 'I') {
+            int x, y;
+            scanf(&quot;%d %d&quot;, &amp;x, &amp;y);
+            int l_limit = next_(y, false);
+            int r_limit = next_(y, true);
+            MIN_SORT_GAP = min(MIN_SORT_GAP, min(ads(y - l_limit), ads(y - r_limit)));
+            insert(y);
+            MIN_GAP = min(MIN_GAP, ads(b[x] - y));
+            modify(1, x + 1, ads(a[x + 1] - y));
+            b[x] = y;
+        }
+        else if (S[4] == 'G') printf(&quot;%d\n&quot;, min(MIN_GAP, SGT[1].val));
+        else printf(&quot;%d\n&quot;, MIN_SORT_GAP);
+    }
+}
+
+signed main() {
+    Initialize();
+    return 0;
+}
+</code></pre>
+<h1>8.Link Cut Tree （动态树）</h1>  
+<p>给定 n 个点以及每个点的权值，要你处理接下来的 m 个操作。  
+操作有四种，操作从 0 到 3 编号。点从 1 到 n 编号。</p>  
+<p>0 x y 代表询问从 x 到 y 的路径上的点的权值的 xor 和。保证 x 到 y 是联通的。</p>  
+<p>1 x y 代表连接 x 到 y，若 x 到 y 已经联通则无需连接。</p>  
+<p>2 x y 代表删除边 (x,y)，不保证边 (x,y) 存在。</p>  
+<p>3 x y 代表将点 x 上的权值变成 y。</p>  
+<hr />  
+<p>模板题没什么好说的，放一下代码就好了，如果要学LCT可以自己看博客(首先要学splay(not fhq-treap))</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#include &lt;stack&gt;
+
+using namespace std;
+
+const int SIZE = 3e5 + 5;
+struct ReadNode {
+    template &lt; typename T&gt;
+    void operator &gt;&gt; (T &amp;a) {
+        a = 0; T f = 1; char ch;
+        while (!isdigit(ch = getchar())) if (ch == '-') f = -1;
+        while (isdigit(ch)) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ '0'), ch = getchar();
+        a *= f;
+    }
+
+    template &lt; typename T&gt;
+    void write(T x) {
+        if (x &lt; 0) x = -x, putchar('-');
+        if (x &gt; 9) write(x / 10);
+        putchar(x % 10 + '0');
+    }
+
+    template &lt; typename T&gt;
+    void operator &lt;&lt; (T x) {
+        write(x);
+    }
+} win;
+int n, q, dis[SIZE];
+
+/******************LinkCutTree******************/
+
+class LinkCutTree {
+private:
+    struct TreeNode {
+        int ch[2];
+        int val;
+        int sum;
+        int rev;
+        int fa;
+    } T[SIZE + 5];
+    int st[SIZE + 5];
+
+    inline void exch(int &amp;x, int &amp;y) { x ^= y ^= x ^= y; }
+    inline void reverse(int x) { exch(T[x].ch[0], T[x].ch[1]); T[x].rev ^= 1; }
+    inline void link(int x, int y, int w) { T[T[x].fa = y].ch[w] = x; }
+    inline bool push_up(int x) { return (T[x].sum = T[x].val ^ T[T[x].ch[0]].sum ^ T[T[x].ch[1]].sum), 1; }
+    inline void push_down(int x) { T[x].rev &amp;&amp; (reverse(T[x].ch[0]), reverse(T[x].ch[1]), T[x].rev = 0); }
+    inline void makeroot(int x) { access(x); splay(x); reverse(x); }
+    inline void split(int x, int y) { makeroot(x); access(y); splay(y); }
+    inline bool isroot(int x) { return (T[T[x].fa].ch[0] ^ x &amp;&amp; T[T[x].fa].ch[1] ^ x); }
+    inline bool which(int x) { return T[T[x].fa].ch[1] == x; }
+    inline void rotate(int x) { int y = T[x].fa, z = T[y].fa, w = which(x); !isroot(y) &amp;&amp; (T[z].ch[which(y)] = x), T[x].fa = z, link(T[x].ch[w ^ 1], y, w), link(y, x, w ^ 1), push_up(y), push_up(x); }
+    inline void splay(int x) { int y = x, top = 0; while (st[++top] = y, !isroot(y)) y = T[y].fa; while (top) push_down(st[top]), --top; while (!isroot(x)) y = T[x].fa, !isroot(y) &amp;&amp; (rotate(which(x) ^ which(y) ? x : y), 0), rotate(x); }
+    inline void access(int x) { for (int son = 0; x; x = T[son = x].fa) splay(x), T[x].ch[1] = son, push_up(x); }
+    inline int getroot(int x) { access(x), splay(x); while (T[x].ch[0]) push_down(x), x = T[x].ch[0]; return splay(x), x; }
+
+public:
+    inline void init(int length, int *data) { for (int i = 1; i &lt;= length; ++i) T[i].val = data[i]; }
+    inline void connect(int x, int y) { makeroot(x), getroot(y) ^ x &amp;&amp; (T[x].fa = y); }
+    inline void erase(int x, int y) { makeroot(x), !(getroot(y) ^ x) &amp;&amp; !(T[y].fa ^ x) &amp;&amp; !(T[y].ch[0]) &amp;&amp; (T[y].fa = T[x].ch[1] = 0, push_up(x)); }
+    inline void insert(int x, int v) { splay(x), T[x].val = v; }
+    inline int find(int x, int y) { return split(x, y), T[y].sum; }
+} lct_mast;
+
+/*****************EndLinkCutTree*****************/
+
+signed main() {
+    win &gt;&gt; n; win &gt;&gt; q;
+    for (int i = 1; i &lt;= n; ++i) win &gt;&gt; dis[i];
+    lct_mast.init(n, dis);
+    for (int i = 1; i &lt;= q; ++i) {
+        int opt, x, y;
+        win &gt;&gt; opt; win &gt;&gt; x; win &gt;&gt; y;
+        switch(opt) {
+        case 0: win &lt;&lt; lct_mast.find(x, y), puts(&quot;&quot;); break;
+        case 1: lct_mast.connect(x, y); break;
+        case 2: lct_mast.erase(x, y); break;
+        case 3: lct_mast.insert(x, y); break;
+        }
+    }
+    return 0;
+}
+</code></pre>
+
+
+<pre><code class="language-cpp">// 需要233.cpp
+</code></pre>
+<h1>9.P5227 [AHOI2013]连通图</h1>  
+<p>给定一个无向连通图和若干个小集合，每个小集合包含一些边，对于每个集合，你需要确定将集合中的边删掉后改图是否保持联通。集合间的询问相互独立</p>  
+<p>定义一个图为联通的当且仅当对于任意的两个顶点，都存在一条路径连接它们</p>  
+<hr />  
+<p>暴力LCT，维护把时间当成权值的<em>最大生成树</em></p>  
+<p>因为我们是离线算法，所以我们可以得到每一条边的删除时间</p>  
+<p>顺便维护一个权值最小的边的编号</p>  
+
+
+<pre><code class="language-cpp">%:include &lt;cstdio&gt;
+%:include &lt;iostream&gt;
+%:include &lt;algorithm&gt;
+%:include &lt;cstring&gt;
+%:include &lt;queue&gt;
+
+using namespace std;
+
+const int SIZE = 1e7 + 5;
+const int INF = 0x7fffffff;
+struct ReadNode &lt;%
+    template &lt; typename T&gt;
+    void operator &gt;&gt; (T &amp;a) &lt;%
+        a = 0; T f = 1; char ch;
+        while (!isdigit(ch = getchar())) if (ch == '-') f = -1;
+        while (isdigit(ch)) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ '0'), ch = getchar();
+        a *= f;
+    %&gt;
+
+    template &lt; typename T&gt;
+    void write(T x) &lt;%
+        if (x &lt; 0) x = -x, putchar('-');
+        if (x &gt; 9) write(x / 10);
+        putchar(x % 10 + '0');
+    %&gt;
+
+    template &lt; typename T&gt;
+    void operator &lt;&lt; (T x) &lt;%
+        write(x);
+    %&gt;
+%&gt; win;
+int n, m;
+
+/******************LinkCutTree******************/
+
+class LinkCutTree &lt;%
+public:
+    struct TreeNode &lt;%
+        int     ch&lt;:2:&gt;;
+        int     fa;
+        int     val;
+        int     siz;
+        int     cnt;
+        int     miv;
+        bool    rev;
+    %&gt; T&lt;:SIZE:&gt;;
+
+    inline void exch(int &amp;x, int &amp;y) &lt;% x ^= y ^= x ^= y; %&gt;
+    inline void push1(int x) &lt;% T&lt;:x:&gt;.siz = T&lt;:T&lt;:x:&gt;.ch&lt;:0:&gt;:&gt;.siz + T&lt;:T&lt;:x:&gt;.ch&lt;:1:&gt;:&gt;.siz +T&lt;:x:&gt;.cnt + (x &lt;= n); x &gt; n &amp;&amp; (T&lt;:x:&gt;.miv = x); %&gt;
+    inline void push2(int x) &lt;% (T&lt;:x:&gt;.val &gt;= T&lt;:T&lt;:T&lt;:x:&gt;.ch&lt;:0:&gt;:&gt;.miv:&gt;.val) &amp;&amp; (T&lt;:x:&gt;.miv = T&lt;:T&lt;:x:&gt;.ch&lt;:0:&gt;:&gt;.miv); (T&lt;:T&lt;:x:&gt;.miv:&gt;.val &gt;= T&lt;:T&lt;:T&lt;:x:&gt;.ch&lt;:1:&gt;:&gt;.miv:&gt;.val) &amp;&amp; (T&lt;:x:&gt;.miv = T&lt;:T&lt;:x:&gt;.ch&lt;:1:&gt;:&gt;.miv); %&gt;
+    inline void transfer(int x) &lt;% push1(x); push2(x); %&gt;
+    inline bool which(int x) &lt;% return T&lt;:T&lt;:x:&gt;.fa:&gt;.ch&lt;:1:&gt; == x; %&gt;
+    inline bool isroot(int x) &lt;% return (T&lt;:T&lt;:x:&gt;.fa:&gt;.ch&lt;:0:&gt; ^ x) &amp;&amp; (T&lt;:T&lt;:x:&gt;.fa:&gt;.ch&lt;:1:&gt; ^ x); %&gt;
+    inline void rotate(int x) &lt;% int y = T&lt;:x:&gt;.fa, z = T&lt;:y:&gt;.fa, w = which(x), test = which(y), s = T&lt;:x:&gt;.ch&lt;:w ^ 1:&gt;; (!isroot(y)) &amp;&amp; (T&lt;:z:&gt;.ch&lt;:test:&gt; = x); T&lt;:y:&gt;.ch&lt;:w:&gt; = s, T&lt;:x:&gt;.ch&lt;:w ^ 1:&gt; = y; (s) &amp;&amp; (T&lt;:s:&gt;.fa = y); T&lt;:x:&gt;.fa = z, T&lt;:y:&gt;.fa = x; transfer(y); %&gt;
+    inline void reverse(int x) &lt;% exch(T&lt;:x:&gt;.ch&lt;:0:&gt;, T&lt;:x:&gt;.ch&lt;:1:&gt;), T&lt;:x:&gt;.rev ^= 1; %&gt;
+    inline void push_down(int x) &lt;% if (T&lt;:x:&gt;.rev) &lt;% if (T&lt;:x:&gt;.ch&lt;:0:&gt;) reverse(T&lt;:x:&gt;.ch&lt;:0:&gt;); if (T&lt;:x:&gt;.ch&lt;:1:&gt;) reverse(T&lt;:x:&gt;.ch&lt;:1:&gt;); T&lt;:x:&gt;.rev = 0; %&gt; %&gt;
+    inline void push_up(int x) &lt;% (!isroot(x)) &amp;&amp; (push_up(T&lt;:x:&gt;.fa), 1); push_down(x); %&gt;
+    inline void splay(int x) &lt;% push_up(x); for (; !isroot(x); rotate(x)) (!isroot(T&lt;:x:&gt;.fa)) &amp;&amp; ((which(x) == which(T&lt;:x:&gt;.fa) ? rotate(T&lt;:x:&gt;.fa) : rotate(x)), 1); transfer(x); %&gt;
+    inline void access(int x) &lt;% for (int i = 0; x; x = T&lt;:i = x:&gt;.fa) splay(x), T&lt;:x:&gt;.cnt += T&lt;:T&lt;:x:&gt;.ch&lt;:1:&gt;:&gt;.siz, T&lt;:x:&gt;.cnt -= T&lt;:T&lt;:x:&gt;.ch&lt;:1:&gt; = i:&gt;.siz, transfer(x); %&gt;
+    inline void makeroot(int x) &lt;% access(x), splay(x), reverse(x); %&gt;
+    inline void split(int x, int y) &lt;% makeroot(y), access(x), splay(x); %&gt;
+    inline int getroot(int x) &lt;% access(x), splay(x), push_down(x); for (; T&lt;:x:&gt;.ch&lt;:0:&gt;; push_down(x = T&lt;:x:&gt;.ch&lt;:0:&gt;)); return splay(x), x; %&gt;
+
+    inline void init(int length, int data) &lt;% for (int i = 0; i &lt;= length; ++i) T&lt;:i:&gt;.val = data; %&gt;
+    inline void connect(int x, int y) &lt;% split(x, y), T&lt;:y:&gt;.fa = x, T&lt;:x:&gt;.cnt += T&lt;:y:&gt;.siz, transfer(x); %&gt;
+    inline void erase(int x, int y) &lt;% split(x, y), T&lt;:y:&gt;.fa = T&lt;:x:&gt;.ch&lt;:0:&gt; = 0, transfer(x); %&gt;
+    inline bool find() &lt;% return access(1), splay(1), (T&lt;:1:&gt;.siz == n); %&gt;
+%&gt; lct_mast;
+
+/*****************EndLinkCutTree*****************/
+
+int now&lt;:SIZE:&gt;, num, ans&lt;:SIZE:&gt;, st&lt;:SIZE:&gt;, top;
+struct EdgeNode &lt;%
+    int from;
+    int to;
+    int dis;
+%&gt; edge&lt;:SIZE:&gt;;
+struct LycNode &lt;%
+    bool opt, tag;
+    int idx;
+%&gt; H&lt;:SIZE:&gt;;
+
+signed main() &lt;%
+    win &gt;&gt; n; win &gt;&gt; m;
+    lct_mast.init(n, INF);
+    for (int i = 1; i &lt;= m; ++i) &lt;%
+        int x, y;
+        win &gt;&gt; x; win &gt;&gt; y;
+        edge&lt;:i:&gt; = &lt;%x, y%&gt;;
+        now&lt;:i:&gt; = i;
+        H&lt;:++num:&gt; = &lt;%1, 0, i%&gt;;
+    %&gt;
+    int k, tot = m;
+    win &gt;&gt; k;
+    for (int i = 1; i &lt;= k; ++i) &lt;%
+        int x;
+        win &gt;&gt; x;
+        for (int j = 1; j &lt;= x; ++j) &lt;%
+            int y;
+            win &gt;&gt; y;
+            edge&lt;:now&lt;:y:&gt;:&gt;.dis = i - 1;
+            lct_mast.T&lt;:now&lt;:y:&gt; + n:&gt;.val = i - 1;
+            H&lt;:++num:&gt; = &lt;%0, 0, now&lt;:y:&gt;%&gt;;
+            edge&lt;:++tot:&gt;.from = edge&lt;:now&lt;:y:&gt;:&gt;.from;
+            edge&lt;:tot:&gt;.to = edge&lt;:now&lt;:y:&gt;:&gt;.to;
+            now&lt;:y:&gt; = tot;
+            st&lt;:++top:&gt; = now&lt;:y:&gt;;
+        %&gt;
+        H&lt;:++num:&gt;.tag = true;
+        if (i ^ k) while (top) H&lt;:++num:&gt; = &lt;%1, 0, st&lt;:top--:&gt;%&gt;;
+    %&gt;
+    for (int i = 1; i &lt;= m; ++i)
+        if (!edge&lt;:now&lt;:i:&gt;:&gt;.dis)
+            edge&lt;:now&lt;:i:&gt;:&gt;.dis = k, lct_mast.T&lt;:now&lt;:i:&gt; + n:&gt;.val = k;
+    tot += n;
+    for (int i = 1; i &lt;= tot; ++i) lct_mast.T&lt;:i:&gt;.siz = 1;
+    for (int i = 1; i &lt;= num; ++i) &lt;%
+        if (H&lt;:i:&gt;.tag) puts(lct_mast.find() ? &quot;Connected&quot; : &quot;Disconnected&quot;);
+        else &lt;%
+            int j = H&lt;:i:&gt;.idx, from = edge&lt;:j:&gt;.from;
+            int to = edge&lt;:j:&gt;.to, dis = edge&lt;:j:&gt;.dis;
+            lct_mast.makeroot(from);
+            if (H&lt;:i:&gt;.opt) &lt;%
+                if (lct_mast.getroot(to) == from) &lt;%
+                    int mix = lct_mast.T&lt;:from:&gt;.miv;
+                    if (lct_mast.T&lt;:mix:&gt;.val &gt;= dis) continue;
+                    lct_mast.erase(edge&lt;:mix - n:&gt;.from, mix);
+                    lct_mast.erase(edge&lt;:mix - n:&gt;.to, mix);
+                %&gt;
+                lct_mast.connect(from, j + n);
+                lct_mast.connect(to, j + n);
+            %&gt; else &lt;%
+                if (lct_mast.getroot(to) == from) &lt;%
+                    lct_mast.transfer(j + n);
+                    if (!lct_mast.T&lt;:j + n:&gt;.fa &amp;&amp; !lct_mast.T&lt;:j + n:&gt;.siz) continue;
+                    lct_mast.erase(edge&lt;:j:&gt;.from, j + n);
+                    lct_mast.erase(edge&lt;:j:&gt;.to, j + n);
+                %&gt;
+            %&gt;
+        %&gt;
+    %&gt;
+    return 0;
+%&gt;
+</code></pre>
+<h1>10.[TJOI2018]异或</h1>  
+<p>现在有一颗以$1$为根节点的由$n$个节点组成的树，树上每个节点上都有一个权值$v_i$。现在有$Q$次操作，操作如下：</p>  
+<ul>  
+<li>$1\;x\;y$：查询节点$x$的子树中与$y$异或结果的最大值</li>  
+<li>$2\;x\;y\;z$：查询路径$x$到$y$上点与$z$异或结果最大值</li>  
+</ul>  
+<hr />  
+<p>这是一道可持久化$01Trie$树+树链剖分的好题。</p>  
+<p>但是树剖是出了名的难打，仔细看题，可以发现只需要$DFS$序便可以解决问题</p>  
+<p>对于第一个操作，直接用$DFS$序维护$sub_tree$的信息即可</p>  
+<p>对于第二个操作，可以考虑在$DFS$遍历整棵树的同时插入权值</p>  
+<p>查询的话直接上$LCA$</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int SIZE = (100000 + 5) &lt;&lt; 1;
+int head[SIZE], ver[SIZE];
+int nxt[SIZE], edge[SIZE];
+int n, q, fuck, a[SIZE];
+
+inline void pushEdge(int x, int y, int z) {
+    ver[++fuck] = y, edge[fuck] = z;
+    nxt[fuck] = head[x], head[x] = fuck;
+}
+
+struct ZeroOneTrie {
+    int root[SIZE], cnt;
+    int trie[SIZE &lt;&lt; 6][2];
+    int frie[SIZE &lt;&lt; 6];
+
+    ZeroOneTrie() { root[0] = cnt = 1; }
+
+    inline void insert(int last, int &amp;lyc, int x) {
+        int rt = lyc = ++cnt;
+        for (int i = 30; ~i; --i) {
+            int now = (x &gt;&gt; i) &amp; 1;
+            trie[rt][!now] = trie[last][!now];
+            trie[rt][now] = ++cnt;
+            rt = trie[rt][now];
+            last = trie[last][now];
+            frie[rt] = frie[last] + 1;
+        }
+    }
+
+    inline int find(int l, int r, int x) {
+        int res = 0;
+        for (int i = 30; ~i; --i) {
+            int now = (x &gt;&gt; i) &amp; 1;
+            if (frie[trie[r][!now]] - frie[trie[l][!now]]) {
+                r = trie[r][!now];
+                l = trie[l][!now];
+                res |= 1 &lt;&lt; i;
+            } else {
+                r = trie[r][now];
+                l = trie[l][now];
+            }
+        }
+        return res;
+    }
+} t0, t1;
+
+int dfn[SIZE], L[SIZE], R[SIZE];
+int num, fa[SIZE][30], depth[SIZE];
+
+inline void dfs(int x, int pre) {
+    t1.insert(t1.root[pre], t1.root[x], a[x]);
+    fa[x][0] = pre;
+    depth[x] = depth[pre] + 1;
+    L[x] = ++num;
+    dfn[num] = a[x];
+    for (int i = head[x]; ~i; i = nxt[i]) if (ver[i] ^ pre) dfs(ver[i], x);
+    R[x] = num;
+}
+
+inline int lca_mast(int x, int y) {
+    if (depth[x] &lt; depth[y]) swap(x, y);
+    for (int i = 25; ~i; --i) if (depth[fa[x][i]] &gt;= depth[y]) x = fa[x][i];
+    if (x ^ y) {
+        for (int i = 25; ~i; --i)
+            if (fa[x][i] ^ fa[y][i]) x = fa[x][i], y = fa[y][i];
+        return fa[x][0];
+    } else return x;
+}
+
+signed main() {
+    memset(head, -1, sizeof head);
+    scanf(&quot;%d %d&quot;, &amp;n, &amp;q);
+    for (int i = 1; i &lt;= n; ++i) scanf(&quot;%d&quot;, &amp;a[i]);
+    for (int i = 1; i &lt; n; ++i) {
+        int from, to;
+        scanf(&quot;%d %d&quot;, &amp;from, &amp;to);
+        pushEdge(from, to, 1);
+        pushEdge(to, from, 1);
+    }
+    dfs(1, 0);
+    for (int j = 1; j &lt;= 25; ++j)
+        for (int i = 1; i &lt;= n; ++i)
+            fa[i][j] = fa[fa[i][j - 1]][j - 1];
+    for (int i = 1; i &lt;= n; ++i) t0.insert(t0.root[i - 1], t0.root[i], dfn[i]);
+    for (int i = 1; i &lt;= q; ++i) {
+        int opt, x, y, z;
+        scanf(&quot;%d %d %d&quot;, &amp;opt, &amp;x, &amp;y);
+        if (opt ^ 1) {
+            scanf(&quot;%d&quot;, &amp;z);
+            int ans = lca_mast(x, y);
+            printf(&quot;%d\n&quot;, max(t1.find(t1.root[fa[ans][0]], t1.root[x], z), t1.find(t1.root[fa[ans][0]], t1.root[y], z)));
+        } else {
+            printf(&quot;%d\n&quot;, t0.find(t0.root[L[x] - 1], t0.root[R[x]], y));
+        }
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

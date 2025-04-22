@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://atcoder.jp/contests/abc215/tasks/abc215_g">link。</a></p>  
+<p>称题目中的 $c_i$ 为 $a_i$，令 $c_i$ 为第 $i$ 种颜色的出现次数，令 $C$ 为颜色总数。固定 $k$，令 $t_i=1$，如果颜色 $i$ 被选择了一次及以上，否则为 $0$，则答案为 $\textbf{E}(\sum t_i)=\sum\textbf{E}(t_i)=\sum\frac{\binom{n}{k}-\binom{n-c_i}{k}}{\binom{n}{k}}$。</p>  
+<p>对于一个固定的 $k$，上式的取值只取决于 $c_i$ 的大小，令 $s_x$ 为 $c_i=x$ 的 $i$ 的数量。则答案写为 $\sum s_x\times\frac{\binom{n}{k}-\binom{n-x}{k}}{\binom{n}{k}}$。</p>  
+<p>分析复杂度，$n=\sum i\times s_i$，因此单次计算最劣 $\Theta(\sqrt n)$。</p>  
+
+
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+
+#include &lt;atcoder/modint&gt;
+using mint = atcoder::modint998244353;
+mint fac[50100], ifac[50100];
+void preComb(int n) {
+  fac[0] = ifac[0] = mint::raw(1);
+  for (int i = 1; i &lt;= n; ++i) fac[i] = fac[i - 1] * i;
+  ifac[n] = fac[n].inv();
+  for (int i = n - 1; i; --i) ifac[i] = ifac[i + 1] * (i + 1);
+}
+mint C(int n, int k) {
+  if (n &lt; k) return 0;
+  return fac[n] * ifac[n - k] * ifac[k];
+}
+int c[50100], s[50100], n, a[50100];
+signed main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr), std::cout.tie(nullptr);
+  std::cin &gt;&gt; n;
+  preComb(n);
+  for (int i = 1; i &lt;= n; ++i) std::cin &gt;&gt; a[i];
+  std::vector&lt;int&gt; pri(a + 1, a + n + 1);
+  std::sort(pri.begin(), pri.end());
+  pri.erase(std::unique(pri.begin(), pri.end()), pri.end());
+  int C = static_cast&lt;int&gt;(pri.size());
+  for (int i = 1; i &lt;= n; ++i)
+    a[i] = std::lower_bound(pri.begin(), pri.end(), a[i]) - pri.begin() + 1;
+  for (int i = 1; i &lt;= n; ++i) ++c[a[i]];
+  for (int i = 1; i &lt;= C; ++i) ++s[c[i]];
+  std::vector&lt;int&gt; vec;
+  for (int i = 1; i &lt;= n; ++i) {
+    if (s[i]) vec.emplace_back(i);
+  }
+  for (int k = 1; k &lt;= n; ++k) {
+    mint res = 0;
+    for (int x : vec) res += s[x] * (::C(n, k) - ::C(n - x, k));
+    res *= ::C(n, k).inv();
+    std::cout &lt;&lt; res.val() &lt;&lt; '\n';
+  }
+  return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

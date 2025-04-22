@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Desc.</h2>  
+<p><a href="https://atcoder.jp/contests/abc310/tasks/abc310_g">Link.</a></p>  
+<p>有 $n$ 个二元组, 用 $(a_i, t_i)$ 描述. 等概率在 $[1, k] \bigcap \mathbb{N}^*$ 中选取一个 $x$, 执行以下操作 $x$ 次:</p>  
+<ul>  
+<li>取一空数组 ${b_n}$, 令 $\displaystyle b_i = \sum_{t_j = i} a_j$, 然后再用 $b_i$ 替换每个 $a_i$;</li>  
+</ul>  
+<p>问最终 $a_i$ 的期望值对 $\mathbf{998244353}$ 取模的结果;</p>  
+<p>$1\leqslant n \leqslant 2 \times 10^5$, $1 \leqslant k \leqslant 10^{18}$, $k$ is not a multiple of $\mathbf{998244353}$.</p>  
+<h2>Sol.</h2>  
+<p>令 $\mathbf A = \left( \begin{matrix} a_1, \dots, a_n \end{matrix}\right)$, $\mathbf T = \left (\begin{matrix} 0/1 &amp; \cdots  &amp; 0/1 \ \vdots &amp; \ddots &amp; \vdots \ 0/1 &amp; \cdots &amp; 0/1 \end{matrix}\right)$, 其中 $\mathbf T_{i, t_i} = 1$, 其余为 $0$. 则答案为 (以下均省去 $\frac 1k$ 不写):  
+$$
+f(\mathbf A, \mathbf T, k) = \sum_{i=1}^k \mathbf A \times \mathbf T^i  
+$$
+进行分治处理 (以下忽略 $\frac 1k$ 的系数).</p>  
+<p>$$  
+\begin{aligned}
+&amp;f(\mathbf A, \mathbf T, 2m)\
+={} &amp; \mathbf A\times \mathbf T + (\mathbf A \times \mathbf T^2) + \dots + (\mathbf A \times \mathbf T ^{2m}) \
+={} &amp; f(\mathbf A\mathbf T+\mathbf A\mathbf T^2, \mathbf T^2, m)
+\end{aligned}
+$$
+对于 $k$ 为奇数的情况：  
+$$
+\begin{aligned}
+&amp;f(\mathbf A, \mathbf T, k)\
+={}&amp; \mathbf A+f(\mathbf A \mathbf T, \mathbf T, k-1)
+\end{aligned}
+$$
+于是我们用 $\mathcal O(n\log k)$ 的时间解决了问题. 当然亦可以建出内向基环树.</p>  
+
+
+<pre><code class="language-cpp">int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    int n; ll k; cin &gt;&gt; n &gt;&gt; k;
+    const int MOD = 998244353;
+    using mint = modint&lt;MOD&gt;;
+    using vm = vector&lt;mint&gt;;
+    vi tmp(n), T(n); rds(T), rds(tmp);
+    vm A(n);
+    transform(allu(T), T.begin(), [&amp;](int x) { return x-1; });
+    transform(allu(tmp), A.begin(), [&amp;](ll x) { return x%MOD; });
+    const auto add = [&amp;](const vm&amp; lhs, const vm&amp; rhs) {
+        vm res(n);
+        for (int i=0;i&lt;n;++i) res[i] = lhs[i]+rhs[i];
+        return res;
+    };
+    const auto mul = [&amp;](const vm&amp; lhs, const vi&amp; to) {
+        vm res(n);
+        for (int i=0;i&lt;n;++i) res[to[i]] += lhs[i];
+        return res;
+    };
+    const auto trans = [&amp;](const vi&amp; v) {
+        vi res(n);
+        for (int i=0;i&lt;n;++i) res[i] = v[v[i]];
+        return res;
+    };
+    vm res(n);
+    ll tmp_k = k%MOD;
+    A = mul(A, T);
+    while (k) {
+        if (k&amp;1) res = add(res, A), A = mul(A, T);
+        A = add(A, mul(A, T));
+        T = trans(T);
+        k /= 2;
+    }
+    mint inv = 1/mint(tmp_k);
+    for (int i=0;i&lt;n;++i) cout &lt;&lt; res[i]*inv &lt;&lt; &quot; \n&quot;[i == n-1];
+}
+</code></pre>
+<hr />  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>/ 相处的时间 你我已命运相连 /</p>  
+<p>/ 音乐频率凋谢 默契超越一切 /</p>  
+<p>/ 已记不清有多少个深夜你独自伏案桌前 /</p>  
+<p>/ 彻夜无眠 只为让我更耀眼 /</p>  
+<p>—— <a href="https://vocadb.net/S/115641">Kide - <em>星愿</em> ft. 星尘</a></p>  
+
+    </div>
+</div>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

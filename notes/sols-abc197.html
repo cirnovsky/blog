@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h1>「ABC 197A」Rotate</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_a">Link</a>.</p>  
+<p>略。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int main(){
+    char a,b,c;cin&gt;&gt;a&gt;&gt;b&gt;&gt;c;cout&lt;&lt;b&lt;&lt;c&lt;&lt;a;
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ABC 197B」Visibility</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_b">Link</a>.</p>  
+<p>扫。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int main(){
+    int h,w,x,y;cin&gt;&gt;h&gt;&gt;w&gt;&gt;x&gt;&gt;y;vector&lt;string&gt; a(h);--x,--y;
+    for(string &amp;i:a)cin&gt;&gt;i;
+    int ans=0;
+    for(int i=x;~i;--i)if(a[i][y]=='.')++ans;/*,printf(&quot;(%d %d)\n&quot;,i+1,y+1);*/else break;
+    for(int i=x;i&lt;h;++i)if(a[i][y]=='.')++ans;/*,printf(&quot;(%d %d)\n&quot;,i+1,y+1);*/else break;
+    for(int i=y;~i;--i)if(a[x][i]=='.')++ans;/*,printf(&quot;(%d %d)\n&quot;,x+1,i+1);*/else break;
+    for(int i=y;i&lt;w;++i)if(a[x][i]=='.')++ans;/*,printf(&quot;(%d %d)\n&quot;,x+1,i+1);*/else break;
+    cout&lt;&lt;ans-3;
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ABC 197C」ORXOR</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_c">Link</a>.</p>  
+<p>二进制枚举暴力算。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+long long n,a[30],b[30];
+int main(){
+    scanf(&quot;%lld&quot;,&amp;n);for(long long i=1;i&lt;=n;++i){scanf(&quot;%lld&quot;,&amp;a[i]);}
+    long long up=(1&lt;&lt;n),ans=1e18;
+    for(long long i=0;i&lt;=up;++i){
+        long long ct=1;
+        b[ct]=a[1];
+        for(long long j=2;j&lt;=n;++j)if(((i&gt;&gt;(j-1))&amp;1)^((i&gt;&gt;(j-2))&amp;1))b[++ct]=a[j];else b[ct]|=a[j];
+        long long tmp=0;
+        for(long long j=1;j&lt;=ct;++j)tmp^=b[j];
+        ans=min(ans,tmp);
+    }
+    printf(&quot;%lld\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ABC 197D」Opposite</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_d">Link</a>.</p>  
+<p>数学题，不会，而且读不太懂题。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">// Oops, something went wrong.
+</code></pre>
+
+
+</details>
+
+<h1>「ABC 197E」Traveler</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_e">Link</a>.</p>  
+<p>这个题看起来就很 <em>关路灯</em>。</p>  
+<p>对于每一种颜色（这里的颜色是指我们已经收集完了上一种颜色，正在收集的颜色），我们不可能走过而不拾。</p>  
+<p>于是收完一种颜色后，我们一定是这种颜色的的最左 / 右边。</p>  
+<p>然后就可以 DP 了；设 $f_{i,0\text{ or }1}$ 为拾 $i$-th 颜色，在左 / 右，转移显然。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">/*
+Denote f[i][0/1] for the minimum time, that we finish collecting the i-th color and we're at the left/right (0/1) endpoint.
+f[i][0]=min( f[las][0]+Dist( R[las],L[i] ),f[las][1]+Dist( L[las],L[i] ) )+R[i]-L[i];
+f[i][1]=min( f[las][0]+Dist( R[las],R[i] ),f[las][1]+Dist( L[las],R[i] ) )+R[i]-L[i];
+*/
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const LL INF=1e18;
+int n;
+LL f[200010][2],L[200010],R[200010];
+int main()
+{
+    scanf(&quot;%d&quot;,&amp;n);
+    for( int i=1;i&lt;=n;++i ) L[i]=INF,R[i]=-INF;
+    for( int i=1;i&lt;=n;++i )
+    {
+        LL pos;
+        int color;
+        scanf( &quot;%lld %d&quot;,&amp;pos,&amp;color );
+        L[color]=min( pos,L[color] );
+        R[color]=max( pos,R[color] );
+    }
+    #define Dist( x,y ) ( LL( abs( ( x )-( y ) ) ) )
+    for( int i=1,las=0;i&lt;=n+1;++i )
+    {
+        if( L[i]!=INF )
+        {
+            f[i][0]=min( f[las][0]+Dist( R[las],L[i] ),f[las][1]+Dist( L[las],L[i] ) )+R[i]-L[i];
+            f[i][1]=min( f[las][0]+Dist( R[las],R[i] ),f[las][1]+Dist( L[las],R[i] ) )+R[i]-L[i];
+            las=i;
+        }
+    }
+    printf( &quot;%lld\n&quot;,f[n+1][1] );
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ABC 197F」Construct a Palindrome</h1>  
+<p><a href="https://atcoder.jp/contests/abc197/tasks/abc197_f">Link</a>.</p>  
+<p>相当于是从 $1$ 和 $n$ 同时走，每次走字母一样的边，直接双向 BFS 即可。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define turn(c) ((c)-'a')
+#define fs first
+#define sc second
+const int INF=1e9;
+vector&lt;int&gt; suf[1010][26];
+int n,m,ans=INF,vis[1010][1010];
+struct node
+{
+    int fs,sc,val;
+    node(int A=0,int B=0,int C=0){fs=A,sc=B,val=C;}
+};
+queue&lt;node&gt; q;
+int main()
+{
+    // freopen(&quot;in.in&quot;,&quot;r&quot;,stdin);
+    // freopen(&quot;my.out&quot;,&quot;w&quot;,stdout);
+    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+    vis[1][n]=1;
+    for(int i=1;i&lt;=m;++i)
+    {
+        int x,y;
+        scanf(&quot;%d %d&quot;,&amp;x,&amp;y);
+        char c=getchar();
+        while(c&lt;'a' || c&gt;'z')   c=getchar();
+        suf[x][turn(c)].emplace_back(y);
+        suf[y][turn(c)].emplace_back(x);
+    }
+    q.emplace(node(1,n,0));
+    while(!q.empty())
+    {
+        int one=q.front().fs,ano=q.front().sc,lav=q.front().val;
+        q.pop();
+        if(lav==ans)    return printf(&quot;%d\n&quot;,ans&lt;&lt;1),0;
+        for(int i=0;i&lt;26;++i)
+        {
+            for(int exone:suf[one][i])
+            {
+                for(int exano:suf[ano][i])
+                {
+                    if(exone==ano || exano==one)    return printf(&quot;%d\n&quot;,lav&lt;&lt;1|1),0;
+                    if(exone==exano)    ans=lav+1;
+                    if(!vis[exone][exano])
+                    {
+                        vis[exone][exano]=1;
+                        q.emplace(node(exone,exano,lav+1));
+                    }
+                }
+            }
+        }
+    }
+    printf(&quot;-1\n&quot;);
+    return 0;
+}
+</code></pre>
+
+
+</details>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

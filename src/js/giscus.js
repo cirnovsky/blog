@@ -1,0 +1,17 @@
+<script
+    src="https://giscus.app/client.js"
+    data-repo="cirnovsky/blog-comments"
+    data-repoId="R_kgDOKmz0Wg"
+    data-category="General"
+    data-categoryId="DIC_kwDOKmz0Ws4Caiud"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactionsEnabled="1"
+    data-emitMetadata="0"
+    data-inputPosition="top"
+    data-theme="transparent_dark"
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+/>

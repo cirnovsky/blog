@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h1>「ARC 113A」A*B*C</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_a">Link</a>.</p>  
+<p>就是算 $\sum_{i=1}^{k}\sum_{j=1}^{\lfloor\frac{k}{i}\rfloor}\lfloor\frac{k}{j\times j}\rfloor$。</p>  
+<p>直接调和级数。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+long long k;
+int main()
+{
+    scanf(&quot;%lld&quot;,&amp;k);
+    long long ans=0;
+    for(long long i=1;i&lt;=k;++i)
+    {
+        for(long long j=1;j&lt;=k/i;++j)   ans+=(k/i/j);
+    }
+    printf(&quot;%lld\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ARC 113B」A\^B\^C</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_b">Link</a>.</p>  
+<p>扩展欧拉定理裸题，$A^{B^{C}}\bmod10=A^{(B^{C}\bmod\varphi(10))+\varphi(10)}\bmod10$。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+long long getphi(long long x)
+{
+    long long res=x;
+    for(long long i=2;i*i&lt;=x;++i)
+    {
+        if(x%i==0)
+        {
+            res=res/i*(i-1);
+            while(x%i==0)   x/=i;
+        }
+    }
+    if(x&gt;1) res=res/x*(x-1);
+    return res;
+}
+long long cqpow(long long bas,long long fur,long long mod)
+{
+    long long res=1;
+    while(fur)
+    {
+        if(fur&amp;1)   res=res*bas%mod;
+        bas=bas*bas%mod;
+        fur&gt;&gt;=1;
+    }
+    return res;
+}
+long long a,b,c;
+int main()
+{
+    scanf(&quot;%lld %lld %lld&quot;,&amp;a,&amp;b,&amp;c);
+    printf(&quot;%lld\n&quot;,cqpow(a,cqpow(b,c,getphi(10))+getphi(10),10));
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ARC 113C」String Invasion</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_c">Link</a>.</p>  
+<p>正序枚举 $i\in[1,n]$，如果满足条件，那么后面的字符串都可以执行操作，则 $ans:=ans+n-i$。</p>  
+<p>当然，由于后面可能存在一个字符就是 $s_{i}$，所以要记录当前操作的字符，特判 $ans:=ans-1$。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#include&lt;cstring&gt;
+int n;
+long long ans;
+char s[200010];
+int main()
+{
+    scanf(&quot;%s&quot;,s+1);
+    n=strlen(s+1);
+    char las=0;
+    for(int i=1;i&lt;=n;++i)
+    {
+        if(i!=n&amp;&amp;s[i]==s[i+1]&amp;&amp;s[i]!=s[i+2]&amp;&amp;s[i]!=las) ans+=n-i,las=s[i];
+        else if(s[i]==las)  --ans;
+    }
+    printf(&quot;%lld\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ARC 113D」Sky Reflector</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_d">Link</a>.</p>  
+<p>显然只要 $\forall i\in[1,m],b_{i}\ge a_{\max}$ 即可，那么枚举 $i\in[1,k]=a_{\max}$，有：  
+$$
+ans=\sum_{i=1}^{k}(i^{n}-(i-1)^{n})\times(k-i+1)^{m}\bmod998244353  
+$$</p>
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+const int mod=998244353;
+long long cqpow(long long bas,int fur)
+{
+    long long res=1;
+    while(fur)
+    {
+        if(fur&amp;1)   res=res*bas%mod;
+        bas=bas*bas%mod;
+        fur&gt;&gt;=1;
+    }
+    return res;
+}
+int n,m,k;
+long long ans;
+int main()
+{
+    scanf(&quot;%d %d %d&quot;,&amp;n,&amp;m,&amp;k);
+    if(n==1)    ans=cqpow(k,m);
+    else if(m==1)   ans=cqpow(k,n);
+    else
+    {
+        for(int i=1;i&lt;=k;++i)   ans=(ans+((cqpow(i,n)-cqpow(i-1,n)+mod)%mod)*cqpow(k-i+1,m)%mod)%mod;
+    }
+    printf(&quot;%lld\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h1>「ARC 113E」Rvom and Rsrev</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_e">Link</a>.</p>  
+<h1>「ARC 113F」Social Distance</h1>  
+<p><a href="https://atcoder.jp/contests/arc113/tasks/arc113_f">Link</a>.</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

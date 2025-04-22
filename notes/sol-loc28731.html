@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="http://222.180.160.110:1024/problem/28731">Link</a>.</p>  
+<p>$\operatorname{Rainyrabbit}$ 是一个数学极好的萌妹子，近期他发现了一个可爱的函数：</p>  
+<p>$$  
+f(n,m,k)=\sum_{d=1}^n d^k\lfloor\dfrac{n}{\operatorname{lcm}(d,m)}\rfloor  
+$$</p>
+<p>其中 $\operatorname{lcm}(d,m)$ 表示 $d$ 和 $m$ 的最小公倍数。</p>  
+<p>她觉得只算这一个函数太单调了于是想要对这个函数求和，给出 $a,b,c$，求：</p>  
+<p>$$  
+\sum_{i=1}^a\sum_{j=1}^b\sum_{k=0}^cf(i,j,k)
+$$</p>
+<p>同时 $\operatorname{I.w.rabbit}$ 固定 $c$ 的值不变，给出 $T$ 组 $a,b$，请回答此时式子对 $998244353$ 取模后的值。</p>  
+<p>算是概括过了额。</p>  
+<h2>Solution</h2>  
+<p>先看 $f$ 怎么把那个烦死的整除去掉。</p>  
+<p>$$  
+\begin{aligned}
+f(n,m,k)&amp;=\sum_{d=1}^{n}d^{k}\lfloor\frac{n}{\text{lcm}(d,m)}\rfloor \  
+&amp;=\sum_{d=1}^{n}d^{k}\lfloor\frac{\frac{n}{d}}{\frac{m}{\gcd(d,m)}}\rfloor \
+&amp;=\sum_{d=1}^{n}d^{k}\lfloor\frac{\frac{n}{d}}{\frac{m}{\gcd(d,m)}}\rfloor \
+\end{aligned}
+$$</p>
+<p>来看 $\lfloor\frac{\frac{n}{d}}{\frac{m}{\gcd(d,m)}}\rfloor$，因为 $\lfloor\frac{a}{b}\rfloor=\sum_{i=1}^{a}[b|i]$，所以 $\lfloor\frac{\frac{n}{d}}{\frac{m}{\gcd(d,m)}}\rfloor=\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}[\frac{m}{\gcd(d,m)}|i]=\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}[m|id]$。所以</p>  
+<p>$$  
+\begin{aligned}
+f(n,m,k)&amp;=\sum_{d=1}^{n}d^{k}\lfloor\frac{\frac{n}{d}}{\frac{m}{\gcd(d,m)}}\rfloor \  
+&amp;=\sum_{d=1}^{n}d^{k}\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}[m|id] \
+&amp;=\sum_{m|i}^{n}\sum_{d|i}d^{k} \
+&amp;=\sum_{m|i}^{n}\sigma_{k}(i) \
+\end{aligned}
+$$</p>
+<p>然后代回原式。  
+$$
+\begin{aligned}
+\sum_{i=1}^{a}\sum_{j=1}^{b}\sum_{k=0}^{c}\sum_{j|d}^{i}\sigma_{k}(d)&amp;=\sum_{k=0}^{c}\sum_{d=1}^{a}\sigma_{k}(d)(a-d+1)\sum_{j=1}^{b}[j|d] \
+\end{aligned}
+$$
+考虑如何计算 $\sum_{k=0}^{c}\sigma_{k}(d)$。把函数又拆回去：  
+$$
+\begin{aligned}
+\sum_{k=0}^{c}\sigma_{k}(d)&amp;=\sum_{w|d}\sum_{k=0}^{c}w^{k}=\sum_{w|d}\frac{w^{c+1}-1}{w-1}
+\end{aligned}
+$$
+最后一步是等比数列求和，然后你就可以调和级数预处理了。具体来说就是线筛的时候筛一下 $w^{c+1}$，这东西是个完全积性函数，你乱筛就行了。</p>  
+<p>设这玩意儿为 $s(d)=\sum_{w|d}\frac{w^{c+1}-1}{w-1}$，原式改写为：  
+$$
+\sum_{d=1}^{a}s(d)(a-d+1)\sum_{j=1}^{b}[j|d] \
+$$
+然后后面那个 sigma 你也可以反过来直接调和级数。还有就是 $b&gt;a$ 的时候没有贡献，所以可以取个 $\min$，这样能多几分。</p>  
+<p>来看看怎么屮多测。</p>  
+<p>和 <em>数表</em> 那道题一样，我们把询问离线下来，以 $b$ 为关键字排序后树状数组。</p>  
+<p>把中间那个系数拆出来，变成：  
+$$
+\sum_{d=1}^{a}(a+1)s(d)-d\times s(d)\sum_{j=1}^{b}[j|d] \
+$$
+前面那个好说，直接来；后面就在树状数组修改时乘上系数即可。</p>  
+<p>综上，维护两个树状数组即可。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+void read(long long &amp;x)
+{
+    x=0;
+    char c=getchar();
+    while(c&lt;'0'||c&gt;'9') c=getchar();
+    while(c&gt;='0'&amp;&amp;c&lt;='9')
+    {
+        x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^'0');
+        c=getchar();
+    }
+}
+void write(long long x)
+{
+    if(x&gt;9) write(x/10);
+    putchar((x%10)^'0');
+}
+const long long mod=998244353;
+struct node
+{
+    long long a,b,ID;
+}nodes[200010];
+struct fenwick
+{
+    #define lowbit(x) ((x)&amp;-(x))
+    long long fen[1000010],mx;
+    void ins(long long x,long long y)
+    {
+        while(x&lt;=mx)
+        {
+            fen[x]=(fen[x]+y)%mod;
+            x+=lowbit(x);
+        }
+    }
+    long long find(long long x)
+    {
+        long long res=0;
+        while(x)
+        {
+            res=(res+fen[x])%mod;
+            x^=lowbit(x);
+        }
+        return res;
+    }
+}onefe,anofe;
+long long t,a,b,c,tag[1000010],prime[1000010],cnt,fu[1000010],exfu[1000010],power[1000010],cur=1,mx,ans[200010];
+bool cmp(node one,node ano)
+{
+    return one.b&lt;ano.b;
+}
+long long cqpow(long long bas,long long fur)
+{
+    long long res=1;
+    while(fur)
+    {
+        if(fur&amp;1)   res=res*bas%mod;
+        bas=bas*bas%mod;
+        fur&gt;&gt;=1;
+    }
+    return res;
+}
+void search(long long x)
+{
+    tag[1]=power[1]=1;
+    for(long long i=2;i&lt;=x;++i)
+    {
+        if(!tag[i])
+        {
+            prime[++cnt]=i;
+            power[i]=cqpow(i,c+1);
+        }
+        for(long long j=1;j&lt;=cnt&amp;&amp;prime[j]*i&lt;=x;++j)
+        {
+            tag[prime[j]*i]=1;
+            power[prime[j]*i]=power[prime[j]]*power[i]%mod;
+            if(i%prime[j]==0)   break;
+        }
+    }
+    fu[1]=(c%mod+1)%mod;
+    for(long long i=2;i&lt;=x;++i) fu[i]=((power[i]-1+mod)%mod)*cqpow(i-1,mod-2)%mod;
+    for(long long i=1;i&lt;=x;++i)
+    {
+        for(long long j=i;j&lt;=x;j+=i)    exfu[j]=(exfu[j]+fu[i])%mod;
+    }
+}
+int main()
+{
+    read(t);
+    read(c);
+    search(1000000);
+    for(long long i=1;i&lt;=t;++i)
+    {
+        read(nodes[i].a);
+        read(nodes[i].b);
+        nodes[i].ID=i;
+        nodes[i].b=min(nodes[i].a,nodes[i].b);
+        mx=max(mx,nodes[i].a);
+    }
+    sort(nodes+1,nodes+t+1,cmp);
+    onefe.mx=anofe.mx=mx;
+    for(long long i=1;i&lt;=mx&amp;&amp;cur&lt;=t;++i)
+    {
+        for(long long j=i;j&lt;=mx;j+=i)
+        {
+            onefe.ins(j,exfu[j]);
+            anofe.ins(j,exfu[j]*j%mod);
+        }
+        while(i==nodes[cur].b)
+        {
+            ans[nodes[cur].ID]=((onefe.find(nodes[cur].a)*(nodes[cur].a+1))%mod-anofe.find(nodes[cur].a)+mod)%mod;
+            cur++;
+        }
+    }
+    for(long long i=1;i&lt;=t;++i)
+    {
+        write(ans[i]);
+        putchar('\n');
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p>&emsp;&emsp;<a href="https://atcoder.jp/contests/abc209/tasks/abc209_f">Link</a>.</p>  
+<p>&emsp;&emsp;有 $n$ 棵树，每棵的高度为 $a(i)$，看到一棵树对答案的贡献为 $a(i-1)+a(i)+a(i+1)$（未定义范围为 $0$），求使得答案最小的砍树顺序的数量。</p>  
+<h2>Solution</h2>  
+<p>&emsp;&emsp;口胡瑇师。不过这个 F 比上次的 Lagrange 插值阳间多了。</p>  
+<p>&emsp;&emsp;考虑每一个元素的贡献次数。发现这个次数的区间是 $[1,3]$，对应树 $i$ 在树 $i-1/i+1$ 之前 / 之后砍倒的情况。</p>  
+<p>&emsp;&emsp;那么我们直接贪心，使得答案最小的砍树顺序一定是：</p>  
+<ul>  
+<li>$a(i)&lt;a(i+1)$ 先砍 $i+1$，再砍 $i$；</li>  
+<li>otherwise：先砍 $i$，再砍 $i+1$。</li>  
+</ul>  
+<p>&emsp;&emsp;然后就可以 DP 仂。设 $f(i,j)$ 为树 $i$ 在是第 $j$ 个被砍的排列数，<strong>注意这里的 $j$ 是相对的</strong>。</p>  
+<ul>  
+<li>$a(i-1)=a(i)$：$f(i,j)=\sum_{k=1}^{i}f(i-1,k)$；</li>  
+<li>$a(i-1)&lt;a(i)$：$f(i,j)=\sum_{k=j}^{i}f(i-1,k)$；</li>  
+<li>$a(i-1)&gt;a(i)$：$f(i,j)=\sum_{k=1}^{j}f(i-1,k)$。</li>  
+</ul>  
+<p>&emsp;&emsp;使用前缀和优化。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+inline ll read() {
+    ll x=0,f=0;
+    char ch=getchar();
+    while(ch&lt;'0'||ch&gt;'9') f|=(ch=='-'),ch=getchar();
+    while(ch&gt;='0'&amp;&amp;ch&lt;='9') x=x*10+(ch&amp;15),ch=getchar();
+    return f?-x:x;
+}
+const int N=4100,MOD=1e9+7;
+ll dp[N][N],sum[N],a[N];
+signed main() {
+    int n=read();
+    for(int i=1; i&lt;=n; ++i) a[i]=read();
+    dp[1][1]=1;
+    for(int i=2; i&lt;=n; ++i) {
+        for(int j=1; j&lt;i; ++j) (sum[j]=sum[j-1]+dp[i-1][j])%=MOD;
+        for(int j=1; j&lt;=i; ++j)
+            if(a[i]==a[i-1]) dp[i][j]=sum[i-1];
+            else if(a[i]&gt;a[i-1]) dp[i][j]=(sum[i-1]-sum[j-1]+MOD)%MOD;
+            else dp[i][j]=sum[j-1];
+    }
+    ll ans=0;
+    for(int i=1; i&lt;=n; ++i) (ans+=dp[n][i])%=MOD;
+    printf(&quot;%lld\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

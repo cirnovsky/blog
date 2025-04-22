@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P2000">Link</a>.</p>  
+<p>概括什么好麻烦哦 w。</p>  
+<h2>Solution</h2>  
+<p>生成函数裸题。</p>  
+<p>把所有情况罗列出来: </p>  
+<p>kkk:</p>  
+<p>金: $1+x^6+x^{12}+\dots=\frac{1}{1-x^6}$</p>  
+<p>木: $1+x+x^2+\dots+x^9=\frac{1-x^{10}}{1-x}$</p>  
+<p>水块: $1+x+x^2+\dots+x^5=\frac{1-x^6}{1-x}$</p>  
+<p>火: $1+x^4+x^8+\dots=\frac{1}{1-x^4}$</p>  
+<p>土: $1+x+x^2+\dots+x^7=\frac{1-x^8}{1-x}$</p>  
+<p>lzn:</p>  
+<p>金: $1+x^2+x^4+\dots=\frac{1}{1-x^2}$</p>  
+<p>木: $1+x=\frac{1-x^2}{1-x}$</p>  
+<p>水: $1+x^8+x^{16}+\dots=\frac{1}{1-x^8}$</p>  
+<p>火: $1+x^{10}+x^{20}+\dots=\frac{1}{1-x^{10}}$</p>  
+<p>土: $1+x+x^2+x^3=\frac{1-x^4}{1-x}$</p>  
+<p>凉心出题人友好的卡了精度并且顺便卡了pypy。所以，人生苦短，Ruby用我</p>  
+
+
+<pre><code class="language-ruby">n = gets.to_i
+print (n + 1) * (n + 2) * (n + 3) * (n + 4) / 24
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

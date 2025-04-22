@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="http://codeforces.com/problemset/problem/1450/E">link。</a></p>  
+<p>首先可以发现，如 $\exists (u, v) \in \mathbf E$，则 $a_u \not \equiv a_v \pmod 2$，那么如果图中存在奇环，则不可能存在解（奇 - 偶 - 奇 矛盾）。那么这就是一个二分图，考虑如何刻画题目中的条件，对于 $a_v = a_u+1$ 型的条件，可以直接用差分约束的方式刻画，即 $a_v \geqslant a_u+1$ 且 $a_v \leqslant a_u+1$；再看到 $\mid a_u - a_v \mid = 1$，则拆成 $-1 \leqslant a_u - a_v \leqslant 1$ 且 $a_u \neq a_v$。</p>  
+<p>因为奇偶性不同，所以 $a_u \neq a_v$ 一定成立，直接用 Floyd-Warshall 算法跑全源最短路即可。最大极差的限制即最长的两点间最短路。</p>  
+
+
+<pre><code class="language-cpp">int n, m, dp[1&lt;&lt;8][1&lt;&lt;8], Fa[2&lt;&lt;8];
+int rt(int x) {
+    while (x != Fa[x]) x = Fa[x] = Fa[Fa[x]];
+    return x;
+}
+void mg(int x, int y) {
+    if (rt(x) != rt(y)) Fa[rt(x)] = rt(y);
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    int x, y, z;
+    cin &gt;&gt; n &gt;&gt; m;
+    iota(Fa, Fa+2*n, 0);
+    memset(dp, 0x3f, sizeof dp);
+    rep(i,n) dp[i][i] = 0;
+    rep(m) {
+        cin &gt;&gt; x &gt;&gt; y &gt;&gt; z;
+        x--, y--;
+        mg(x+n, y), mg(x, y+n);
+        if (z) dp[x][y] = 1, dp[y][x] = -1;
+        else dp[x][y] = dp[y][x] = 1;
+    }
+    rep(i,n) if (rt(i) == rt(i+n)) return cout&lt;&lt;&quot;no\n&quot;, 0;
+    rep(k,n) rep(i,n) rep(j,n) cmin(dp[i][j], dp[i][k]+dp[k][j]);
+    rep(i,n) if (dp[i][i] &lt; 0) return cout&lt;&lt;&quot;no\n&quot;, 0;
+    int ans = -233333333, pos = n;
+    rep(i,n) {
+        int MX = *max_element(dp[i], dp[i]+n);
+        if (MX &gt; ans) ans = MX, pos = i;
+    }
+    cout &lt;&lt; &quot;yes\n&quot; &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+    rep(i,n) cout &lt;&lt; dp[pos][i] &lt;&lt; &quot; \n&quot;[i == n-1];
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

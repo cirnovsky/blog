@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P5300">Link</a>.</p>  
+<p>给定一个 $N \times N$ 的矩阵，她希望求出：</p>  
+<ol>  
+<li>该矩阵的所有子矩阵的 $\texttt{AND}$ 值之和（所有子矩阵 $\texttt{AND}$ 值相加的结果）。</li>  
+<li>该矩阵的所有子矩阵的 $\texttt{OR}$ 值之和（所有子矩阵 $\texttt{OR}$ 值相加的结果）。</li>  
+</ol>  
+<h2>Solution</h2>  
+<p>对于每一个数的每一位，我们单独拉出来构成 $\log$ 个矩阵。</p>  
+<p>对于 $\texttt{AND}$，显然只有全为 $1$ 的子矩阵能产生贡献。</p>  
+<p>对于 $\texttt{OR}$，只有存在 $1$ 的子矩阵才能产生贡献。</p>  
+<p>那么枚举右下角，单调栈统计。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const int MOD=1e9+7;
+int n,pre[1010][1010],stk[1010],top,a[1010][1010],b[1010][1010],ans,exans,mx;
+void work(int k,int t)
+{
+    for(int i=1;i&lt;=n;++i)   for(int j=1;j&lt;=n;++j)   b[i][j]=((a[i][j]&gt;&gt;k)&amp;1);
+    for(int i=1;i&lt;=n;++i)
+    {
+        for(int j=1;j&lt;=n;++j)
+        {
+            if(b[i][j]==t)  pre[i][j]=pre[i-1][j]+1;
+            else    pre[i][j]=0;
+        }
+    }
+    int siz=0;
+    for(int i=1;i&lt;=n;++i)
+    {
+        siz=top=0,stk[1]=stk[0]=0;
+        for(int j=1;j&lt;=n;++j)
+        {
+            while(top&amp;&amp;pre[i][stk[top]]&gt;=pre[i][j]) siz=(siz-LL(pre[i][stk[top]])*(stk[top]-stk[top-1])%MOD+MOD)%MOD,--top;
+//          siz=(siz+LL(pre[i][j])*(j-stk[top])%MOD)%MOD,stk[++top]=j;
+            siz+=LL(pre[i][j])*(j-stk[top]),stk[++top]=j;
+            if(t)   ans=(ans+LL(siz)*(1&lt;&lt;k)%MOD)%MOD;
+            else    exans=(exans+(LL(i)*j%MOD-LL(siz))*(1&lt;&lt;k)%MOD+MOD)%MOD;
+        }
+    }
+}
+inline char fgc()
+{
+    static char buf[1&lt;&lt;17],*p=buf,*q=buf;
+    return p==q&amp;&amp;(q=buf+fread(p=buf,1,1&lt;&lt;17,stdin),p==q)?EOF:*p++;
+}
+void read(int &amp;hhh)
+{
+    int x=0;
+    char c=fgc();
+    while(!isdigit(c))  c=fgc();
+    while(isdigit(c))   x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^'0'),c=fgc();
+    hhh=x;
+}
+void write(int x,char las='\n')
+{
+    static int stk[100],top=0;
+    do stk[++top]=x%10,x/=10; while(x);
+    while(top)  putchar(stk[top--]^'0');
+    putchar(las);
+}
+int main()
+{
+    read(n);
+    for(int i=1;i&lt;=n;++i)   for(int j=1;j&lt;=n;++j)   read(a[i][j]),mx=max(mx,a[i][j]);
+    for(int k=0;(1ll&lt;&lt;k)&lt;=mx;++k)   work(k,0),work(k,1);
+    write(ans,' '),write(exans);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

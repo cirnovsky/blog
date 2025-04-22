@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://codeforces.com/problemset/problem/1621/G">link。</a></p>  
+<p>一个 dp（拜谢 ly）和切入点都略有不同的做法，并不需要观察啥性质。</p>  
+<p>原问题针对子序列进行规划，自然地想到转而对前缀进行规划。接下来我们考虑一个前缀 $[1, i]$ 以及一个 $j \in [1, i]$ 对答案的贡献，可以写出 $\displaystyle \textit{cont}(j \text{ to } [1, i]) = [\max_{i &lt; k} a_k &gt; a_j] \times \text{the number of LISs containing } j \text{ indexed in } [1, i]$。</p>  
+<p>这个可以做两个 dp 解决，第一个好解决的静态 dp，即结束在 $j$ 的 LIS 方案数；第二个 dp 有些烦：$j$ 在动，我们考虑的前缀 $[1, i]$ 也在移动。</p>  
+<p>到这里其实换一下着手点第二个 dp 就变成静态的了，即考虑位置 $j$，直接算 $(j, i)$ 的贡献即可，其中 $i$ 是「满足 $a_i &gt; a_j$ 的最大的 $i$」。于是我们的第二个 dp 就可以被描述为从 $j$ 开始，结束在 $i$ 之前（不包括，因为要保证 $\max_{i &lt; k} a_k &gt; a_j$）的 LIS 方案数。答案即 $\displaystyle \sum_{i=1}^n dp_i \times dp'_i$。</p>  
+<p>第二个 dp 的具体实现，还需要一个辅助的 dp，其定义是第二个 dp 的定义中去掉贡献范围上界（即 $i$），转移画画图就能理解了。</p>  
+<p>用下 Fenwick Tree 啥的就能 $O(n \log_2 n)$ 了。</p>  
+
+
+<pre><code class="language-cpp">using modint = modint1000000007;
+int n, a[200100], pos[200100], id[200100];
+modint dp[200100], dp2[200100], dp3[200100], bit[200100], bit2[200100];
+void cng(int x, modint w) {
+    for (; x&lt;=n; x+=x&amp;-x) {
+        bit[x] += w;
+    }
+}
+modint qry(int x) {
+    modint res = 0;
+    for (; x; x-=x&amp;-x) {
+        res += bit[x];
+    }
+    return res;
+}
+void cng2(int x, modint w) {
+    for (; x&lt;=n; x+=x&amp;-x) {
+        bit2[x] += w;
+    }
+}
+modint qry2(int x) {
+    modint res = 0;
+    for (; x; x-=x&amp;-x) {
+        res += bit2[x];
+    }
+    return res;
+}
+void solve() {
+    cin &gt;&gt; n;
+    bastr&lt;int&gt; dsc;
+    for (int i=1; i&lt;=n; ++i) {
+        cin &gt;&gt; a[i];
+        dsc += a[i];
+    }
+    sort(dsc.begin(), dsc.end());
+    dsc.erase(unique(dsc.begin(), dsc.end()), dsc.end());
+    for (int i=1; i&lt;=n; ++i) {
+        a[i] = lower_bound(dsc.begin(), dsc.end(), a[i])-dsc.begin()+1;
+    }
+    iota(id+1, id+n+1, 1);
+    sort(id+1, id+n+1, [&amp;](int x, int y) {
+        return a[x] &lt; a[y];
+    });
+    for (int i=1,now=n; i&lt;=n; ++i) {
+        while (now &gt;= 1 &amp;&amp; a[now] &lt;= a[id[i]]) {
+            now--;
+        }
+        pos[id[i]] = now;
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        bit[i] = 0;
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        dp[i] = qry(a[i]-1)+1;
+        cng(a[i], dp[i]);
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        bit[i] = bit2[i] = 0;
+    }
+    modint ans = 0;
+    for (int i=n; i&gt;=1; --i) {
+        dp2[i] = qry(cs(dsc)-a[i])+1;
+        cng(cs(dsc)-a[i]+1, dp2[i]);
+        if (pos[i] &gt; i) {
+            dp3[i] = qry(cs(dsc)-a[pos[i]]+1)+qry2(a[pos[i]]-1)-qry2(a[i]);
+            cng2(a[i], dp3[i]);
+        }
+        else {
+            dp3[i] = 0;
+        }
+        ans += dp[i]*dp3[i];
+    }
+    cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

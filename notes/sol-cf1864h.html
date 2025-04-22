@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>没想到吧，还有题解更新。</p>  
+<p><a href="https://codeforces.com/problemset/problem/1864/H">Problem statement.</a></p>  
+<p>首先朴素的做法即令 $f(x)$ 为从 $x$ 出发到达任一 $\geqslant n$ 的数的期望步数，转移显然是 $f(x) = \frac 12(f(x+1) + f(2x))+1$。</p>  
+<p>令 $k=\frac 12$，几何级数 $a\times k^{bx}={a,b}$。根据官方题解的说法，对于 $x\in[l,r]$，可以假设 $f(x) = \sum{a,b}$。这样假设是合理的，因为根据归纳法，若区间 $[2l, 2r]$ 可以以同样的形式表示，那么 $[l,r]$ 也可以，且 $f(x\in[n, 2n])={0, 0}$。这样做的好处是，从 $[n, 2n]$ 推到 $[1, 1]$，需要维护的 ${a,b}$ 数量线性增长，又因为是折半递推，总的级数会很少。</p>  
+<p>然后再经过大力化式子，能得到  
+$$
+f(x) = {k^{r+1}f(r+1)-k^r+\sum\frac{ak^{(2b+1)(r+1)+1}}{k^{2b+1}-1},-1 }+{2,0}+\sum{\frac{-ak}{k^{2b+1}-1},2b }  
+$$
+这部分官解最后的结果写错了（$(2b+1)(r+1)\rightarrow (2b+1)(n+1)$）， 惩罚每一个不老实推式子的人。</p>  
+<p>需要注意的细节是折半递推区间的选择方式。</p>  
+<p><a href="https://codeforces.com/problemset/submission/1864/314185587">完整代码可见此处。</a></p>  
+
+
+<pre><code class="language-cpp">using mint = atcoder::modint998244353;
+int main() {
+    std::cin.tie(nullptr)-&gt;sync_with_stdio(0);
+    int T; cin &gt;&gt; T;
+    const mint k = mint(2).inv();
+    while (T--) {
+        ll n; rd(n);
+        vector&lt;mint&gt; P, Q;
+        mint zero = 0;
+        if (n == 1) {
+            cout &lt;&lt; &quot;0\n&quot;;
+            continue;
+        }
+        for (ll l = (n + 1) / 2, r = max(1ll, n - 1);; l = (l + 1) / 2, r /= 2) {
+            mint tmp = zero, tmp2 = 0;
+            for (int i = 0, upp = Q.size(); i &lt; upp; ++i) {
+                tmp += Q[i] * k.inv().pow(1ll &lt;&lt; i).pow(r + 1);
+                tmp2 += Q[i] * k.inv().pow((1ll &lt;&lt; (i + 1)) - 1).pow(r + 1) * k / (k.inv().pow((1ll &lt;&lt; (i + 1)) - 1) - 1);
+            }
+            P.push_back(k.pow(r + 1) * tmp - k.pow(r) + tmp2 + zero * k.pow(r + 2) / (k - 1));
+            for (int i = 0, upp = Q.size(); i &lt; upp; ++i)
+                P.push_back(-Q[i] * k / (k.inv().pow((1ll &lt;&lt; (i + 1)) - 1) - 1));
+            zero = 2 - zero * k / (k - 1);
+            Q = P;
+            vector&lt;mint&gt;().swap(P);
+            if (l == 1)
+                break;
+        }
+        for (int i = 0, upp = Q.size(); i &lt; upp; ++i)
+            zero += Q[i] * k.inv().pow(1ll &lt;&lt; i);
+        cout &lt;&lt; zero.val() &lt;&lt; &quot;\n&quot;;
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

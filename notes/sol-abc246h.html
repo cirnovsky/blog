@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://atcoder.jp/contests/abc246/tasks/abc246_h">link。</a></p>  
+<p>平时基本打不到 ex，这个 ex 还是比较 ez 的，但也有些需要注意的地方。</p>  
+<p>考虑 dp 规划前缀，设 $f[i][0/1]$ 表示前缀 $[1, i]$ 否是选 $i$ 的方案数，这个明显会算重，注意到前缀 $[1, i)$ 凑不出来的字符串可以通过前缀 $[1, i)$ 再 append 一个 $0/1$ 凑出来，所以我们改描述 $f[i][0/1]$ 为前缀 $[1, i]$ 凑出结尾为 $\texttt0/\texttt1$ 的方案数。</p>  
+<p>转移分 $s_i$ 是 $\texttt{0}/\texttt{1}/\texttt{?}$ 讨论，放到矩阵上做 ddp 即可，如果令 $f[0][0] = f[0][1] := 1$ 可以缩减矩阵的规模至 $2$，但是这样答案就要减 $2$。</p>  
+<p>这类 dp 通常对当前元素的直接规划会算重，可以将目光放到已经构造出的结果上，再结合结论（其实比较 ad hoc 了）避免算重。</p>  
+
+
+<pre><code class="language-cpp">// s[i]=0: dp[i][0] = dp[i-1][0]+dp[i-1][1], dp[i][1] = dp[i-1][1]
+// s[i]=1: dp[i][0] = dp[i-1][0], dp[i][1] = dp[i-1][0]+dp[i-1][1]
+// s[i]=?: dp[i][0/1] = dp[i-1][0]+dp[i-1][1]
+using modint = modint998244353;
+using mt = static_matrix&lt;modint, 2&gt;;
+int n, q, ms, mh;
+char s[100100];
+vi&lt;mt&gt; md;
+mt get(int i) {
+    return mt({{1, s[i-1] == '1' || s[i-1] == '?'}, {s[i-1] == '0' || s[i-1] == '?', 1}});
+}
+void upd(int now) {
+    md[now] = md[now*2]*md[now*2+1];
+}
+void mdf(int now, const mt&amp; w) {
+    md[now += ms-1] = w;
+    for (int i=1; i&lt;=mh; ++i) {
+        upd(now&gt;&gt;i);
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; q &gt;&gt; s;
+    mh = ceil(log2(n)), ms = 1&lt;&lt;mh;
+    md = vi&lt;mt&gt;(ms*2, mt::id());
+    for (int i=1; i&lt;=n; ++i) {
+        md[i+ms-1] = get(i);
+    }
+    for (int i=ms-1; i&gt;=1; --i) {
+        upd(i);
+    }
+    char c;
+    for (int x; q--;) {
+        cin &gt;&gt; x &gt;&gt; c;
+        s[x-1] = c;
+        mdf(x, get(x));
+        mt ret = mt({{1, 1}, {0, 0}})*md[1];
+        cout &lt;&lt; (ret[0][0]+ret[0][1]-2).val() &lt;&lt; &quot;\n&quot;;
+    }
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

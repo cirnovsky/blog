@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>Singapore is proud of many unique identities, at which we can have a rough glance in the movie Long Long Time Ago 2. The movie follows three families, representing three major ethnicities in Singapore – Indians, Malays and Chinese. Their love and hate, pain and euphoria are a vivid epitome of Singapore society.</p>  
+<p>One of Singapore’s defining identities is multiculturalism. Singapore blends cultures from various sources. For instance, in the movie, the three families, racially distinct with each other, got along well, their children playing together without barriers, the Indian and the Chinese even ending up married. Besides Asian cultures, western cultures such as rock n’ roll are also part of the melt pot. Despite different religions, different rituals for prayer, different gods to worship, whenever they gathered, they showed intimacy like a united one. That is why Singapore can be a melt pot of cultures – people there show respect to each other, so anyone can integrate in well.</p>  
+<p>Family is also heavily valued in Singapore. This is evident in some frequent phrases from the movie, such as “be not calculative”, “because we’re family” and “family share” etc. Admah, who was estranged with his parents due to emotional turmoil, eventually returned to the side of Osman, revealing the deep-rooted family bonds in Singapore. In fact, in Singapore family is like a miniature society where everyone has a significant role. For instance, Shamugan always commanded his wife to “do your work in the kitchen”, indicating that everyone is part of the family and must put in due efforts. Henceforth, it is evident that Singaporeans highly value families.</p>  
+<p>Beyond family, Singaporeans also value their country – the family in a big picture. When Zhao Di already had a kampung, she still worked to get a flat in response to the government’s appeal. When the three families were asked to leave their beloved kampungs for flats by the government, they displayed pure acceptance and adaptability. These examples demonstrated Singaporeans’ collective mindset, which allows the country to work unitedly, thus propelling efficient development.</p>  
+<p>In conclusion, as a multicultural country, Singapore attracts people to value both their own families and their common family. The city state both shocks and attracts the world. The shocking part is how its government and people work as an efficient integration and the attractive part is the beautiful humanity landscape created by the harmony amongst diverse races and cultures. While this essay only explores one side of Singapore’s unique identities, this amazing Asian country still holds many dimensions of uniqueness left to be discovered.</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

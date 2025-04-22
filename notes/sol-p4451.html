@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P4451">Link</a>.</p>  
+<p>求</p>  
+<p>$$  
+\sum\prod_{i=1}^{m}F_{a_{i}},(m&gt;0,a_{1},\cdots a_{m}&gt;0,\sum a_{i}=n)
+$$</p>
+<h2>Solution</h2>  
+<p>这是一篇不用 $\mathbf{OGF}$ 的题解。</p>  
+<p>设 $f_{i}$ 为 $i$ 的 $\operatorname{lqp}$ 拆分值。</p>  
+<p>然后有显然的过不了递推式：</p>  
+<p>$$  
+f_{n}=\begin{cases}  
+1,n=0 \  
+\displaystyle
+\sum_{i=0}^{n-1}F_{n-i}\times f_{i},n\neq0
+\end{cases}
+$$</p>
+<p>然后传统艺能错位相减操作一下：</p>  
+<p>$$  
+\begin{aligned}
+f_{n}&amp;=\sum_{i=0}^{n-1}F_{n-i}\times f_{i} \  
+f_{n-1}&amp;=\sum_{i=0}^{n-2}F_{n-i-1}\times f_{i} \  
+f_{n-2}&amp;=\sum_{i=0}^{n-3}F_{n-i-2}\times f_{i}  
+\end{aligned}
+\Longrightarrow
+\begin{aligned}
+f_{n}-f_{n-1}-f_{n-2}&amp;=\sum_{i=0}^{n-1}F_{n-i}\times f_{i}-\sum_{i=0}^{n-2}F_{n-i-1}\times f_{i}-\sum_{i=0}^{n-3}F_{n-i-2}\times f_{i} \  
+f_{n}-f_{n-1}-f_{n-2}&amp;=(F_{2}-F_{1})\times f_{n-2}+F_{1}\times f_{n-1}  
+\end{aligned}
+\
+\downarrow \
+f_{n}=2f_{n-1}+f_{n-2}  
+$$</p>
+<p>递推公式有了，然后矩阵快速幂：</p>  
+<p>$$  
+\begin{bmatrix}
+f_{n} \  
+f_{n-1}  
+\end{bmatrix}
+=\begin{bmatrix}
+2f_{n-1}+f_{n-2} \  
+f_{n-1}  
+\end{bmatrix}
+=\begin{bmatrix}
+f_{n-1} \  
+f_{n-2}  
+\end{bmatrix}
+\times\begin{bmatrix}
+2 &amp; 1 \  
+1 &amp; 0  
+\end{bmatrix}
+$$</p>
+<p>这样就可以做了（吗？）：</p>  
+<p>（code？）</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#define mod ( 1000000007 )
+
+using namespace std;
+typedef long long LL;
+
+template&lt;typename _T, typename _P&gt;
+_T qkpow( _T bas, _T one, _P fur ){
+    _T res = one;
+    while( fur != 0 ){
+        if( fur % 2 == ( _P )1 )    res = bas * res;
+        bas = bas * bas;
+        fur /= 2;
+    }
+    return res;
+}
+
+template&lt;typename _T&gt;
+_T add( _T x, _T y ){ if( y &gt;= mod )    y %= mod; x += y; if( x &gt;= mod )    x -= mod; return x; }
+
+struct bigInt : vector&lt;int&gt;{
+    bigInt &amp;check( ){
+        while( ! empty( ) &amp;&amp; ! back( ) ) pop_back( );
+        if( empty( ) )  return *this;
+        for( unsigned i = 1; i &lt; size( ); ++ i ){ ( *this )[i] += ( *this )[i - 1] / 10; ( *this )[i - 1] %= 10; }
+        while( back( ) &gt;= 10 ){ push_back( back( ) / 10 ); ( *this )[size( ) - 2] %= 10; }
+        return *this;
+    }
+    bigInt( int tpN = 0 ){ push_back( tpN ); check( ); }
+};
+istream &amp;operator &gt;&gt; ( istream &amp;is, bigInt &amp;tpN ){
+    string s;
+    is &gt;&gt; s; tpN.clear( );
+    for( int i = s.size( ) - 1; i &gt;= 0; --i ) tpN.push_back( s[i] - '0' );
+    return is;
+}
+ostream &amp;operator &lt;&lt; ( ostream &amp;os, const bigInt &amp;tpN ){
+    if( tpN.empty( ) )  os &lt;&lt; 0;
+    for( int i = tpN.size( ) - 1; i &gt;= 0; --i ) os &lt;&lt; tpN[i];
+    return os;
+}
+bool operator != ( const bigInt &amp;one, const bigInt &amp;another ){
+    if( one.size( ) != another.size( ) )    return 1;
+    for( int i = one.size( ) - 1; i &gt;= 0; --i ){
+        if( one[i] != another[i] )  return 1;
+    }
+    return 0;
+}
+bool operator == ( const bigInt &amp;one, const bigInt &amp;another ){
+    return ! ( one != another );
+}
+bool operator &lt; ( const bigInt &amp;one, const bigInt &amp;another ){
+    if( one.size( ) != another.size( ) )    return one.size( ) &lt; another.size( );
+    for( int i = one.size( ) - 1; i &gt;= 0; --i ){
+        if( one[i] != another[i] )  return one[i] &lt; another[i];
+    }
+    return 0;
+}
+bool operator &gt; ( const bigInt &amp;one, const bigInt &amp;another ){ return another &lt; one; }
+bool operator &lt;= ( const bigInt &amp;one, const bigInt &amp;another ){ return ! (one &gt; another ); }
+bool operator &gt;= ( const bigInt &amp;one, const bigInt &amp;another ){ return ! (one &lt; another ); }
+bigInt &amp;operator += ( bigInt &amp;one, const bigInt &amp;another ){
+    if( one.size( ) &lt; another.size( ) ) one.resize(another.size( ) );
+    for( unsigned i = 0; i != another.size( ); ++ i ) one[i] += another[i];
+    return one.check( );
+}
+bigInt operator + ( bigInt one, const bigInt &amp;another ){ return one += another; }
+bigInt &amp;operator -= ( bigInt &amp;one, bigInt another ){
+    if( one &lt; another ) swap( one, another );
+    for( unsigned i = 0; i != another.size( ); one[i] -= another[i], ++ i ){
+        if( one[i] &lt; another[i] ){
+            unsigned j = i + 1;
+            while( ! one[j] ) ++ j;
+            while( j &gt; i ){ -- one[j]; one[--j] += 10; }
+        }
+    }
+    return one.check( );
+}
+bigInt operator - ( bigInt one, const bigInt &amp;another ){ return one -= another; }
+bigInt operator * ( const bigInt &amp;one, const bigInt &amp;another ){
+    bigInt tpN;
+    tpN.assign( one.size( ) + another.size( ) - 1, 0 );
+    for( unsigned i = 0; i != one.size( ); ++ i ){
+        for( unsigned j = 0; j != another.size( ); ++ j ) tpN[i + j] += one[i] * another[j];
+    }
+    return tpN.check( );
+}
+bigInt &amp;operator *= ( bigInt &amp;one, const bigInt &amp;another ){ return one = one * another; }
+bigInt divMod( bigInt &amp;one, const bigInt &amp;another ){
+    bigInt ans;
+    for( int t = one.size( ) - another.size( ); one &gt;= another; -- t ){
+        bigInt tpS;
+        tpS.assign( t + 1, 0 );
+        tpS.back( ) = 1;
+        bigInt tpM = another * tpS;
+        while( one &gt;= tpM ){ one -= tpM; ans += tpS; }
+    }
+    return ans;
+}
+bigInt operator / ( bigInt one, const bigInt &amp;another ){ return divMod(one, another ); }
+bigInt &amp;operator /= ( bigInt &amp;one, const bigInt &amp;another ){ return one = one / another; }
+bigInt &amp;operator %= ( bigInt &amp;one, const bigInt &amp;another ){ divMod( one, another ); return one; }
+bigInt operator % ( bigInt one, const bigInt &amp;another ){ return one %= another; }
+
+struct matrixS{
+    int mat[2][2];
+    matrixS( int x = 0 ){ memset( mat, x, sizeof( mat ) ); }
+    matrixS operator * ( const matrixS &amp;another ) const{
+        matrixS res;
+        for( int i = 0; i &lt; 2; ++ i ){
+            for( int j = 0; j &lt; 2; ++ j ){
+                for( int k = 0; k &lt; 2; ++ k )   res.mat[i][j] = add( ( LL )res.mat[i][j], ( LL )mat[i][k] * another.mat[k][j] );
+            }
+        }
+        return res;
+    }
+} unit, erng;
+
+bigInt N;
+
+void progressBaseInformation( ){
+    int unitS[2][2] = { { 1, 0 }, { 0, 1 } };
+    memcpy( unit.mat, unitS, sizeof( unitS ) );
+    int erngS[2][2] = { { 2, 1 }, { 1, 0 } };
+    memcpy( erng.mat, erngS, sizeof( erngS ) );
+}
+
+signed main( ){
+    ios::sync_with_stdio( 0 ); cin.tie( 0 ); cout.tie( 0 );
+    progressBaseInformation( );
+    cin &gt;&gt; N; cout &lt;&lt; qkpow( erng, unit, N ).mat[1][0] &lt;&lt; '\n';
+    return 0;
+}
+</code></pre>
+<p>不，凉心出题人友好地卡了高精的常数，于是你打开题解，发现 $f_{n}=f_{n\bmod (10^{9}+6)}$，于是你又行了。</p>  
+<h1>$\mathcal{Code}$</h1>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+#define mod ( 1000000007 )
+
+using namespace std;
+typedef long long LL;
+
+template&lt;typename _T&gt;
+void read( _T &amp;x ){
+    x = 0; char c = getchar( ); _T f = 1;
+    while( c &lt; '0' || c &gt; '9' ){ if( c == '-' ) f = -1; c = getchar( ); }
+    while( c &gt;= '0' &amp;&amp; c &lt;= '9' ){ x = ( ( x &lt;&lt; 3 ) + ( x &lt;&lt; 1 ) + ( c &amp; 15 ) ) % ( mod - 1 ); c = getchar( ); }
+    x *= f;
+}
+
+template&lt;typename _T&gt;
+void write( _T x ){
+    if( x &lt; 0 ){ putchar( '-' ); x = -x; }
+    if( x &gt; 9 ) write( x / 10 );
+    putchar( x % 10 + '0' );
+}
+
+template&lt;typename _T, typename _P&gt;
+_T qkpow( _T bas, _T one, _P fur ){
+    _T res = one;
+    while( fur != 0 ){
+        if( fur % 2 == ( _P )1 )    res = bas * res;
+        bas = bas * bas;
+        fur /= 2;
+    }
+    return res;
+}
+
+template&lt;typename _T&gt;
+_T add( _T x, _T y ){ if( y &gt;= mod )    y %= mod; x += y; if( x &gt;= mod )    x -= mod; return x; }
+
+struct matrixS{
+    int mat[2][2];
+    matrixS( int x = 0 ){ memset( mat, x, sizeof( mat ) ); }
+    matrixS operator * ( const matrixS &amp;another ) const{
+        matrixS res;
+        for( int i = 0; i &lt; 2; ++ i ){
+            for( int j = 0; j &lt; 2; ++ j ){
+                for( int k = 0; k &lt; 2; ++ k )   res.mat[i][j] = add( ( LL )res.mat[i][j], ( LL )mat[i][k] * another.mat[k][j] );
+            }
+        }
+        return res;
+    }
+} unit, erng;
+
+LL N;
+
+void progressBaseInformation( ){
+    int unitS[2][2] = { { 1, 0 }, { 0, 1 } };
+    memcpy( unit.mat, unitS, sizeof( unitS ) );
+    int erngS[2][2] = { { 2, 1 }, { 1, 0 } };
+    memcpy( erng.mat, erngS, sizeof( erngS ) );
+}
+
+signed main( ){
+    progressBaseInformation( );
+    read( N ); write( qkpow( erng, unit, N ).mat[1][0] ), putchar( '\n' );
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>&emsp;&emsp;有这样一种说法，讲的是宇宙万物是由话语体系派生出来的附属概念，人通过不断在客观世界与主观思路之间建立映射，即为实验观察结果创造出新的词汇，从而使得人类总的智慧不断增长．但是我们很容易发现这种观点的逻辑错误：它主张将主观概念放置于客观之前，却在详细论述的时候指出主观首先要观测到客观的物理现象才会处于主动地在旧识与新知之间建立联系．</p>  
+<p>&emsp;&emsp;举例来说，两个不同语言的人进行交流，他们之间建立映射的方式就可能是通过辞典；而最初两个不同语言的人进行接触，他们之间建立映射的方式就几乎只能靠共通的肢体语言．考察两人之间建立映射的过程，我们会发现总是有提前共享的思路，这是否说明有一些先验的思路在支持？如果是，我们能够通过不完全的归类将其列举出来吗？我认为这是两个比较有趣的问题．</p>  
+<p>&emsp;&emsp;可以发现，无论存在先验思路与否，在这样的一个过程中，贯穿始终的是「我」这一角色．苏格拉底那广为人知的猜想在这里得到了一个比较合理的动机．在这个过程中，接受新知的一端或多或少都会因发出一端对内容的陈述不恰当、或更富主动性的欺瞒行为而错误地对接收内容进行判断，可无论如何，就算一切事物都在欺骗「我」，始终需要一个「我」在某个地方接受事物的欺骗．这便是对「我思故我在」动机的一个并不高妙的近似．</p>  
+<p>&emsp;&emsp;我们不妨将主题讲得更宽泛一些．在信息时代潮浪中显得尤其突出的声音在试图声明如今的社会满富压力，这将年轻的一代置于奋斗与放弃两种介质之间上下浮动，以至于苦不堪言的地步．由上述的内容，你似乎可以找到一个打破浮动局面的想法：极端唯心主义．需要注意的是，这里的唯心主义并不是常言的 Idealism，而是 Spiritualism．这个概念最早出现在 <em>Paradox Interactive</em> 的 <em>Stellaris</em>．原作中此设定出现在 <em>Fallen Empire</em> 一地，Spiritualism 与 Idealism 并没有更明显的区别，至少我没有洞见到．这样的一个想法，会让你更坚定对精神愉悦的追求，而不是更偏向于较普世的观点．当然，该想法在很久以前就被批判的体无完肤．反对派所持的主要观点即，精神总是需要肉体支持的，许多精神层面的愉悦要求物质层面的支持，如正版书籍．而在信息时代这个较为特殊的背景下，这个看似无懈可击的观点出现了一丝裂缝：只要你愿意，Pirate Sites 能够提供廉价甚至免费的服务．而这又引发了一场矛盾，这场矛盾的参与者可以被更具体地描述为开源与闭源之争．以前不久的 Z-Library 锁定事件 [^1] 为例，版权商与海盗站点之间的斗争，自然是以间接形式手握枪杆子与面包的版权商获得了最为直接的胜利——两名创始人被逮捕．然而若是你足够了解互联网那一套，你就能知道 Z-Library 并没有第一时间失效，而是以其他的形式勉强生存了下来．而这些不便明说的形式，正是互联网精神的体现．更为完全的例子，则是与 Z-Library 相同性质的 Library Gensis．Library Gensis 采用 .torrent 形式分享书籍文献文件，则进一步地说明互联网的去中心化以及它更为伟大的「开放、平等、协作、快速、共享」的理念．</p>  
+<p>&emsp;&emsp;早在互联网伊始，上一段叙述的内容就已经被提出了．著名的 <em>A Declaration of the Independence  of Cyberspace</em> [^2] 已经通过更加冒进的方式表达了我想表达的内容．</p>  
+<p>&emsp;&emsp;一言以蔽之，在你依然拥有表达、阅读的自由与喜好时，尽管由于政治的接入，它们可能不会被广泛的承认，你又为何在担忧明天的面包呢？</p>  
+<p>[^1]:<a href="https://en.wikipedia.org/wiki/Z-Library">Z-Library - Wikipedia</a>  
+[^2]:<a href="https://en.wikipedia.org/wiki/A_Declaration_of_the_Independence_of_Cyberspace">A Declaration of the Independence of Cyberspace - Wikipedia</a></p>
+<div align = "right">二〇二二年十一月二十日于重庆静屋</div>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

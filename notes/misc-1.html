@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>区间加法可以差分的原因是 $\Delta_i = \Delta_{i-1}$，所以令 $\textit{d}<em>i = \Delta_i-\Delta</em>{i-1}$，对于一个一般点的 $\Delta_i = f({\Delta_1, \dots, \Delta_{i-1}})$，我们可以令 $\textit{d}<em>i = \Delta_i-f({\Delta_1, \dots, \Delta</em>{i-1}})$。</p>  
+<p>这得出了广义一点的差分。那么前缀和的方式即 $\textit{d}<em>i \gets d_i+f({d, \dots, d</em>{i-1}})$（其实这里的 $f$ 改为下标的函数可能更准确一点）。</p>  
+<p>举个例子，对区间 $[l, r]$ 中的 $i \in [l, r]$ 操作 $a_i \gets a_i+f_{i-l+1}$，其中 $f$ 是 Fibonacci 数列，也就是说 $f_i = f_{i-1}+f_{i-2}$，差分数组即 $d_i = a_i-a_{i-1}-a_{i-2}$，操作即 $d_l \gets d_l+1$，$d_{r+1} \gets d_{r+1}+f_{r-l+2}$，$d_{r+2} \gets d_{r+2}+f_{r-l+1}$，前缀和方法即 $d_i \gets d_i+d_{i-1}+d_{i-2}$。</p>  
+<p>差分是导函数的一个演绎，即令研究范围中的 $\epsilon = 1$ 而得来的（在实数中令 $\epsilon = \lim\limits_{\frac{1}{x} \rightarrow +\infty}x$ 做差分即可得到导函数）。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

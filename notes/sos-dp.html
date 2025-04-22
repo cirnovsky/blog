@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>本文差不多算是翻译了一遍 <a href="https://codeforces.com/blog/entry/45223">CF blog?id=45223</a> ~~就是抄了一遍~~，看不懂可以去原文。</p>  
+<p>当然我的翻译并不是完全遵从原文的。</p>  
+<h1>Part. 1 Introduction</h1>  
+<p>平时我们怎么求高维前缀和？容斥对吧，复杂度多少？$\mathcal{O}(n^{d}\times2^{d})$（$n$ 每维元素个数，默认同阶，$d$ 维度）。</p>  
+<p>这好吗？这不好。</p>  
+<h1>Part. 2 Ying Wen</h1>  
+<p>For 个 example，二维，容斥这么写对吧？</p>  
+
+
+<pre><code class="language-cpp">for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;j++)  f[i][j]=f[i-1][j]+f[i][j-1]-f[i-1][j-1]+a[i][j];
+}
+</code></pre>
+<p>事实上我们还可以分维来前缀和：</p>  
+
+
+<pre><code class="language-cpp">for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;j++)  f[i][j]=f[i-1][j]+a[i][j];
+}
+for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;++j)  f[i][j]=f[i][j-1]+a[i][j];;
+}
+</code></pre>
+<p>复杂度多少？$\mathcal{O}(n^{d}\times d)$，厉害吧。</p>  
+<p>对应到 SOS DP（sum over subsets），我们把每一维整到集合上去来求子集和。</p>  
+<p>形式化地定义子集和，即给定一个有 $2^{n}$ 个元素的数组 $A$，定义函数：</p>  
+<p>$$  
+\text{sub-sum}(mask)=\sum_{i\subseteq mask}A_{i}
+$$</p>
+<p>写成位运算的形式：</p>  
+<p>$$  
+\text{sub-sum}(mask)=\sum_{mask\text{ &amp; }i=i}A_{i}
+$$</p>
+<p>学过 FWT 的巨佬可能发现了什么，可是这和我没关系。</p>  
+<p>看不懂？没关系，我们有严谨的代码定义：</p>  
+
+
+<pre><code class="language-cpp">for(int mask = 0;mask &lt; (1&lt;&lt;N); ++mask){
+    for(int i = 0;i &lt; (1&lt;&lt;N); ++i){
+        if((mask&amp;i) == i){
+            F[mask] += A[i];
+        }
+    }
+}
+</code></pre>
+<p>这是什么垃圾复杂度，用高维前缀和可得以下代码：</p>  
+
+
+<pre><code class="language-cpp">for (int j = 0; j &lt; n; ++j) {
+  for (int i = 0; i &lt; (1 &lt;&lt; n); ++i) {
+    if((i &gt;&gt; j) &amp; 1)  f[i] += f[i ^ (1 &lt;&lt; j)];
+  }
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

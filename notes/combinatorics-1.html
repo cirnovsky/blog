@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>题都是好题，会的没几道。</p>  
+<p><strong><a href="https://codeforces.com/problemset/problem/367/E">「codeforces - 367E」Sereja and Intervals</a></strong>：注意到 $l_x &lt; l_y$ 且 $r_x &lt; r_y$，以及 $n \leqslant \sqrt{10^5}$，然后分配左右端点 dp。</p>  
+
+
+<pre><code class="language-cpp">using mint = modint1000000007;
+/*
+n &lt;= sqrt
+sort all ranges
+构造结果长相: l_i &lt; l_j, r_i &lt; r_j
+dp[i][l][r] [1, i], l ok, r ok l &gt;= r
+if i != x:
+  dp[i][l][r] = dp[i-1][l-1][r]
+*/
+simple&lt;mint&gt; sip;
+int n, m, X;
+mint dp[2][320][320];
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; m &gt;&gt; X;
+    if (n &gt; m) {
+        cout &lt;&lt; &quot;0\n&quot;;
+        return 0;
+    }
+    dp[0][0][0] = 1;
+    for (int i=1,turn=1; i&lt;=m; ++i,turn^=1) {
+        for (int u=0; u&lt;=n+1; ++u) {
+            for (int v=0; v&lt;=n+1; ++v) {
+                dp[turn][u][v] = 0;
+            }
+        }
+        for (int u=0; u&lt;=n; ++u) {
+            for (int v=0; v&lt;=u; ++v) {
+                if (u &gt; v &amp;&amp; i != X) dp[turn][u][v+1] += dp[turn^1][u][v];
+                dp[turn][u+1][v] += dp[turn^1][u][v];
+                dp[turn][u+1][v+1] += dp[turn^1][u][v];
+                if (i != X) dp[turn][u][v] += dp[turn^1][u][v];
+            }
+        }
+    }
+    cout &lt;&lt; (sip.gfac(n)*dp[m&amp;1][n][n]).val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="http://codeforces.com/problemset/problem/140/E">「codeforces - 140E」New Year Garland</a></strong>：我觉得挺难想到的，但是被某些 alpha 人喷水题了 233。考虑没有行间限制的情况，你写出了 $m \times (m-1)^{\sum l_i}$，然后发现没用。写出一行的 dp，设 $f[i][j]$ 表示摆 $i$ 个球，用恰好 $j$ 种颜色，可以写出 $g[i][j] = g[i-1][j-1]+g[i-1][j] \times (j-1)$。然后考虑行间限制，设 $f[i][j]$ 表示前 $i$  行的方案数，其中第 $i$ 行用了恰好 $j$ 种颜色，同样可以写出 $\displaystyle f[i][j] = \binom{m}{j} \times j! \times g[l[i]][j] \times \left(\sum f[i-1][k]\right) - g[l[i]][j] \times f[i-1][j]$。</p>  
+
+
+<pre><code class="language-cpp">using mint = dynamic_modint&lt;-1&gt;;
+int n, m, p, a[1000100];
+mint P[1000100], rnm[5100], tuiq[5100], sum = mint::raw(1), ans, fct[5100], sl[5100][5100];
+signed main() {
+    // ios::sync_with_stdio(0);
+    // cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; m &gt;&gt; p;
+    mint::set_mod(p);
+    P[0] = 1;
+    for (int i=1; i&lt;=m; ++i) P[i] = P[i-1]*(m-i+1);
+    for (int i=1; i&lt;=n; ++i) {
+        cin &gt;&gt; a[i];
+    }
+    sl[0][0] = 1;
+    for (int i=1; i&lt;=5000; ++i) {
+        for (int j=1,up=min(i, m); j&lt;=up; ++j) {
+            sl[i][j] = sl[i-1][j-1]+sl[i-1][j]*(j-1);
+        }
+    }
+    fct[0] = 1;
+    for (int i=1; i&lt;=5000; ++i) fct[i] = fct[i-1]*i;
+    for (int i=1,turn=1; i&lt;=n; ++i,turn^=1) {
+        mint tmp(0);
+        for (int j=1; j&lt;=a[i]; ++j) {
+            rnm[j] = P[j]*sum*sl[a[i]][j]-sl[a[i]][j]*tuiq[j]*fct[j];
+            tmp += rnm[j];
+        }
+        sum = tmp;
+        for (int j=1; j&lt;=a[i-1]; ++j) tuiq[j] = 0;
+        for (int j=1; j&lt;=a[i]; ++j) tuiq[j] = rnm[j];
+    }
+    cout &lt;&lt; sum.val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="https://codeforces.com/problemset/problem/1523/E">「codeforces - 1523E」Crypto Lights</a></strong>：trick：设概率。但是还是没有理解什么时候需要设概率。设出 $f_i$ 表示放了恰好 i 台灯停止的概率，则期望答案为 $\sum f_i \times i$，这是个经典形式，可以写成 f_i 的后缀和，那么期望答案为 $\sum s_i$，其中 s_i 是 f_i 的后缀和。考虑 s_i 有什么意义，一个比较容易想到的结论是 s_i 是放了 i-1 台灯依然合法 的概率。比如 n = 7，s_5 = f_5 + f_6 + f_7。注意到概率可加等价于各事件独立，这里再考察 f_i 的组合意义：放了恰好 i 台灯的停止的概率，所以取 f_{i+1} 的条件就是没有取到 f_i（$1-f_i$，即放了 i 台灯依然合法，这和 f_i 的定义完全矛盾）因此各事件是独立的。</p>  
+<p>这就引出了另一个 trick：如果有概率的和式，可以考虑事件是否独立从而构造组合意义。</p>  
+<p>那么可以写出 $\displaystyle s_i = \frac{\binom{n-(i-2)\times (k-1)}{i-1}}{\binom{n}{i-1}}$。</p>  
+
+
+<pre><code class="language-cpp">using mint = modint1000000007;
+int n, k;
+mint fct[100100], ifct[100100];
+void init(int maxn) {
+  fct[0] = 1;
+  for (int i=1; i&lt;=maxn; ++i) fct[i] = fct[i-1]*i;
+  ifct[maxn] = fct[maxn].inv();
+  for (int i=maxn-1; i&gt;=0; --i) ifct[i] = ifct[i+1]*(i+1);
+}
+mint gc(int x, int y) {
+  if (x &lt; y) return 0;
+  return fct[x]*ifct[x-y]*ifct[y];
+}
+void mcase() {
+  cin &gt;&gt; n &gt;&gt; k;
+  mint ans = 1;
+  for (int i=2; i&lt;=n; ++i) {
+    if (n-(i-2)*(k-1) &lt;= 0) break;
+    ans += gc(n-(i-2)*(k-1), i-1)/gc(n, i-1);
+  }
+  cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  init(1e5);
+  int tt;
+  for (cin&gt;&gt;tt; tt--;) mcase();
+}
+</code></pre>
+<p><strong><a href="https://codeforces.com/problemset/problem/1237/F">「codeforces - 1237F」Balanced Domino Placements</a></strong>：第一步就不会了，太弱小了。分 $n$ 的奇偶讨论可以玩出来最优决策就是随便走，后手必胜，证明还没研究。然后发现终局一定是在 ABABA... 或者 BABAB... 的中间填一些空格，注意连续的空格不能超过一个，否则就是非法终局。</p>  
+<p>那么枚举 $x$ 表示一共走了多少步。</p>  
+
+
+<pre><code class="language-cpp">using mint = modint1000000007;
+int n;
+mint fct[1000100], ifct[1000100];
+void init(int const maxn) {
+    fct[0] = 1;
+    for (int i=1; i&lt;=maxn; ++i) fct[i] = fct[i-1]*i;
+    ifct[maxn] = fct[maxn].inv();
+    for (int i=maxn-1; i&gt;=0; --i) ifct[i] = ifct[i+1]*(i+1);
+}
+mint gc(int x, int y) {
+    if (x &lt; y) return 0;
+    return fct[x]*ifct[x-y]*ifct[y];
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    init(1e6);
+    cin &gt;&gt; n;
+    mint ans = 0;
+    for (int i=0; i&lt;n; ++i) {
+        if (i%2) {
+            ans += gc(i+1, n-i-1)*fct[i];
+        }
+    }
+    ans *= n*2;
+    cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="http://codeforces.com/problemset/problem/1295/F">「codeforces - 1295F」 Good Contest</a></strong>：写成计数，缩减值域，用给出的区间把值域划分成 $O(n)$ 个部分（通常在通过取出区间左右端点混着排序划分值域或者下标啥的的时候，需要将区间变成左闭右开，避免一个元素同时属于多个划分后的部分），把第 j 个部分记作 $I_j = [d_j, d_{j+1})$。如果你设 $f[i][j]$ 表示决策了 i 个元素，最后一个元素放在 $I_j$，就会发现 $f[i+1][j+t]$ 好转移，然而 $I_j$ 内部的转移很难办。这里涉及一个 trick：整体转移，即一次决策把当前决策层做完。对于这个题，我们就改 $f[i][j]$ 的描述为「决策了 i 个元素，下一个元素放到 $I_j$ 后面的部分去的方案数」，那么转移即 $f[i+k][j+t] \gets f[i+k][j+t] + f[i][j] \times \binom{|I_{j+t}|+k-1}{k}$，后面那个组合数即在 $I_{j+t}$ 这个区间中选出一个由 k 个元素构成的不严格递增子序列的方案数（插板）。</p>  
+<p>但是这个转移我写了过不了啊，也不知道为什么，总之不求甚解抄了下飘飘蛋的转移…… 周末记得回档。</p>  
+
+
+<pre><code class="language-cpp">/*
+有些题你两年前做不来两年后还是做不来
+肯定写成计数
+用区间把值域划成 O(n) 段
+要把区间搞成 [)
+f[i][j] 决策了 i 个元素, last element 在段 j
+f[i+1][j+t] += f[i][j] * len[j+t]
+分开 dp
+f[i][j] 是后继不在段 j 的方案数
+g[i][j][k] 是后继在段 j, 第 i 个元素放在段 j 的位置 k 的方案数
+g[i+1][j][k] += g[i][j][k] * (realR[j] - k)
+不行
+k 记录了就寄
+trick: 把一个决策阶段一下考虑完
+那么 f[i][j], 考虑了前缀 [1, i], 都在前 j 段, 并且后继不能属于 j 方案数
+f[i+k][j+t] += f[i][j] * C(len[j+t]+k-1, k)
+I_{j+t} \subseteq Q_{i+k}
+满足 i+k 的范围包括了 j
+预处理组合数
+f[i][j] += f[k][j-t] * C(len[j]+i-k-1, i-k), k from i-1 to 0
+*/
+using mint = modint998244353;
+int n, xl[233], xr[233], len[233], dc[233], tot;
+mint dp[233][233], c[233], iv[233];
+mint gc(int x, int y) {
+    mint res = 1;
+    for (int i=x; i&gt;=x-y+1; --i) res *= i;
+    for (int i=y; i&gt;=1; --i) res *= iv[i];
+    return res;
+}
+signed main() {
+    // ios::sync_with_stdio(0);
+    // cin.tie(0);
+    cin &gt;&gt; n;
+    iv[0] = iv[1] = 1;
+    for (int i=2; i&lt;233; ++i) iv[i] = -998244353/i*iv[998244353%i];
+    for (int i=1; i&lt;=n; ++i) {
+        cin &gt;&gt; xl[i] &gt;&gt; xr[i], xr[i]++;
+        len[i] = xr[i]-xl[i];
+        dc[++tot] = xl[i], dc[++tot] = xr[i];
+    }
+    sort(dc+1, dc+tot+1);
+    tot = unique(dc+1, dc+tot+1)-dc-1;
+    for (int i=1; i&lt;=n; ++i) {
+        xl[i] = lower_bound(dc+1, dc+tot+1, xl[i])-dc;
+        xr[i] = lower_bound(dc+1, dc+tot+1, xr[i])-dc;
+    }
+    xl[0] = 1, xr[0] = tot+1;
+    for (int i=1; i&lt;=tot; ++i) dp[0][i] = 1;
+    for (int i=1; i&lt;=n; ++i) {
+        for (int j=xl[i]; j&lt;xr[i]; ++j) {
+            for (int k=i; k&gt;=1; --k) {
+                if (j &lt; xl[k] || j &gt;= xr[k]) break;
+                dp[i][j] += dp[k-1][j+1]*gc(dc[j+1]-dc[j]+i-k, i-k+1);
+            }
+        }
+        for (int j=tot-1; j&gt;=1; --j) dp[i][j] += dp[i][j+1];
+    }
+    mint dt = 1;
+    for (int i=1; i&lt;=n; ++i) dt *= len[i];
+    cout &lt;&lt; (dp[n][1]*dt.inv()).val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="http://codeforces.com/problemset/problem/1188/C">「codeforces - 1188C」Array Beauty</a></strong>：不容易一眼观察到，可以对数组排序（总之是子序列，根据美丽值的计算方式可知可以排序，其他贡献形式不知道可不可以，记得后面思考）。考虑反过来算贡献系数（这也是一个 trick，尤其是这种长得一脸坐标轴的贡献），即对每一个 $x$，算出 $f(x)$ 表示「美丽值至少为 x 的子序列的数量」，则答案为 $\sum f(x)$。设 $f[i][j]$ 表示「长度为 i 的子序列的数量，满足其以 a_j 结尾」，朴素转移比较平凡，注意到转移中「$a_j - a_u \geqslant x$」的限制，又结合对原数组的排序，可以知道这个有单调性，于是前缀和优化即可。最后还要注意到 $x$ 最大取 $\frac{10^5}{k-1}$。 证明考虑贡献形式是 min，比如我要让 10^5 - 1 作为 min，又要有恰好 k 个元素，必然不可能。</p>  
+
+
+<pre><code class="language-cpp">/*
+算贡献
+排序
+钦定至少 x 的beauty
+f[len][j] subsequences with length len, ending with a[j]
+f[len][j] += f[len-1][u], a[j] - a[u] &gt;= x, u &lt; j
+1e5/(k-1)
+*/
+using mint = modint998244353;
+int n, kk, a[1100], ptr[1100];
+mint ans, dp[1100][1100], cum[1100];
+mint getans(int X) {
+  for (int i = 0; i &lt;= kk; ++i) {
+    for (int j = 0; j &lt;= n; ++j) dp[i][j] = 0;
+  }
+  ptr[0] = 0;
+  for (int i=1; i&lt;=n; ++i) {
+    ptr[i] = ptr[i-1];
+    while (a[i]-a[ptr[i]+1] &gt;= X) ptr[i]++;
+  }
+  for (int i=0; i&lt;=n; ++i) dp[1][i] = 1;
+  for (int i=1; i&lt;=n; ++i) cum[i] = cum[i-1]+dp[1][i];
+  for (int i=2; i&lt;=kk; ++i) {
+    for (int j=1; j&lt;=n; ++j) dp[i][j] = cum[ptr[j]];
+    for (int j=1; j&lt;=n; ++j) cum[j] = cum[j-1]+dp[i][j];
+  }
+  mint res = 0;
+  for (int i=1; i&lt;=n; ++i) res += dp[kk][i];
+  return res;
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin &gt;&gt; n &gt;&gt; kk;
+  for (int i=1; i&lt;=n; ++i) cin &gt;&gt; a[i];
+  sort(a+1, a+n+1);
+  for (int i=1; i&lt;=100000/(kk-1); ++i) ans += getans(i);
+  cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="https://codeforces.com/problemset/problem/1237/F">「codeforces- 1237F」Balanced Domino Placements</a></strong>：很有启发性的一道题目。首先需要把问题转化为二分图匹配。如果不考虑题目中 k 个既有骨牌的限制，并把骨牌看作一个 $1 \times 1$ 的物体，我在 $(i, j)$ 上放一个骨牌就意味着行 i 和列 j 匹配了（which is a common trick）。现在把骨牌还原成 $1 \times 2$ 或 $2 \times 1$ 的物体，则问题这样转化：「把行看作一个长度为 $n$ 的纸带，列看作长度为 $m$ 的纸带，那么原题即在行和列纸带中选出一些长度为 2 的黑条（黑条之间不交不包含），纸带中的黑条与另一条纸带中的空位匹配」。可以看出这个二分图上的一个匹配就对应原问题的一个方案。那么写出答案的式子：$\displaystyle \sum_{i = 0}^{\lfloor\frac{n}{2}\rfloor} \sum_{j = 0}^{\lfloor\frac{m}{2}\rfloor} \binom{n-2i}{j} \binom{m-2j}{ i} f_i g_j i! j!$，其中 f_i，g_i 表示在纸带上选出 $i$ 个长度为 2 的黑条的方案数，直接 dp 即可。</p>  
+
+
+<pre><code class="language-cpp">/*
+考虑成行和列匹配
+两行, 每次占两个, 可以不占, 匹配另一行的空格
+答案: \sum_{i=1}^{n/2} \sum_{j=1}^{m/2} C(n-2*i, j) * C(m-2*j, i) * f[i] * g[j]
+f[i][j] = f[i-1][j]+f[i-2][j-1]
+*/
+using mint = modint998244353;
+bool row[3700], col[3700];
+int n, m, r, c, kk;
+mint f[3700][3700], g[3700][3700], fct[3700], ifct[3700];
+void init(int maxn) {
+  fct[0] = 1;
+  for (int i = 1; i &lt;= maxn; ++i) fct[i] = fct[i-1]*i;
+  ifct[maxn] = fct[maxn].inv();
+  for (int i = maxn-1; i &gt;= 0; --i) ifct[i] = ifct[i+1]*(i+1);
+}
+mint perm(int x, int y) {
+  if (x &lt; y) return 0;
+  return fct[x]*ifct[x-y];
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin &gt;&gt; n &gt;&gt; m &gt;&gt; kk;
+  init(max(n, m));
+  for (int i = 1, r1, r2, c1, c2; i &lt;= kk; ++i) {
+    cin &gt;&gt; r1 &gt;&gt; c1 &gt;&gt; r2 &gt;&gt; c2;
+    row[r1] = row[r2] = col[c1] = col[c2] = 1;
+  }
+  r = count(row+1, row+n+1, 0), c = count(col+1, col+m+1, 0);
+  f[0][0] = 1;
+  row[0] = col[0] = 1;
+  for (int i = 1; i &lt;= n; ++i) {
+    for (int j = 0; j &lt;= i/2; ++j) {
+      f[i][j] = f[i-1][j];
+      if (i &gt;= 2 &amp;&amp; j &gt; 0 &amp;&amp; !row[i] &amp;&amp; !row[i-1]) f[i][j] += f[i-2][j-1];
+    }
+  }
+  g[0][0] = 1;
+  for (int i = 1; i &lt;= m; ++i) {
+    for (int j = 0; j &lt;= i/2; ++j) {
+      g[i][j] = g[i-1][j];
+      if (i &gt;= 2 &amp;&amp; j &gt; 0 &amp;&amp; !col[i] &amp;&amp; !col[i-1]) g[i][j] += g[i-2][j-1];
+    }
+  }
+  mint ans = 0;
+  for (int i = 0; i &lt;= r/2; ++i) {
+    for (int j = 0; j &lt;= c/2; ++j) ans += perm(r-2*i, j)*perm(c-2*j, i)*f[n][i]*g[m][j];
+  }
+  cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="https://codeforces.com/problemset/problem/1111/D">「codeforces - 1111D」Destroy the Colony</a></strong>：背包还能删除…… 长见识了。在没有 x 和 y 的限制的时候，容易看出这就是个计数背包，考虑本质不同的询问个数只有 $|\Sigma|^2$ 个，考虑可持久化询问，那么时间复杂度就是 $O(|\Sigma|^3 \times n)$。计数 01 背包本质上是一个高维前缀和，那么如果钦定一个维度不选，那么我们完全可以删除这个温度的影响。$O(|\Sigma|^2 n)$</p>  
+<p>兔兔 2h 写了个复杂度一样但是跑满 T 了的 dp，默哀。</p>  
+
+
+<pre><code class="language-cpp">using mint = modint1000000007;
+int n, q, freq[60];
+char s[100100];
+mint dp[100100], fct[100100], ifct[100100], ans[60][60];
+void init(int mxn) {
+  fct[0] = 1;
+  for (int i = 1; i &lt;= mxn; ++i) fct[i] = fct[i-1]*i;
+  ifct[mxn] = fct[mxn].inv();
+  for (int i = mxn-1; i &gt;= 0; --i) ifct[i] = ifct[i+1]*(i+1);
+}
+int inline trs(char c) {
+  if ('a' &lt;= c &amp;&amp; c &lt;= 'z') return c-'a'+1;
+  return 26+c-'A'+1;
+}
+void precompute() {
+  dp[0] = 1;
+  for (int i = 1; i &lt;= 52; ++i) {
+    if (!freq[i]) continue;
+    for (int j = n; j &gt;= freq[i]; --j) dp[j] += dp[j-freq[i]];
+  } // dp[s]: 使用所有物品凑出 s 的方案数.
+  mint prm = fct[n/2].pow(2);
+  for (int i = 1; i &lt;= 52; ++i) {
+    if (freq[i]) prm *= ifct[freq[i]];
+  }
+  for (int i = 1; i &lt;= 52; ++i) {
+    if (!freq[i]) continue;
+    for (int j = freq[i]; j &lt;= n; ++j) dp[j] -= dp[j-freq[i]];
+    for (int j = i+1; j &lt;= 52; ++j) {
+      if (!freq[j]) continue;
+      for (int k = freq[j]; k &lt;= n; ++k) dp[k] -= dp[k-freq[j]];
+      ans[i][j] = ans[j][i] = 2*dp[n/2];
+      for (int k = n; k &gt;= freq[j]; --k) dp[k] += dp[k-freq[j]];
+    }
+    for (int j = n; j &gt;= freq[i]; --j) dp[j] += dp[j-freq[i]];
+  }
+  for (int i = 1; i &lt;= 52; ++i) ans[i][i] = dp[n/2];
+  for (int i = 1; i &lt;= 52; ++i) {
+    for (int j = 1; j &lt;= 52; ++j) ans[i][j] *= prm;
+  }
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin &gt;&gt; s &gt;&gt; q;
+  n = strlen(s);
+  init(n);
+  for (int i = 0; i &lt; n; ++i) freq[trs(s[i])]++;
+  precompute();
+  for (int x, y; q--;) {
+    cin &gt;&gt; x &gt;&gt; y;
+    cout &lt;&lt; ans[trs(s[x-1])][trs(s[y-1])].val() &lt;&lt; &quot;\n&quot;;
+  }
+}
+</code></pre>
+<p><strong><a href="http://codeforces.com/problemset/problem/814/E">「codeforces - 814E」An unavoidable detour for home</a></strong>：unweighted shortest paths 问题，考虑 bfs 树的性质，即非树边在同层或相邻层。因为这题说最短路唯一，所以非树边只能在同层，又因为编号大的点到 1 的最短路大于等于编号小的点到 1 的最短路，因此每一层的编号是有序的。于是 dp 即可，当我们加入点 $u$ 的时候，我们会关心上一层和当前层能够连边的结点数，这就是状态了。</p>  
+
+
+<pre><code class="language-cpp">/*
+yuanlai unweighted, rnm, tq
+bfs trees
+non-tree arcs take places in the same levels
+add vertexes from 1 to n
+dp[u][i][j][k][l]: adding vertex u, i vertexes with 1 out-degree in the previous level,
+  j vertexes with 2 out-degree in the previsou level, k ... 1 .. current, l ... 2 ... current
+fuck
+*/
+using mint = modint1000000007;
+int n, d[233];
+mint dp[2][51][51][51][51];
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin &gt;&gt; n;
+  for (int i = 1; i &lt;= n; ++i) cin &gt;&gt; d[i];
+  int cur = 1;
+  dp[cur][d[1] == 2][d[1] == 3][d[2] == 2][d[2] == 3] = 1;
+  for (int u = 2; u &lt; n; ++u) {
+    memset(dp[cur^1], 0, sizeof dp[cur^1]);
+    for (int i = 0; i &lt;= n; ++i) {
+      for (int j = 0; i+j &lt;= n; ++j) {
+        for (int k = 0; i+j+k &lt;= n; ++k) {
+          for (int l = 0; i+j+k+l &lt;= n; ++l) {
+            if (dp[cur][i][j][k][l].val() == 0) continue;
+            mint upd = dp[cur][i][j][k][l];
+            if (i == 0 &amp;&amp; j == 0) dp[cur][k][l][0][0] += upd;
+            else {
+              for (int qwq = 0; qwq &lt;= 1; ++qwq) {
+                int i_ = i, j_ = j, mc;
+                if (qwq == 0) { // use 1-plug vertexes in the previous level
+                  mc = i, i_--;
+                  if (i == 0) continue;
+                } else if (qwq == 1) { // use 2-plug vertexes in the previous level
+                  mc = j, i_++, j_--;
+                  if (j == 0) continue;
+                }
+                // i_: amount of vertexes with ... in the previous level
+                // category: d[u+1]
+                if (d[u+1] == 2) {
+                  dp[cur^1][i_][j_][k+1][l] += upd*mc;
+                  if (k &gt; 0) dp[cur^1][i_][j_][k-1][l] += upd*mc*k;
+                  if (l &gt; 0) dp[cur^1][i_][j_][k+1][l-1] += upd*mc*l;
+                } else {
+                  dp[cur^1][i_][j_][k][l+1] += upd*mc;
+                  if (k &gt; 0) dp[cur^1][i_][j_][k][l] += upd*mc*k;
+                  if (l &gt; 0) dp[cur^1][i_][j_][k+2][l-1] += upd*mc*l;
+                  if (k &gt; 1) dp[cur^1][i_][j_][k-2][l] += upd*mc*k*(k-1)/2;
+                  if (l &gt; 1) dp[cur^1][i_][j_][k+2][l-2] += upd*mc*l*(l-1)/2;
+                  if (k &gt; 0 &amp;&amp; l &gt; 0) dp[cur^1][i_][j_][k][l-1] += upd*mc*k*l;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    cur ^= 1;
+  }
+  cout &lt;&lt; dp[cur][0][0][0][0].val() &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+<p><strong><a href="https://acm.hdu.edu.cn/showproblem.php?pid=7060">「hdu - 7060」Separated Number</a></strong></p>  
+<p>我就会你妈个这</p>  
+<p>$$  
+C+\sum_{k=2}^K \left(\sum_{i=1}^n s_i \left( 10^{n-i} \times \binom{i-1}{k-1} + \sum_{j=0}^{n-i} 10^j\times \binom{n-j-2}{k-2} \right) \right)  
+$$</p>
+<p>其中 $C$ 是 k=1 时的答案，推导过程就考虑一个位置 i 作为 10^k 时的贡献系数即可。注意到如果我们能求出组合数前缀和，这个问题就解决了。</p>  
+<p>推导 $\displaystyle f_n(m) = \sum_{i=0}^m \binom{n}{i}$。考虑 $f_n$ 和 $f_{n-1}$ 的关系，放到杨辉三角上，有 $f_n(m) = f_{n-1}(m)-\binom{n-1}{m}$。</p>  
+
+
+<pre><code class="language-cpp">/*
+Ans for k=1+\sum_{k=2}^K \left(\sum_{i=1}^n s_i \left( 10^{n-i} \times \binom{i-1}{k-1} + \sum_{j=0}^{n-i} 10^j\times \binom{n-j-2}{k-2} \right) \right) \\
+我就会你妈个这
+*/
+using mint = modint998244353;
+mint operator &quot;&quot;_m(ull x) {
+    return mint(x);
+}
+mint fct[1000100], ifct[1000100], pw[1000100], pre[1000100], rep[1000100];
+int n, kk;
+char s[1000100];
+void init(int up) {
+  pw[0] = 1;
+  for (int i = 1; i &lt;= up; ++i) pw[i] = pw[i-1]*10;
+  fct[0] = 1;
+  for (int i = 1; i &lt;= up; ++i) fct[i] = fct[i-1]*i;
+  ifct[up] = fct[up].inv();
+  for (int i = up-1; i &gt;= 0; --i) ifct[i] = ifct[i+1]*(i+1);
+}
+mint comb(int x, int y) {
+  if (x &lt; 0 || y &lt; 0 || x &lt; y) return 0;
+  return fct[x]*ifct[x-y]*ifct[y];
+}
+void mcase() {
+  cin &gt;&gt; kk &gt;&gt; s;
+  n = strlen(s);
+  pre[0] = kk-1 &gt;= 0;
+  rep[0] = kk-2 &gt;= 0;
+  for (int i = 1; i &lt;= n; ++i) rep[i] = rep[i-1]*2-comb(i-1, kk-2);
+  for (int i = 1; i &lt;= n; ++i) pre[i] = pre[i-1]*2-comb(i-1, kk-1);
+  mint ans, sum;
+  for (int i = n; i &gt;= 1; --i) {
+    if (i &lt; n) sum += rep[i-1]*pw[n-i-1];
+    ans += (s[i-1]-'0')*(pre[i-1]*pw[n-i]+sum);
+  }
+  cout &lt;&lt; ans.val() &lt;&lt; &quot;\n&quot;;
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  init(1e6);
+  int tt;
+  for (cin &gt;&gt; tt; tt--;) mcase();
+}
+</code></pre>
+<p><strong><a href="https://acm.hdu.edu.cn/showproblem.php?pid=6822">「hdu - 6822」Paperfolding</a></strong>：有意思。显然 [L R] 和 [U D] 对答案的影响是独立的，在现实中模拟可知答案是 $\frac{\sum (2^i+1)(2^{n-i}+1)\binom{n}{i}}{2^n}$，等差数列求和即可。</p>  
+
+
+<pre><code class="language-cpp">/*
+有意思
+至少四片, 考虑怎样的切痕会断
+影响独立
+分开算
+*/
+using mint = modint998244353;
+mint operator &quot;&quot;_m(ull x) {
+    return mint(x);
+}
+void mcase() {
+  ll n; cin &gt;&gt; n;
+  cout &lt;&lt; ((2_m).pow(n).inv()*2*(3_m).pow(n)+(2_m).pow(n)+1).val() &lt;&lt; &quot;\n&quot;;
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  int tt;
+  for (cin &gt;&gt; tt; tt--;) mcase();
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

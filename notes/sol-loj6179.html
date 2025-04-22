@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://loj.ac/p/6179">link。</a></p>  
+<p>我们想要求出 $\varphi(ij)=\varphi(i)\varphi(j)C$ 中的常数。先研究 $i=p^a$，$j=p^b$ 的情况，即 $\varphi(p^{a+b})=\varphi(p^a)\varphi(p^b)C=p^{a+b}\frac{p-1}{p}=p^{a+b}\left(\frac{p-1}{p}\right)^2C\Longrightarrow C=\frac{p}{p-1}$。现在把情况推广到 $i,j\in\mathbb{N_\ast}$ 的情况，就，你想象一下，前面 $p^{a+b}$ 变成了一个普通合数，后面的 $\frac{p}{p-1}$ 变成了一坨连乘，可以肉眼看出结论 $\varphi(ij)=\varphi(i)\varphi(j)\frac{(i,j)}{\varphi((i,j))}$。</p>  
+<p>把这个带入原式，得到一个套路的的式子，这里直接给出最后的形式 $\displaystyle\sum_{T=1}^{\min(n,m)}\sum_{d\mid T}\frac{d}{\varphi(d)}\mu\left(\frac{T}{d}\right)\sum_{i=1}^{\lfloor\frac{n}{T}\rfloor}\varphi(i\times T)\sum_{j=1}^{\lfloor\frac{m}{T}\rfloor}\varphi(j\times T)$，令 $\displaystyle f(n,T)=\sum_{i=1}^{n}\varphi(i\times T)$，$\displaystyle g(T)=\sum_{d\mid T}\frac{d}{\varphi(d)}\mu(\frac{T}{d})$，如果这两个东西可以直接筛出来就做完了。</p>  
+<p>式子基本上不能推了，于是我们考虑暴力，直接设个阈值，一半暴力算，一半预处理。调调参就行了。</p>  
+
+
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+const int P = 998244353, THRESHOLD = 25;
+#define cmin(x, ...) x = min({x, __VA_ARGS__})
+#define cmax(x, ...) x = max({x, __VA_ARGS__})
+#define fors(i, l, r, ...) for(int i = (l), i##end = (r), ##__VA_ARGS__; i &lt;= i##end; i++)
+#define dfors(i, r, l, ...) for(int i = (r), i##end = (l), ##__VA_ARGS__; i &gt;= i##end; i--)
+const auto [f, g, s] = [](const int n, const int THRESHOLD) {
+    vector&lt;int&gt; mu(n+1), phi(n), prime, g(n+1), invs(n+1);
+    vector&lt;bool&gt; not_prime(n+1);
+    vector f(n+1, vector&lt;int&gt;());
+    vector s(THRESHOLD+1, vector(THRESHOLD+1, vector&lt;int&gt;()));
+    mu[1] = phi[1] = 1;
+    fors(i, 2, n) {
+        if(not_prime[i] == 0) {
+            prime.emplace_back(i);
+            mu[i] = P-1, phi[i] = i-1;
+        }
+        for(const int p : prime) {
+            if(i &gt; n/p) break;
+            not_prime[i*p] = 1;
+            if(i%p == 0) {
+                phi[i*p] = phi[i]*p;
+                break;
+            }
+            phi[i*p] = phi[i]*(p-1), mu[i*p] = P-mu[i];
+        }
+    }
+    invs[1] = 1;
+    fors(i, 2, n) invs[i] = ll(P-P/i)*invs[P%i]%P;
+    fors(d, 1, n) {
+        for(int T = d; T &lt;= n; T += d) g[T] += ll(d)*invs[phi[d]]%P*mu[T/d]%P,g[T] %= P;
+    }
+    fors(i, 1, n) {
+        f[i].emplace_back(0);
+        fors(T, 1, n/i) f[i].emplace_back((f[i][T-1]+phi[i*T])%P);
+    }
+    fors(i, 1, THRESHOLD) {
+        fors(j, 1, THRESHOLD) {
+            s[i][j].emplace_back(0);
+            fors(k, 1, min(n/i, n/j)) s[i][j].emplace_back((s[i][j][k-1]+ll(g[k])*f[k][i]%P*f[k][j]%P)%P);
+        }
+    }
+    return make_tuple(f, g, s);
+}(1e5, THRESHOLD);
+signed main() {
+    ios::sync_with_stdio(0), cin.tie(0);
+    int tt, n, m, ans;
+    for(cin &gt;&gt; tt; ans = 0, tt--;) {
+        cin &gt;&gt; n &gt;&gt; m;
+        if(n &gt; m) swap(n, m);
+        fors(i, 1, m/THRESHOLD) ans += ll(g[i])*f[i][n/i]%P*f[i][m/i]%P,ans %= P;
+        for(int l = m/THRESHOLD+1, r; l &lt;= n; l = r+1) {
+            r = min(n/(n/l), m/(m/l));
+            ans += (s[n/l][m/l][r]-s[n/l][m/l][l-1]+P)%P, ans %= P;
+        }
+        cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

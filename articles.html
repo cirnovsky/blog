@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="src/styles/fonts.css" >
+        <link rel="stylesheet" href="src/styles/style.css" >
+        <title>Wang Site | 汪站</title>
+        <script src="src/js/jquery.min.js"></script>
+        <script src="src/js/basic.js"></script>
+        <script src="src/js/file.js"></script>
+        <script>
+            currentBranch = "articles"
+            $(document).ready(function() {
+                let params = parseSearch(location.search)
+                currentPage = parseInt(params["page"] || '1')
+                console.log(currentPage)
+
+                $.getJSON(currentBranch + "/meta.json", parseEntries)
+                
+                $("#page").keydown(function(e) {
+                    if (e.key == 'Enter') {
+                        let page = parseInt($("#page").val())
+                        location.href = `${currentBranch}.html?page=${page}`
+                    }
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <div class="page">
+            <div class="navbar">
+                <button onclick="location.href='/'">Home</button>
+                <button onclick="location.href='notes.html'">Notes</button>
+                <button onclick="location.href='articles.html'">Articles</button>
+                <button onclick="location.href='friends.html'">Friends</button>
+                <button onclick="location.href='stories.html'">Stories</button>
+            </div>
+            <div class="content">
+                <div id="shelf">
+                    <div id="entries"></div>
+                    <div id="pageid"></div>
+                    <label for="page"></label>
+                    <input id="page" min="1"> / <span id="totpage"></span> pages
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

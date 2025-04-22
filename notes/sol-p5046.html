@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P5046">Link</a>.</p>  
+<p>无修改区间求逆序对。</p>  
+<h2>Solution</h2>  
+<p>首先有一个显然的 $\Theta(N\sqrt{N}\log_{2}N)$ 做法，由于过不了所以我就不废话。</p>  
+<p>其实有了 $\Theta(N\sqrt{N}\log_{2}N)$ 的过不去做法，我们就可以根据这个思路然后预处理解决问题。</p>  
+<p>我们需要处理的信息有：</p>  
+<ol>  
+<li>  
+<p>散块的逆序对数量</p>  
+</li>  
+<li>  
+<p>以块为单位的区间逆序对数量</p>  
+</li>  
+</ol>  
+<p>那么我们需要处理的数组就有以下几个：</p>  
+<ol>  
+<li>  
+<p><code>previous[i]</code> 表示 $i$ 到 该块开头的逆序对数量。</p>  
+</li>  
+<li>  
+<p><code>suffix[i]</code> 同理。</p>  
+</li>  
+<li>  
+<p><code>block[i][j]</code> 表示前 $i$ 个块中 $\leq j$ 元素个数。</p>  
+</li>  
+<li>  
+<p><code>intervals[i][j]</code> 表示以块为单位的区间 $[i,j]$ 中的逆序对数量。</p>  
+</li>  
+</ol>  
+<p>讲讲预处理方法。</p>  
+<ol>  
+<li>  
+<p><code>previous[i]</code> 和 <code>suffix[i]</code> 的处理方法都很显然，可以一直扫着然后FWT扫就行。</p>  
+</li>  
+<li>  
+<p><code>block[i][j]</code> 可以递推，递推式为 <code>block[i][j]=block[i+1][j]+block[i][j-1]-block[i+1][j-1]+cont(i,j)</code>。其中 <code>cont(i,j)</code> 表示计算对应块的逆序对数。</p>  
+</li>  
+<li>  
+<p><code>intervals[i][j]</code> 每次循环到块的开头继承上一个块的贡献即可。</p>  
+</li>  
+</ol>  
+<p>计算贡献的方法很简单，归并即可。mrsrz讲得也挺清楚的，我这里就不再赘述，主要讲讲怎么卡常。</p>  
+<p>首先我们可以把主函数里的所有循环全部展开，经过实践参数传8的时候跑得比较快。</p>  
+<p>然后八聚氧先加上，luogu O2也开着。</p>  
+<p>再其次快读fread快输fwrite，这些都是卡常的标配。</p>  
+<p>然后就把能拿出来的结构体拿出来，实在不能就不管了。</p>  
+<p>然后去STL，pair vector能去就去。</p>  
+<p>然后long long开在正确的地方，不要无脑replace。</p>  
+<p>函数inline，循环register。虽然可能作用不大但是可以先加上。</p>  
+<p>然后调块长，经过无数次实践发现取150~170较为优秀。</p>  
+<p>然后加了过后发现就算rp再好也只有60pts。</p>  
+<p>然后谷歌搜索硫酸的化学式H₂SO₄，给评测机喂硫酸（idea来自SyadouHayami）。</p>  
+<p>然后本来交了5页都过不了，这下再交两次就过了。</p>  
+
+
+<pre><code class="language-cpp">// 省略八聚氧
+#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+
+using namespace std;
+
+const int Maxn = 1e5 + 5;
+const int Maxm = 650;
+const int each = 160;
+int n, m, blocks, Lp[Maxn], Rp[Maxn], isa[Maxn], head[Maxn], tail[Maxn], sorted[Maxn], belong[Maxn], previous[Maxn], suffix[Maxn], block[Maxm][Maxn];
+long long intervals[Maxm][Maxn];
+struct Holy_Pair
+{
+    int first, second;
+
+    bool operator &lt; (const Holy_Pair&amp; rhs) const
+    {
+        return first &lt; rhs.first;
+    }
+} current[Maxn];
+struct Fenwick_Tree
+{
+    int fwt[Maxn];
+
+    inline void Modify(int x, int v)
+    {
+        for (; x + 5 &lt;= Maxn; x += x &amp; -x)  fwt[x] += v;
+    }
+
+    inline int Query(int x)
+    {
+        int ret = 0;
+        for (; x; x ^= x &amp; -x)  ret += fwt[x];
+        return ret;
+    }
+} FWT;
+
+#define io_e '\0'
+#define io_s ' '
+#define io_l '\n'
+namespace Fast_IO
+{
+... // 省略快读
+}  // namespace Fast_IO
+
+using Fast_IO::read;
+using Fast_IO::write;
+
+inline Holy_Pair make_pair(int first, int second)
+{
+    Holy_Pair ret;
+    ret.first = first;
+    ret.second = second;
+    return ret;
+}
+
+inline int Merge_Vct(int rhs[], int shr[], int szl, int szr)
+{
+    int itl = 1, itr = 1;
+    int ret = 0, ctr = 1;
+    while (itl &lt;= szl &amp;&amp; itr &lt;= szr)
+    {
+        if (rhs[itl] &lt; shr[itr])    ++itl, ++ctr;
+        else
+        {
+            ret += szl - ctr + 1;
+            ++itr;
+        }
+    }
+    return ret + szr - szr;
+}
+
+inline int Merge_Idx(int st1, int st2, int sz1, int sz2)
+{
+    int ret = 0, id1 = st1 + 1, id2 = st2 + 1;
+    sz1 += st1, sz2 += st2;
+    while (id1 &lt;= sz1 &amp;&amp; id2 &lt;= sz2)
+    {
+        if (sorted[id1] &lt; sorted[id2])      ++id1;
+        else
+        {
+            ret += sz1 - id1 + 1;
+            ++id2;
+        }
+    }
+    return ret;
+}
+
+inline void Behavior(int l, int r, long long &amp;ans)
+{
+    int itl = 0, itr = 0;
+    if (belong[l] == belong[r])
+    {
+        for (int i = head[belong[l]]; i &lt;= tail[belong[r]]; ++i)
+        {
+            if (current[i].second &gt;= l &amp;&amp; current[i].second &lt;= r)   Rp[++itr] = sorted[i];
+            else if (current[i].second &lt; l)     Lp[++itl] = sorted[i];
+        }
+        if (l == head[belong[l]])   ans = previous[r] - Merge_Vct(Lp, Rp, itl, itr);
+        else    ans = previous[r] - previous[l - 1] - Merge_Vct(Lp, Rp, itl, itr);
+    }
+    else
+    {
+        ans = intervals[belong[l] + 1][belong[r] - 1] + previous[r] + suffix[l];
+        for (int i = head[belong[l]]; i &lt;= tail[belong[l]]; ++i)
+        {
+            if (current[i].second &gt;= l)
+            {
+                Lp[++itl] = sorted[i];
+                ans += block[belong[r] - 1][1] - block[belong[r] - 1][sorted[i]] - block[belong[l]][1] + block[belong[l]][sorted[i]];
+            }
+        }
+        for (int i = head[belong[r]]; i &lt;= tail[belong[r]]; ++i)
+        {
+            if (current[i].second &lt;= r)
+            {
+                Rp[++itr] = sorted[i];
+                ans += block[belong[r] - 1][sorted[i] + 1] - block[belong[l]][sorted[i] + 1];
+            }
+        }
+        ans += Merge_Vct(Lp, Rp, itl, itr);
+    }
+    write(io_l, ans);
+}
+
+signed main()
+{
+    read(n, m), blocks = (n - 1) / each + 1;
+    if (n &lt;= 8)
+    {
+        for (int i = 1; i &lt;= n; ++i)
+        {
+            read(isa[i]);
+            current[i] = make_pair(isa[i], i);
+        }
+    }
+    else
+    {
+        #pragma unroll 8
+        for (int i = 1; i &lt;= n; ++i)
+        {
+            read(isa[i]);
+            current[i] = make_pair(isa[i], i);
+        }
+    }
+    if (blocks &lt;= 8)
+    {
+        for (int i = 1; i &lt;= blocks; ++i)
+        {
+            head[i] = tail[i - 1] + 1;
+            tail[i] = tail[i - 1] + each;
+            if (i == blocks)    tail[i] = n;
+        }
+    }
+    else
+    {
+        #pragma unroll 8
+        for (int i = 1; i &lt;= blocks; ++i)
+        {
+            head[i] = tail[i - 1] + 1;
+            tail[i] = tail[i - 1] + each;
+            if (i == blocks)    tail[i] = n;
+        }
+    }
+    if (blocks &lt;= 8)
+    {
+        for (int i = 1; i &lt;= blocks; ++i)
+        {
+            memcpy(block[i], block[i - 1], sizeof(block[0]));
+            sort(current + head[i], current + 1 + tail[i]);
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                ++block[i][isa[j]];
+                belong[j] = i;
+                sorted[j] = current[j].first;
+            }
+            int satisfy = 0;
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                FWT.Modify(isa[j], 1);
+                satisfy += FWT.Query(n) - FWT.Query(isa[j]);
+                previous[j] = satisfy;
+            }
+            intervals[i][i] = satisfy;
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                suffix[j] = satisfy;
+                FWT.Modify(isa[j], -1);
+                satisfy -= FWT.Query(isa[j] - 1);
+            }
+        }
+    }
+    else
+    {
+        #pragma unroll 8
+        for (int i = 1; i &lt;= blocks; ++i)
+        {
+            memcpy(block[i], block[i - 1], sizeof(block[0]));
+            sort(current + head[i], current + 1 + tail[i]);
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                ++block[i][isa[j]];
+                belong[j] = i;
+                sorted[j] = current[j].first;
+            }
+            int satisfy = 0;
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                FWT.Modify(isa[j], 1);
+                satisfy += FWT.Query(n) - FWT.Query(isa[j]);
+                previous[j] = satisfy;
+            }
+            intervals[i][i] = satisfy;
+            for (int j = head[i]; j &lt;= tail[i]; ++j)
+            {
+                suffix[j] = satisfy;
+                FWT.Modify(isa[j], -1);
+                satisfy -= FWT.Query(isa[j] - 1);
+            }
+        }
+    }
+    if (blocks &lt;= 8)
+    {
+        for (int dis = 1; dis &lt;= blocks; ++dis)
+        {
+            for (int i = n - 1; i; --i)     block[dis][i] += block[dis][i + 1];
+            for (int l = 1, r = dis + 1; r &lt;= blocks + 1; ++l, ++r)
+                intervals[l][r] = intervals[l + 1][r] + intervals[l][r - 1] - intervals[l + 1][r - 1] +
+                                    Merge_Idx(head[l] - 1, head[r] - 1, tail[l] - head[l] + 1, tail[r] - head[r] + 1);
+        }
+    }
+    else
+    {
+        #pragma unroll 8
+        for (int dis = 1; dis &lt;= blocks; ++dis)
+        {
+            for (int i = n - 1; i; --i)     block[dis][i] += block[dis][i + 1];
+            for (int l = 1, r = dis + 1; r &lt;= blocks + 1; ++l, ++r)
+                intervals[l][r] = intervals[l + 1][r] + intervals[l][r - 1] - intervals[l + 1][r - 1] +
+                                    Merge_Idx(head[l] - 1, head[r] - 1, tail[l] - head[l] + 1, tail[r] - head[r] + 1);
+        }
+    }
+
+    if (m &lt;= 8)
+    {
+        long long lastans = 0;
+        for (int i = 0; i &lt; m; ++i)
+        {
+            long long l, r;
+            read(l, r);
+            l ^= lastans;
+            r ^= lastans;
+            Behavior(l, r, lastans);
+        }
+    }
+    else
+    {
+        long long lastans = 0;
+        #pragma unroll 8
+        for (int i = 0; i &lt; m; ++i)
+        {
+            long long l, r;
+            read(l, r);
+            l ^= lastans;
+            r ^= lastans;
+            Behavior(l, r, lastans);
+        }
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

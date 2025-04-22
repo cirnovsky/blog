@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="http://www.accoders.com/contest.php?cid=4077">link。</a></p>  
+<p>T1 是卡牌类模拟，T2 trivial 构造，T3 不知道为啥挂了，等我找到原因再更新一发。</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p><strong>D. possible</strong>：给定一棵以 $1$ 为根的带边权有根树，再给出一些带权返祖边，多次询问两点间最短距离，保证树高最多 $20$。</p>  
+
+    </div>
+</div>  
+<p>注意到两个事情，首先如果我们像点分治那样对每个子树暴力跑最短路复杂度是对的，考虑深度最高 $20$ 即可；其次两点最短距离我们可以暴力跳两个结点的祖先然后用最短路的结果判断。</p>  
+<p>然后就做完了嘛，代码在 accoders 要开氧气才能过，很久没体验过的一遍过题……</p>  
+
+
+<pre><code class="language-cpp">int n, m, Q, par[100100], dep[100100];
+vi&lt;pil&gt; adj[100100], adj2[100100];
+bastr&lt;int&gt; sub[100100];
+map&lt;int, LL&gt; mp[100100];
+LL dis[100100];
+bitset&lt;100100&gt; vis;
+void dfs(int x, int pa) {
+    par[x] = pa;
+    dep[x] = dep[pa]+1;
+    for (auto const&amp; e : adj[x]) {
+        if (e.first != pa) {
+            dfs(e.first, x);
+        }
+    }
+}
+int now;
+void dfs2(int x) {
+    sub[now] += x;
+    dis[x] = -1, vis.reset(x);
+    for (auto const&amp; e : adj[x]) {
+        if (e.first != par[x]) {
+            dfs2(e.first);
+        }
+    }
+}
+void work(int st) {
+    priority_queue&lt;pli, vi&lt;pli&gt;, greater&lt;pli&gt;&gt; q;
+    now = st;
+    dfs2(st);
+    q.emplace(dis[st] = 0, st);
+    while (!q.empty()) {
+        int x = q.top().second;
+        q.pop();
+        if (vis.test(x)) continue;
+        vis.set(x);
+        for (auto const&amp; e : adj2[x]) {
+            int y = e.first;
+            LL w = e.second;
+            if (dis[y] == -1 || dis[y] &gt; dis[x]+w) {
+                dis[y] = dis[x]+w;
+                if (!vis[y]) {
+                    q.emplace(dis[y], y);
+                }
+            }
+        }
+    }
+    for (auto v : sub[st]) {
+        mp[st][v] = dis[v];
+    }
+}
+void dfs3(int x) {
+    work(x);
+    for (auto const&amp; e : adj[x]) {
+        if (e.first != par[x]) {
+            dfs3(e.first);
+        }
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; m &gt;&gt; Q;
+    for (int i=1,x,y,z; i&lt;n; ++i) {
+        cin &gt;&gt; x &gt;&gt; y &gt;&gt; z;
+        adj[x].eb(y, z), adj[y].eb(x, z);
+    }
+    dfs(1, 0);
+    for (int i=n,x,y,z; i&lt;=m; ++i) {
+        cin &gt;&gt; x &gt;&gt; y &gt;&gt; z;
+        adj2[x].eb(y, z), adj2[y].eb(x, z);
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        for (auto const&amp; e : adj[i]) {
+            adj2[i].pb(e);
+        }
+    }
+    dfs3(1);
+    for (int x,y; Q--;) {
+        cin &gt;&gt; x &gt;&gt; y;
+        LL ans = 1e18;
+        for (int u=x; u; u=par[u]) {
+            if (mp[u].count(x) &amp;&amp; mp[u].count(y)) {
+                cmin(ans, mp[u][x]+mp[u][y]);
+            }
+        }
+        for (int v=y; v; v=par[v]) {
+            if (mp[v].count(x) &amp;&amp; mp[v].count(y)) {
+                cmin(ans, mp[v][x]+mp[v][y]);
+            }
+        }
+        cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+    }
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

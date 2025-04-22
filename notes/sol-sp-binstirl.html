@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/SP106">Link</a>.</p>  
+<p>求 $\begin{Bmatrix}n \ m\end{Bmatrix}\bmod2$</p>  
+<h2>Solution</h2>  
+<p>求  
+$$
+\begin{aligned}
+\begin{Bmatrix}n \ m\end{Bmatrix}\bmod2
+&amp;=\left(\begin{Bmatrix}n-1 \ m-1\end{Bmatrix}+m\begin{Bmatrix}n-1 \ m\end{Bmatrix}\right)\bmod2 \
+&amp;=\begin{cases}
+\begin{Bmatrix}n-1 \ m-1\end{Bmatrix}\bmod2,m\equiv0\space(\operatorname{mod}2) \
+\left(\begin{Bmatrix}n-1 \ m-1\end{Bmatrix}+\begin{Bmatrix}n-1 \ m\end{Bmatrix}\right)\bmod2,m\equiv1\space(\operatorname{mod}2)
+\end{cases}
+\end{aligned}
+$$
+$m\equiv1\space(\operatorname{mod}2)$ 的情况为组合数的递推。</p>
+<p>转化一下，把填表转移换成刷表，即</p>  
+<ul>  
+<li>  
+<p>当 $m\equiv0\space(\operatorname{mod}2)$ 时，$\begin{Bmatrix}n \ m\end{Bmatrix}$ 转移到 $\begin{Bmatrix}n+1 \ m+1\end{Bmatrix}$。</p>  
+</li>  
+<li>  
+<p>当 $m\equiv1\space(\operatorname{mod}2)$ 时，$\begin{Bmatrix}n \ m\end{Bmatrix}$ 转移到 $\begin{Bmatrix}n+1 \ m+1\end{Bmatrix}$ 和 $\begin{Bmatrix}n+1 \ m\end{Bmatrix}$。</p>  
+</li>  
+</ul>  
+<p>那么这个题目就转化成了在表格上 $(0,0)$ 走到 $(n,m)$ 的路径条数 $\operatorname{mod}2$ 问题。</p>  
+<p>两种情况都可以转移到 $\begin{Bmatrix}n+1 \ m+1\end{Bmatrix}$，为了方便起见，我们定义这种情况为向右上转移，把 $\begin{Bmatrix}n+1 \ m\end{Bmatrix}$ 定义为向上转移。</p>  
+<p>因为我们转移只能向上或右上走，所以只会走 $n$ 步，其中 $m$ 次向右上转移，$n-m$ 次向右转移。</p>  
+<p>我们一共有 $\lfloor\frac{m+1}{2}\rfloor$ 次机会向右转移（只能从奇数走）。</p>  
+<p>相当于我们现在需要把转移的过程分成 $n-m$ 段，每一段的内部全部都是向右上转移，这样我们才能到达 $(n,m)$。</p>  
+<p>用盒子与球的语言来描述，就是一共就有 $n-m+\lfloor\frac{m+1}{2}\rfloor$ 个球（这里理解起来其实特别麻烦）（不过只是对于我这种组合差的人），分成 $\lfloor\frac{m+1}{2}\rfloor$ 段，隔板即可。</p>  
+<p>于是 $\begin{Bmatrix}n \ m\end{Bmatrix}\bmod2={n-m+\lfloor\frac{m+1}{2}\rfloor-1\choose\lfloor\frac{m+1}{2}\rfloor-1}\bmod2$。</p>  
+<p>关于组合数奇偶性，<a href="https://www.luogu.com.cn/blog/161849/solution-p3773">我这篇博客里写过</a>，再贴上来：</p>  
+<p>结论：$\dbinom{n}{m}\equiv0\space(\operatorname{mod}2)$ 当且仅当 $n\operatorname{bitand}m=m$。</p>  
+<p>证明（也许不是特别严谨）：我们可以知道：  
+$$
+{n\choose m}={\lfloor\frac{n}{2}\rfloor\choose\lfloor\frac{m}{2}\rfloor}\times{n\bmod 2\choose m\bmod2}={\lfloor\frac{\lfloor\frac{n}{2}\rfloor}{2}\rfloor\choose\lfloor\frac{\lfloor\frac{m}{2}\rfloor}{2}\rfloor}\times {\lfloor\frac{n}{2}\rfloor\bmod2\choose\lfloor\frac{m}{2}\rfloor\bmod2}\times{n\bmod 2\choose m\bmod2}=\cdots
+$$
+我们发现：  
+$$
+{\lfloor\frac{\lfloor\frac{\lfloor\frac{n}{2}\rfloor}{2}\rfloor}{\cdots}\rfloor\choose\lfloor\frac{\lfloor\frac{\lfloor\frac{m}{2}\rfloor}{2}\rfloor}{\cdots}\rfloor}
+$$
+这一坨，就是在一直进行二进制移位，$\operatorname{shr}1$。</p>  
+<p>那么我们可以得出一个结论：如果对于我们记 $(n)<em>{k}$ 表示 $n$ 在二进制意义下的第 $k$ 位。$(n)</em>{k}\in[0,1]$</p>  
+<p>那么对于 $\forall i$，有 $(n)<em>{i}=0$ 且 $(m)</em>{i}=1$，那么 $\dbinom{n}{m}\equiv0\space(\operatorname{mod} 2)$。</p>  
+<p>所以 $n\operatorname{bitand}m=m$，证毕。</p>  
+<p>答案显然。</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+
+int N, M;
+
+int main () {
+    int TC; scanf ( &quot;%d&quot;, &amp;TC ); while ( TC -- &gt; 0 ) {
+        scanf ( &quot;%d%d&quot;, &amp;N, &amp;M );
+        if ( ! N &amp;&amp; ! M )   puts ( &quot;1&quot; );
+        else if ( ! N || ! M || N &lt; M ) puts ( &quot;0&quot; );
+        else if ( ( ( N - M + ( ( M + 1 ) &gt;&gt; 1 ) - 1 ) &amp; ( ( ( M + 1 ) &gt;&gt; 1 ) - 1 ) ) == ( ( ( M + 1 ) &gt;&gt; 1 ) - 1 ) )   puts ( &quot;1&quot; );
+        else    puts ( &quot;0&quot; );
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

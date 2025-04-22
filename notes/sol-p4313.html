@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://www.luogu.com.cn/problem/P4313">link。</a></p>  
+<p>Pretty nice practice for the min-cut trick.</p>  
+<p>Starting out we eliminate the constraint that if five students in a edge-connected component alternatively choose exactly the same learning branch they get an extra contribution to the answer, and easily we can work it out with the following way to build a network and run a max-flow algorithm:</p>  
+<ul>  
+<li>Connect the source with each student and set the capacities of arcs as the number of euphorias the student would get if he or she chooses Arts. </li>  
+<li>Connect each student with the sink and set capacities of arcs as the number of euphorias the student would get if he or she chooses Science.</li>  
+</ul>  
+<p>Considering how to deal with the extra contributions, we simply shrink the four neighboring students and the student himself or herself into one point and connect the source with this taken the extra contributions (for choosing Arts) as the capacities. Additionally, connect the point with the four neighboring students taken $+\infty$ as the capacities. So do we process ones who choose Science.</p>  
+<p>Just as the picture via <em>@jun头吉吉</em> goes.</p>  
+<p><img alt="" src="uploads/11.webp" /></p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int INF=0x3f3f3f3f;
+template&lt;typename Kap&gt; struct Net {
+    const int n;
+    struct Arc {
+        int to; size_t rev; Kap cap,flow;
+    };
+    vector&lt;vector&lt;Arc&gt;&gt; e;
+    vector&lt;int&gt; iter,lev;
+    queue&lt;int,list&lt;int&gt;&gt; q;
+    Net(int n):n(n),e(n),iter(n),lev(n) {}
+    void line(int one,int ano,Kap ca) {
+        one--; ano--;
+        assert(0&lt;=one &amp;&amp; one&lt;n &amp;&amp; 0&lt;=ano &amp;&amp; ano&lt;n);
+        e[one].push_back((Arc){ano,e[ano].size()+(one==ano),ca,0});
+        e[ano].push_back((Arc){one,e[one].size()-1,0,0});
+    }
+    Kap dinitz(int s,int t) { return dinitz(s-1,t-1,numeric_limits&lt;Kap&gt;::max()); }
+    bool Getlayer(int s,int t) {
+        lev.assign(n,0); q.push(s); lev[s]=1;
+        while(q.size()) {
+            int now=q.front(); q.pop();
+            for(int i=0; i&lt;int(e[now].size()); ++i) {
+                int y=e[now][i].to;
+                if(!lev[y] &amp;&amp; e[now][i].cap&gt;e[now][i].flow) lev[y]=lev[now]+1,q.push(y);
+            }
+        }
+        return lev[t];
+    }
+    Kap Augment(int now,Kap up,int t) {
+        if(now==t)  return up;
+        Kap rlow=0;
+        for(int&amp; i=iter[now]; i&lt;int(e[now].size()); ++i) {
+            if(up==rlow)    break;
+            int y=e[now][i].to;
+            if(lev[y]==lev[now]+1 &amp;&amp; e[now][i].cap&gt;e[now][i].flow) {
+                Kap f=Augment(y,min(up-rlow,e[now][i].cap-e[now][i].flow),t);
+                e[now][i].flow+=f; e[y][e[now][i].rev].flow-=f; rlow+=f;
+            }
+        }
+        if(up==rlow)    lev[now]=0;
+        return rlow;
+    }
+    Kap dinitz(int s,int t,const Kap INF) {
+        assert(0&lt;=s &amp;&amp; s&lt;n &amp;&amp; 0&lt;=t &amp;&amp; t&lt;n);
+        Kap res=0;
+        while(Getlayer(s,t))    iter.assign(n,0),res+=Augment(s,INF,t);
+        return res;
+    }
+};
+int n,m,a[200][200],b[200][200],exta[200][200],extb[200][200],S,T,sum;
+int valid(int x,int y) { return x&gt;=1 &amp;&amp; x&lt;=n &amp;&amp; y&gt;=1 &amp;&amp; y&lt;=m; }
+int getID(int x,int y) { return (x-1)*m+y; }
+int artify(int x) { return x+n*m; }
+int sciencify(int x) { return x+n*m*2; }
+signed main() {
+    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+    for(int i=1; i&lt;=n; ++i) {
+        for(int j=1; j&lt;=m; ++j) scanf(&quot;%d&quot;,&amp;a[i][j]),sum+=a[i][j];
+    }
+    for(int i=1; i&lt;=n; ++i) {
+        for(int j=1; j&lt;=m; ++j) scanf(&quot;%d&quot;,&amp;b[i][j]),sum+=b[i][j];
+    }
+    for(int i=1; i&lt;=n; ++i) {
+        for(int j=1; j&lt;=m; ++j) scanf(&quot;%d&quot;,&amp;exta[i][j]),sum+=exta[i][j];
+    }
+    for(int i=1; i&lt;=n; ++i) {
+        for(int j=1; j&lt;=m; ++j) scanf(&quot;%d&quot;,&amp;extb[i][j]),sum+=extb[i][j];
+    }
+    Net&lt;int&gt; net(n*m*3+2); S=n*m*3+1; T=n*m*3+2;
+    for(int i=1; i&lt;=n; ++i) {
+        for(int j=1; j&lt;=m; ++j) {
+            net.line(S,getID(i,j),a[i][j]);
+            net.line(getID(i,j),T,b[i][j]);
+            net.line(S,artify(getID(i,j)),exta[i][j]);
+            net.line(artify(getID(i,j)),getID(i,j),INF);
+            net.line(getID(i,j),sciencify(getID(i,j)),INF);
+            net.line(sciencify(getID(i,j)),T,extb[i][j]);
+            if(valid(i+1,j)) {
+                net.line(artify(getID(i,j)),getID(i+1,j),INF);
+                net.line(getID(i+1,j),sciencify(getID(i,j)),INF);
+            }
+            if(valid(i,j+1)) {
+                net.line(artify(getID(i,j)),getID(i,j+1),INF);
+                net.line(getID(i,j+1),sciencify(getID(i,j)),INF);
+            }
+            if(valid(i-1,j)) {
+                net.line(artify(getID(i,j)),getID(i-1,j),INF);
+                net.line(getID(i-1,j),sciencify(getID(i,j)),INF);
+            }
+            if(valid(i,j-1)) {
+                net.line(artify(getID(i,j)),getID(i,j-1),INF);
+                net.line(getID(i,j-1),sciencify(getID(i,j)),INF);
+            }
+        }
+    }
+    printf(&quot;%d\n&quot;,sum-net.dinitz(S,T));
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h4>高维前缀和</h4>  
+<p>给一个 intrada 性质的问题：</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>求 $\displaystyle F[mask] = \sum_{i \subseteq mask} A[i]$</p>  
+
+    </div>
+</div>  
+<p>这个形式看起来会很像一个 and-convolution，虽然并不完全是但这很重要。有个经典的朴素做法是以 $O(3^n)$ 枚举子集，从这个做法可以看出，$A[x]$，其中 $x$ 有 $k$ 个 off-bits，会被 $2^k$ 次计算。</p>  
+<p>到了这个时候网上的脑瘫博客就会开始告诉你二维怎么办？容斥！三维不想推怎么办？分维前缀和！$k$ 维怎么办？看代码。</p>  
+<p>事实上分维前缀和的思想的确非常重要，如果有人看这篇博客推荐先理解。</p>  
+<p>我们首先对 sum over subsets 问题和高维前缀和之间的关联建立认知。一个 multidimensional partial sums 具体是在一个 $k$-d 空间里求出向量 $((1, \dots, 1), (a_1, \dots, a_k))$ 的所有元素的运算结果，也就是说我们用 $(k, (n_1, \dots n_k))$ 这样一个向量来刻画问题的背景；而 sum over subsets 的一个 alternative ver. 则是给定 $k$ 个物品及其价值，询问全集的某个子集的所有子集的价值和的价值和，以及我们只需要 $k$ 就可刻画问题的背景（所有维度的有意义长度均为 $2$，即选与不选），而传统的 sum over subsets 则是给出全集所有子集的价值，询问全集的某个子集的所有子集价值和（即将某个子集的价值从由子集中的元素的价值决定到和子集中的元素的价值没关系）。</p>  
+<p>然后开始想象，typical sum over subsets problem 是在一个 $k$-d 空间中做高维前缀和做的事情，所以我们可以类比得出其解法，并且我们得出结论：<strong>typical sum over subsets problem 是 multidimensional partial sums problem 的弱化，区别在于每一维度的模长是 $\boldsymbol 2$ 还是任意</strong>。 </p>  
+<p>应该比网上大部分博客都要清楚，或者更接近本质吧。不过我觉得这个洞见显然不是 SOS 的本质。</p>  
+
+
+<pre><code class="language-cpp">for (int i=0; i&lt;k; ++i) {
+    for (int j=0; j&lt;(1&lt;&lt;k); ++j) {
+        if ((j&gt;&gt;i)&amp;1) f[j] += f[j^(1&lt;&lt;i)]; // 相当于从于第 @i 维的 0 转移到 1
+    }
+}
+</code></pre>
+<h4>dirichlet partial sums</h4>  
+<p>这个东西就是上述问题的一个演绎应用，问题背景是：</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>已知数论函数 $g(T)$，求 $\displaystyle f(T) = \sum_{d \mid T} g(d)$。</p>  
+
+    </div>
+</div>  
+<p>$O(n \ln n)$ 的做法应该都会。</p>  
+<p>会发现这个的形式和上面的很像，不过直接套会有一个 trap。如果你想的是把数分解为 $\displaystyle \prod^k_{i=1} p_i^{c_i}$ 的形式后考虑一个 $k$-d 空间是不行的，因为 SOS 的维度模长为 $2$，所以应该考虑一个 $\left( \sum c_i+1 \right)$-d 的空间。复杂度是 $O(n \log \log n)$，dyh 有个高妙的证法，但是我忘了，就这。</p>  
+
+
+<pre><code class="language-cpp">for (int i=1; i&lt;=tot; ++i) {
+    for (int j=/*lower bound, depends on the specific problem*/; j&lt;=n/prime[i]; ++j) {
+        f[j*prime[i]] += f[j];
+    }
+}
+</code></pre>
+<p>当然这个有四个形式，不过很搞笑罢了，就是因数倍数乘上正着求和逆着求，本质都一样。</p>  
+<h4>e.g.</h4>  
+<p>看两道题。</p>  
+<p>第一个就是 <a href="https://www.cnblogs.com/orchid-any/p/16557474.html"><em>codeforces - 585e</em></a>，这个题求 $f$ 的部分我是直接上的莫反，结果只能调和级数，翻了下题解发现式子里面的 $\mu$ 直接没了，感觉很神奇，有空再想想。</p>  
+<p>第二个是 <a href="http://codeforces.com/problemset/problem/449/D"><em>codeforces - 449d</em></a>，一样的套路。记 $f_i$ 为子集 AND 和为 $i$ 的方案数，根据莫反的套路设出 $g_i$ 为子集 AND 和是 $i$ 超集的方案数。如果我们能求出 $h_i$ 表示 $i$ 的超集数量，则 $g_i = 2^{h_i}-1$，然后通过逆 sos 跑差分就行了，注意这里是高维后缀和。</p>  
+<p>从这两道题我们可以洞见 sos 和莫反有着莫大的关联，之前陀螺仪在 oj 指出过，现在才理解一点点，果然还是要看太阳神的。</p>  
+<p>之前也看到有人写出莫反不关于莫比乌斯函数的形式，有空 cancan。</p>  
+<h4>gugugu……</h4>  
+<p>[TODO]：莫反不关于莫比乌斯函数的形式；FMT；gcd-convolution。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

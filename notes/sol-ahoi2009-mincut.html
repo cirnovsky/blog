@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://www.luogu.com.cn/problem/P4126">link。</a></p>  
+<p>也许题不错，反正有点降智…</p>  
+<p>先给结论，在</p>  
+<p>$$  
+V_N=V \  
+E_N=E \  
+c(x,y)=w(x,y)  
+$$</p>
+<p>的流网络中：</p>  
+<ul>  
+<li>可行边：在增广完的 induced subgraph 中，不存在 $u$ 到 $v$ 的<strong>路径</strong>；</li>  
+<li>必要边：在增广完的 induced subgraph 中，可以从 $S$ 到 $u$ 且可以从 $v$ 到 $T$。</li>  
+</ul>  
+<p>先看可行边。不存在 $(u,v)$ 有两个条件，一个是 $c_f(u,v)=0$，另一个是与之并联（特指以 $u$ 为起点，$v$ 为终点的）的线路中存在 $c_f(u',v')=0$。第一个的理解是，如果它没满流，则与之串联的 arcs 中存在比它的容量更小的边，根据最小割串联割最小的原则成立；第二个就是，如果你不把并联的砍了，你的划分压根不合法，何谈可行与否。</p>  
+<p>那么关于可行边的判断，把图缩点即可。</p>  
+<p>再看必要边。这个类比可行边即可，不赘述。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int n,m,S,T,co[4100],dfsnt,colnt,inst[4100],sta[4100],top,dfn[4100],low[4100],vi[4100],rec[60100];
+vector&lt;pair&lt;int,int&gt;&gt; arc;
+template&lt;typename T&gt; struct network {
+    const int n;
+    struct edge {
+        int to,r; T w;
+//      friend bool operator&lt;(const edge&amp; one,const edge&amp; ano) { return one.to&lt;ano.to || (one.to==ano.to &amp;&amp; one.r&lt;ano.r); }
+    };
+    vector&lt;vector&lt;edge&gt;&gt; e;
+    vector&lt;int&gt; lev,iter;
+    network(int n):n(n),e(n+1),lev(n+1),iter(n+1) {}
+    void link(const int x,const int y,T w,int ID) {
+        assert(1&lt;=x &amp;&amp; x&lt;=n &amp;&amp; 1&lt;=y &amp;&amp; y&lt;=n);
+        rec[ID]=int(e[x].size());
+        e[x].push_back((edge){y,int(e[y].size())+(x==y),w});
+        e[y].push_back((edge){x,int(e[x].size())-1,0});
+    }
+    bool BFS(const int s,const int t) {
+        queue&lt;int&gt; q; lev.assign(n+1,0);
+        for(q.push(s),lev[s]=1; q.size(); q.pop()) {
+            for(int now=q.front(),i=iter[now]=0,y; i&lt;int(e[now].size()); ++i) {
+                if(now==t)  return 1;
+                if(!lev[y=e[now][i].to] &amp;&amp; e[now][i].w) lev[y]=lev[now]+1,q.push(y);
+            }
+        }
+        return lev[t];
+    }
+    T DFS(const int now,T f,const int t) {
+        if(now==t)  return f;
+        T res=0,tt;
+        for(int&amp; i=iter[now],y; i&lt;int(e[now].size()); ++i) {
+            if(lev[y=e[now][i].to]==lev[now]+1 &amp;&amp; e[now][i].w &amp;&amp; (tt=DFS(y,min(f,e[now][i].w),t))) {
+                e[now][i].w-=tt; e[y][e[now][i].r].w+=tt; res+=tt; f-=tt;
+                if(!f)  break;
+            }
+        }
+        if(!res)    lev[now]=0;
+        return res;
+    }
+    T get(const int s,const int t) {
+        T res=0;
+        while(BFS(s,t)) res+=DFS(s,numeric_limits&lt;T&gt;::max(),t);
+        return res;
+    }
+};
+template&lt;typename T=int&gt; T rd() {
+    T x=0; char IO=getchar(); bool f=0;
+    while(IO&lt;'0' || IO&gt;'9') f|=IO=='-',IO=getchar();
+    while(IO&gt;='0' &amp;&amp; IO&lt;='9')   x=x*10+(IO&amp;15),IO=getchar();
+    return f?-x:x;
+}
+void DFS(const int now,const network&lt;int&gt;&amp; G) {
+    dfn[now]=low[now]=++dfsnt;
+    inst[sta[++top]=now]=1;
+    for(int i=0,y; i&lt;int(G.e[now].size()); ++i) {
+        if(!G.e[now][i].w)  continue;
+        if(!dfn[y=G.e[now][i].to])  DFS(y,G),low[now]=min(low[now],low[y]);
+        else if(inst[y])    low[now]=min(low[now],dfn[y]);
+    }
+    if(dfn[now]==low[now]) {
+        ++colnt;
+        while(sta[top]!=now)    co[sta[top]]=colnt,inst[sta[top]]=0,top--;
+        top--; co[now]=colnt; inst[now]=0;
+    }
+}
+void DFS_network(const int now,const network&lt;int&gt;&amp; G,const int c) {
+    vi[now]=c;
+    for(int i=0,y; i&lt;int(G.e[now].size()); ++i) {
+        if(!vi[y=G.e[now][i].to] &amp;&amp; (c-1?G.e[y][G.e[now][i].r].w:G.e[now][i].w))    DFS_network(y,G,c);
+    }
+}
+signed main() {
+    freopen(&quot;mincut.in&quot;,&quot;r&quot;,stdin);
+    freopen(&quot;mincut.out&quot;,&quot;w&quot;,stdout);
+    n=rd(); m=rd(); S=rd(); T=rd();
+    network&lt;int&gt; G(n);
+    for(int i=0,x,y; i&lt;m; ++i)  x=rd(),y=rd(),G.link(x,y,rd(),i),arc.emplace_back(x,y);
+    for(int i=(G.get(S,T),1); i&lt;=n; ++i)    if(!dfn[i]) DFS(i,G);
+    DFS_network(S,G,1); DFS_network(T,G,2);
+//  for(int i=1; i&lt;=n; ++i) printf(&quot; --- %d &quot;,vi[i]); puts(&quot;\n&quot;);
+//  for(int i=1; i&lt;=n; ++i) printf(&quot; --- %d &quot;,co[i]); puts(&quot;&quot;);
+//  for(int i=1; i&lt;=n; ++i) sort(G.e[i].begin(),G.e[i].end());
+//  for(int now=1; now&lt;=n; ++now) {
+//      printf(&quot; --- current node = %d:&quot;,now);
+//      for(int i=0; i&lt;int(G.e[now].size()); ++i)   printf(&quot; %d&quot;,G.e[now][i].to);
+//      puts(&quot;&quot;);
+//  }
+    for(int i=0; i&lt;m; ++i) {
+//      printf(&quot; (%d %d)\n&quot;,arc[i].first,lower_bound(G.e[arc[i].first].begin(),G.e[arc[i].first].end(),(network&lt;int&gt;::edge){arc[i].second,0,0})-&gt;to);
+//      if(lower_bound(G.e[arc[i].first].begin(),G.e[arc[i].first].end(),(network&lt;int&gt;::edge){arc[i].second,0,0})-&gt;w)   puts(&quot;0 0&quot;);
+//      printf(&quot; (%d %d)[%d %d]\n&quot;,arc[i].first,G.e[arc[i].first][rec[i]].to,co[arc[i].first],co[G.e[arc[i].first][rec[i]].to]);
+        if(G.e[arc[i].first][rec[i]].w) puts(&quot;0 0&quot;);
+        else    printf(&quot;%d %d\n&quot;,co[arc[i].first]!=co[arc[i].second],vi[arc[i].first]==1 &amp;&amp; vi[arc[i].second]==2);
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="http://222.180.160.110:1024/contest/4357">Link.</a></p>  
+<h3>A. 赢钱 (money)</h3>  
+<p>人类智慧题, 好像是写成二进制小数, 每次用 Least Significant Bit 去赌? 不是很能理解...</p>  
+<h3>B. 排列 (per)</h3>  
+<p>贡献可以分成五类: 环 (长度 $&gt; 1$); 自环; 链 (长度 $&gt; 2$); 链 (长度 $= 2$); 点. 记问题的答案为 $ans$, 一类贡献即将 $ans$ 乘 $2$, 二类贡献对 $ans$ 没有影响, 这两类都可以最后来计算, 先不管. 分别记三 / 四 / 五类贡献的数量为 $a$ / $b$ / $c$, 接下来进行分析.</p>  
+<p>这总共 $a+b+c$ 个元素对答案贡献是: 任意分组, 将组内元素拼成环的方案数之和之积. 但注意, 三类贡献由于自身可以反转, 因此要 $\times 2$, 这部分也放到最后来考虑, 而五类贡献不需要, 四类贡献最特殊, 它在自成一组的情况下不需要 $\times 2$, 否则需要. 考虑二项式反演, 设 $g_i$ 为至少有 $i$ 个四类元素自成一组的答案 (<strong>不考虑</strong>四类贡献的 $\times 2$ [^1]), $f_i$ 为恰好 (<strong>考虑</strong>四类贡献的 $\times 2$). 则由二项式反演, 有:</p>  
+<p>$$  
+f_i = 2^{b-i}\sum_{j=i}^b (-1)^{j-i}\binom ji g_j  
+$$</p>
+<p>考虑 $g_i$ 的求法, 有:</p>  
+<p>$$  
+g_i = \binom bi (a+b+c-i)!  
+$$</p>
+<p>为什么后面那部分是阶乘? 考虑已经加入了 $1 \sim i-1$, 现在加入 $i$, 它只能接在某个元素的后面, 或者自成一组, 一共 $i$ 种方案, 乘起来就是阶乘.</p>  
+<p>则:</p>  
+<p>$$  
+\begin{aligned}
+&amp;\sum f_i \
+=&amp;~2^{b-i}\sum_{i=0}^b\sum_{j=i}^b(-1)^{j-i}\binom ji g_j \
+=&amp;~2^b\sum_{j=0}^bg_j\sum_{i=0}^j\left(\frac 12\right)^i(-1)^{j-i}\binom ji \
+=&amp;~2^b\sum_{j=0}^bg_j \left(-\frac 12\right)^j
+\end{aligned}
+$$</p>
+<p>直接计算即可. 说起来比较麻烦, 其实还是比较简单的, 应该是真正的签到题.</p>  
+<h3>C. 箱子 (box)</h3>  
+<p>贪心策略就是选择极长区间操作, 证明可以考虑贡献形式是求和, 因此操作区间不会相交, 只会包含或无交. 于是用线段树维护左右端点的信息, 区间的答案, 区间如果全部同色的答案 (为了区间覆盖操作) 即可.</p>  
+<h3>D. 排列 (permutation)</h3>  
+<p>学了下高一同学的模拟退火.</p>  
+<p>[^1]: 为什么不考虑? 如果在 $g_i$ 的阶段就计算了, 后面就无法套用二项式定理优化复杂度了.</p>  
+<hr />  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>/ <span style="font-variant:small-caps;">When</span> thy inconsiderate hand /</p>  
+<p>/ Flings ope this casement, with my trembling name, /</p>  
+<p>/ To look on one, whose wit or land, /</p>  
+<p>/ New battery to thy heart may frame, /</p>  
+<p>/ Then think this name alive, and that thou thus /</p>  
+<p>/ In it offend’st my Genius./</p>  
+<p>—— <a href="">John Donne - <em>A Valediction of My Name in the Window</em></a></p>  
+
+    </div>
+</div>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

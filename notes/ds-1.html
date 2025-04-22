@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>莫队的重学。</p>  
+<p>普通莫队的排序有很多讲究，以后只写回滚莫队好了，至少复杂度是稳定的。这是莫队的排序关键字：$(\textit{bel}_{ \text{left endpoint }}, \text{ right endpoint})$。</p>  
+<p>回滚莫队和莫队还是有点区别的，具体而言就是对序列分块，块内询问暴力，跨块询问就根据左端点所在的块分类，将左端点在一个块内的询问拉出来，按照右端点排序，这样移动右端点就是单调的，而左端点每次从（所在）块的右端点 $+1$ 的位置开始暴力跑，平衡了复杂度。</p>  
+<p>上面说的是只加不减莫队，只减不加莫队和这个有点区别。</p>  
+<p>首先还是按左端点所在块分类，然后右端点按降序排，莫队维护的区间右端点就从序列末端往前单调地跑就行了。只减不加莫队的区别在于，块内询问我们不必暴力了，直接跟着跑就行了。</p>  
+<p>举个例子，$\texttt{[}\texttt{(}_1\texttt{)}_1\texttt{(}_2\texttt{)}_2\texttt{]}$（方括号代表一个块，角标用以区分不同询问），如果是只加不减莫队的话，维护的右指针根本跑不到块内（从右端点开始单调向右跑），而只减不加莫队的右指针可以跑进来。注意两种莫队的左端点都是暴力的，所以不需要考虑。</p>  
+<p>高维莫队真的很没意思，就是强行加了一维时间轴，排序的方法是：</p>  
+
+
+<pre><code class="language-cpp">if (bel[x.l] != bel[y.l]) return x.l &lt; y.l;
+else if (bel[x.r] != bel[y.r]) return x.r &lt; y.r;
+return x.tim &lt; y.tim;
+</code></pre>
+<p>如果有什么厉害的排序 trick 或其他 trick 或高庙题记得放上来。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

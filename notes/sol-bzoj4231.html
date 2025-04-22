@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <hr />  
+<p>date: '2023-10-09'  
+title: 'Solution -「BZOJ 4231」回忆树'</p>  
+<hr />  
+<h2>Desc.</h2>  
+<p><a href="https://hydro.ac/d/bzoj/p/4231">Link.</a></p>  
+<p>树 $T=(V,E)$, 询问 $Q={q_i}$，每次询问:</p>  
+<ul>  
+<li>$u~v~s$, 问从 $u$ 到 $v$ 的简单路径上的字符拼接起来字符串中, $s$ 出现了多少次.</li>  
+</ul>  
+<h2>Sol.</h2>  
+<p>真毒瘤... 😅</p>  
+<p>$s$ 对询问 $q_i$ 的贡献可以分为三种:</p>  
+<ul>  
+<li>在 $\lang u,lca(u,v)\rang$ 上出现;</li>  
+<li>在 $\lang lca(u,v),v\rang$ 上出现;</li>  
+<li>跨过 $lca(u, v)$.</li>  
+</ul>  
+<p>其中第三种贡献可能的情况不超过 $\mathcal O(2|s|)$ 种, 拉出来跑哈希或者 KMP 即可.</p>  
+<p>对于剩下两种的情况, 我们以模式串的正反串建立 ACAM, 然后对原树 DFS, 那么从根节点到当前节点的树链上组成的字符串即为文本串.</p>  
+<p>代码太难打了, 打了一半就跑路了.</p>  
+
+
+<pre><code class="language-cpp">using pii = pair&lt;int, int&gt;;
+using vvp = vector&lt;vector&lt;pii&gt;&gt;;
+const int SZ = 3e5;
+typedef struct AhoCorasickAutomaton {
+    int tot = 1, nxt[SZ + 5][26], fail[SZ + 5], dfn[SZ + 5], out[SZ + 5], num;
+    vvi grp;
+    void insert(const bsi&amp; s, int&amp; pos) {
+        int u = 0;
+        for (int i=0;i&lt;(int)s.length();++i) {
+            if (!nxt[u][s[i]-'a']) nxt[u][s[i]-'a'] = tot++;
+            u = nxt[u][s[i]-'a'];
+        }
+        pos = u;
+    }
+    void build() {
+        queue&lt;int&gt; que;
+        for (int v : nxt[0]) if (v) que.push(v);
+        while (!que.empty()) {
+            int u = que.front();
+            for (int i=0;i&lt;26;++i) if (nxt[u][i]) fail[nxt[u][i]] = nxt[fail[u]][i], que.push(nxt[u][i]);
+                else nxt[u][i] = nxt[fail[u]][i];
+        }
+        grp = vvi(tot);
+        for (int i=1;i&lt;tot;++i) grp[fail[i]].pb(i);
+        dfs(0);
+    }
+    void dfs(int u) {
+        dfn[u] = num++;
+        for (int v:grp[u]) dfs(v);
+        out[u] = num;
+    }
+    int bit[SZ + 5];
+    void upd(int p, int d) {
+        for (p=dfn[p]+1;p&lt;=tot;p+=p&amp;-p) bit[p] += d;
+    }
+    int Ask(int p) {
+        int res = 0;
+        for (p=dfn[p];p;p-=p&amp;-p) res += bit[p];
+        return res;
+    }
+    int Ask(int l, int r) { return Ask(r)-Ask(l); }
+} ACAM;
+ACAM acam[2];
+const int N = 1e5;
+int n, q, fa[23][N + 5], ht, dep[N + 5], to[N + 5];
+vvp grp;
+void dfs(int u, int Fu) {
+    fa[0][u] = Fu; dep[u] = dep[Fu] + 1;
+    for (int i=1;i&lt;=ht;++i) fa[i][u] = fa[i-1][fa[i-1][u]];
+    for (const auto&amp; [v, ch] : grp[u]) if (v != Fu) dfs(v, u), to[v] = ch-'a';
+}
+int getLca(int u, int v) {
+    if (dep[u] &lt; dep[v]) swap(u, v);
+    for (int i=ht;i&gt;=0;--i) if (dep[fa[i][u]] &gt;= dep[v]) u = fa[i][u];
+    if (u == v) return u;
+    for (int i=ht;i&gt;=0;--i) if (fa[i][u] != fa[i][v]) u = fa[i][u], v = fa[i][v];
+    return fa[0][u];
+}
+struct Query {
+    int u, v, lca, pos[2];
+};
+int jump(int u, int d) {
+    for (int i=0;i&lt;=ht;++i) if (d&amp;(1&lt;&lt;i)) u = fa[i][u];
+    return u;
+}
+bsi extract(int u, int v, int lca, int len) {
+    bsi res, tmp;
+    u = jump(u, dep[u]-dep[lca]-len);
+    v = jump(v, dep[v]-dep[lca]-len);
+    while (u != lca) res.pb(to[u]), u = fa[0][u];
+    while (v != lca) tmp.pb(to[v]), v = fa[0][v];
+    reverse(allu(tmp));
+    return res.append(tmp);
+}
+int solve_passing(const bsi&amp; text, const bsi&amp; pat) {
+    static const ull BASE = 1331;
+    static ull pw[SZ + 5], h[SZ + 5];
+    static void* __tmp = ([]() {
+        pw[0] = 1;
+        for (int i=1;i&lt;SZ+5;++i) pw[i] = pw[i-1]*BASE;
+        return pw;
+    })();
+    auto get_hash = [&amp;](int l, int r) { return h[r]-h[l-1]*pw[r-l+1]; };
+    int m = text.length(), k = pat.length();
+    memset(h, 0, m*8);
+    ull H = 0;
+    for (int x:pat) H = H*BASE+x;
+    for (int i=0;i&lt;m;++i) h[i+1] = h[i]*BASE+text[i];
+    int res = 0;
+    for (int i=1;i&lt;=m-k+1;++i) res += get_hash(i, i+k-1) == H;
+    return res;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    cin &gt;&gt; n &gt;&gt; q; ht = ceil(log2(n));
+    grp = vvp(n);
+    for (int i=1,u,v;i&lt;n;++i) {
+        char c; cin &gt;&gt; u &gt;&gt; v &gt;&gt; c; u--; v--;
+        grp[u].eb(v, int(c-'a')); grp[v].eb(u, int(c-'a'));
+    }
+    dfs(0, n);
+    vector&lt;Query&gt; queries(q);
+    vector&lt;vvp&gt; mnt(2, vvp(n));
+    for (auto&amp; [u, v, lca, pos] : queries) {
+        static int qid = 0;
+        string _let;
+        cin &gt;&gt; u &gt;&gt; v &gt;&gt; _let; u--; v--;
+        int len = _let.length();
+        bsi let;
+        for (int i=0;i&lt;len;++i) let.pb(_let[i]-'a');
+        lca = getLca(u, v);
+        acam[0].insert(let, pos[0]); reverse(allu(let)); acam[1].insert(let, pos[1]);
+        if (lca != u &amp;&amp; lca != v) {
+            bsi s = extract(u, v, lca, len);
+            cout &lt;&lt; solve_passing(s, let) &lt;&lt; &quot;\n&quot;;
+        } else {
+            if (dep[u]-dep[lca] &gt;= len) mnt[0][u].eb(qid, 1), mnt[0][jump(u, dep[u]-dep[lca]-len+1)].eb(qid, -1);
+            if (dep[v]-dep[lca] &gt;= len) mnt[1][v].eb(qid, 1), mnt[1][jump(v, dep[v]-dep[lca]-len+1)].eb(qid, -1);
+        }
+    }
+    acam[0].build(), acam[1].build();
+    static int ans[N + 5];
+    auto dfs2 = [&amp;](auto self, int u, int Fu, vi cur) {
+        for (int i:{0,1}) acam[i].upd(cur[i], 1);
+        for (const auto&amp; [v, ignore] : grp[u]) {
+        }
+    };
+    dfs2(dfs2, 0, n, {0, 0});
+    for (int i=0;i&lt;q;++i) cout &lt;&lt; ans[i] &lt;&lt; &quot;\n&quot;;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

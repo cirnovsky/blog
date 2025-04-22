@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P3206">Link</a>.</p>  
+<p>修改边权的动态 MST。</p>  
+<h2>Solution</h2>  
+<p>讲清楚点。</p>  
+<p>修改边权的 MST，考虑对时间分治。设我们当前操作的操作区间是 $[l,r]$，直接暴力找 MST 是不行的。</p>  
+<p>考虑找出必要的边和必不要的边。</p>  
+<ul>  
+<li>  
+<p>若把 $[l,r]$ 操作中的边边权改成 $+\infty$，拿原图点集和不包含 $[l,r]$ 中边的边集和 $[l,r]$ 中边权修改为 $+\infty$ 后的边的集合的并集作为边集跑 MST，此时如果不在 MST 上的边一定不在最终的 MST 边集中。</p>  
+</li>  
+<li>  
+<p>同理，改成 $-\infty$，此时在 MST 边集里的边一定在最终的 MST 边集中。</p>  
+</li>  
+</ul>  
+<p>这样暴力跑 Kruskal 的规模保证在了 $O(r-l+1)$。</p>  
+<p>复杂度 $O(n\log_{2}^{2}n)$。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+const int INF=std::numeric_limits&lt;int&gt;::max();
+struct edge
+{
+    int fr,ba,val,ID;
+    edge():fr(0),ba(0),val(0),ID(0){}
+    edge(int _fr,int _ba,int _val,int _id):fr(_fr),ba(_ba),val(_val),ID(_id){}
+    friend bool operator &lt; (const edge &amp;lhs,const edge &amp;rhs){return lhs.val&lt;rhs.val;}
+}edge_set[20][100010],ori_edge[100010],tmp_edge[100010];
+struct oper
+{
+    int ID,val;
+    oper():ID(0),val(0){}
+    oper(int _id,int _val):ID(_id),val(_val){}
+}ope[100010];
+int tagcur[100010],tagope[100010],n,m,q,size_v[20],size_e[20],ver_set[20][100010],wgt[100010],srt[100010];
+struct DSU
+{
+    int fa[100010];
+    int f(int i){return fa[i];}
+    void clear(int l){std::iota(fa+1,fa+l+1,1);}
+    int find(int x){return (x^fa[x])?fa[x]=find(fa[x]):x;}
+    bool merge(int x,int y){x=find(x),y=find(y); if(x^y)    return fa[x]=y,true; else   return false;}
+}dsu;
+int read()
+{
+    int x=0,f=1;
+    char c=getchar();
+    while(c&lt;'0' || c&gt;'9')
+    {
+        if(c=='-')  f=-1;
+        c=getchar();
+    }
+    while(c&gt;='0' &amp;&amp; c&lt;='9') x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^'0'),c=getchar();
+    if(~f)  return x;
+    else    return -x;
+}
+int wrstk[100];
+void write(long long x,char las='\n')
+{
+    int top=0;
+    if(x&lt;0) x=-x,putchar('-');
+    do wrstk[++top]=x%10,x/=10; while(x);
+    while(top)  putchar(wrstk[top--]^'0');
+    putchar(las);
+}
+void rawgrass(int l,int r,int dep,long long ans)
+{
+    const int &amp;n=size_v[dep],&amp;m=size_e[dep];
+    if(l^r)
+    {
+        for(int i=1;i&lt;=m;++i)   tagope[edge_set[dep][i].ID]=0;
+        for(int i=l;i&lt;=r;++i)   tagcur[ope[i].ID]=1;
+        for(int i=1;i&lt;=m;++i)
+        {
+            tmp_edge[i]=edge_set[dep][i];
+            if(tagcur[tmp_edge[i].ID])  tmp_edge[i].val=INF;
+        }
+        std::sort(tmp_edge+1,tmp_edge+m+1);
+        dsu.clear(n);
+        for(int i=1;i&lt;=m;++i)   if(!dsu.merge(tmp_edge[i].fr,tmp_edge[i].ba) &amp;&amp; tmp_edge[i].val!=INF)   tagope[tmp_edge[i].ID]=-1;
+        for(int i=l;i&lt;=r;++i)   tagcur[ope[i].ID]=1;
+        for(int i=1;i&lt;=m;++i)
+        {
+            tmp_edge[i]=edge_set[dep][i];
+            if(tagcur[tmp_edge[i].ID])  tmp_edge[i].val=-INF;
+        }
+        std::sort(tmp_edge+1,tmp_edge+m+1);
+        dsu.clear(n);
+        for(int i=1;i&lt;=m;++i)   if(dsu.merge(tmp_edge[i].fr,tmp_edge[i].ba) &amp;&amp; tmp_edge[i].val!=-INF)   tagope[tmp_edge[i].ID]=1;
+        for(int i=l;i&lt;=r;++i)   tagcur[ope[i].ID]=0;
+        size_v[dep+1]=size_e[dep+1]=0;
+        dsu.clear(n);
+        for(int i=1;i&lt;=m;++i)   if(tagope[edge_set[dep][i].ID]==1)  dsu.merge(edge_set[dep][i].fr,edge_set[dep][i].ba);
+        for(int i=1;i&lt;=n;++i)   if(dsu.f(i)==i) ver_set[dep+1][++size_v[dep+1]]=ver_set[dep][i],srt[i]=size_v[dep+1];
+        for(int i=1;i&lt;=m;++i)
+        {
+            if(tagope[edge_set[dep][i].ID]==1)  ans+=edge_set[dep][i].val;
+            else if(tagope[edge_set[dep][i].ID]==0)
+            {
+                int x=edge_set[dep][i].fr,y=edge_set[dep][i].ba;
+                x=dsu.find(x),y=dsu.find(y);
+                if(x^y) edge_set[dep+1][++size_e[dep+1]]=edge(srt[x],srt[y],edge_set[dep][i].val,edge_set[dep][i].ID);
+            }
+        }
+        int mid=(l+r)&gt;&gt;1;
+        rawgrass(l,mid,dep+1,ans);
+        for(int i=l;i&lt;=mid;++i) wgt[ope[i].ID]=ope[i].val;
+        for(int i=1;i&lt;=size_e[dep+1];++i)   if(wgt[edge_set[dep+1][i].ID]!=INF) edge_set[dep+1][i].val=wgt[edge_set[dep+1][i].ID];
+        for(int i=l;i&lt;=mid;++i) wgt[ope[i].ID]=INF;
+        rawgrass(mid+1,r,dep+1,ans);
+    }
+    else
+    {
+        for(int i=1;i&lt;=m;++i)
+        {
+            tmp_edge[i]=edge_set[dep][i];
+            if(tmp_edge[i].ID==ope[l].ID)   tmp_edge[i].val=ope[l].val;
+        }
+        std::sort(tmp_edge+1,tmp_edge+m+1);
+        dsu.clear(n);
+        for(int i=1;i&lt;=m;++i)   if(dsu.merge(tmp_edge[i].fr,tmp_edge[i].ba))    ans+=tmp_edge[i].val;
+        write(ans);
+    }
+}
+int main()
+{
+    n=read(),m=read(),q=read();
+    for(int i=1,x,y,z;i&lt;=m;++i) x=read(),y=read(),z=read(),ori_edge[i]=edge(x,y,z,i);
+    for(int i=1,id,k;i&lt;=q;++i)  id=read(),k=read(),ope[i]=oper(id,k);
+    size_v[0]=n;
+    size_e[0]=m;
+    for(int i=1;i&lt;=size_v[0];++i)   ver_set[0][i]=i;
+    for(int i=1;i&lt;=size_e[0];++i)   edge_set[0][i]=ori_edge[i],wgt[i]=INF;
+    rawgrass(1,q,0,0);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

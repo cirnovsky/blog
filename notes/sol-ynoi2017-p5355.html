@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P5355">Link</a>.</p>  
+<p>见 Link。</p>  
+<h2>Solution</h2>  
+<p>前三个操作就是小清新人渣的本愿。</p>  
+<p>这里简单讲解一下。</p>  
+<p>记录两个 bitset <code>cla</code> 和 <code>inv</code>。</p>  
+<p>我们考虑莫队。</p>  
+<p><code>cla[x]==1</code> 表示 $x$ 这个数出现过。</p>  
+<p><code>inv[x]==1</code> 表示 $100000-x$ 这个数出现过。</p>  
+<p>这两个 bitset 的维护很简单，就是在莫队的加减贡献操作里改就行了。</p>  
+<p>对于第一个减法的判断，我们的答案就是 <code>((cla&lt;&lt;x)&amp;cla)</code> 是否为 0。</p>  
+<p>如果为 0 的话表示应该输出有解。</p>  
+<p>正确性很好得到。</p>  
+<p>比如我们的询问是是否存在 $a,b$ 使得 $a-b=x$。</p>  
+<p>那么我们只需要存在 $a$ 以及 $a-x$ 即可。</p>  
+<p>第二个加法的判断也差不多，看作是加一个负数即可，判断是 <code>((cla&lt;&lt;(100000-x)&amp;inv))</code>。</p>  
+<p>第三个乘法的判断直接暴力枚举因子 $i$，判断 $i,\frac{x}{i}$ 是否同时存在即可。($i\mid x$)。</p>  
+<p>由于值域和 $n,m$ 同阶，所以我们的复杂度是对的。</p>  
+<p>对于第四个操作我们直接从乘法贺过来。</p>  
+<p>枚举一个 $i$，从 1 开始，终止条件为 $i\times x\le100000$。</p>  
+<p>其中 $x$ 为当前询问给出的商。</p>  
+<p>然后直接判断是否同时存在 $i$ 和 $i\times x$ 即可。</p>  
+<p>在 $x\ge\sqrt{n}$ 的时候我们的复杂度是对的。</p>  
+<p>那么 $x&lt;\sqrt{n}$ 的时候我们就换一种方法吧。</p>  
+<p>我们枚举一个 $x\in[1,\sqrt{100000}]$。</p>  
+<p>然后维护两个数组 <code>pre</code> 和 <code>mxp</code>。</p>  
+<p>在 $x$ 的枚举里面我们再枚举一个 $i\in[1,n]$。</p>  
+<p>然后 <code>pre[i]</code> 表示 $a_{i}$ 的上一次出现位置。</p>  
+<p><code>mxp[i]</code> 扫描到 $i$ 的时候出现了满足 $a\div b=x$ 的最右位置。</p>  
+<p>维护的具体方法看注释吧。</p>  
+<p>这道题就完了。</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cstring&gt;
+#include &lt;algorithm&gt;
+#include &lt;bitset&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int Maxn = 1e5 + 5, Maxs = 400 + 5, Maxv = 310;
+int n, m, each, cube, isa[Maxn], cnt[Maxn], ans[Maxn], pre[Maxn], mxp[Maxn], bel[Maxn], lps[Maxs], rps[Maxs];
+struct Query
+{
+    int t, l, r, x, id;
+    Query() {}
+    Query(int t1, int t2, int t3, int t4, int t5)
+    {
+        t = t1;
+        l = t2;
+        r = t3;
+        x = t4;
+        id = t5;
+    }
+};
+struct Special
+{
+    int l, r, id;
+    Special() {}
+    Special(int t1, int t2, int t3)
+    {
+        l = t1;
+        r = t2;
+        id = t3;
+    }
+};
+vector &lt; Query &gt; Mq; // Mo's Algorithm | Query
+vector &lt; Special &gt; Vq[Maxn]; // Violence | Query
+bitset &lt; Maxn &gt; cla, inv; // classic | inverse
+
+bool cmp(const Query &amp;one, const Query &amp;ano)
+{
+    if (bel[one.l] != bel[ano.l])   return one.l &lt; ano.l;
+    else if (bel[one.l] &amp; 1)    return one.r &lt; ano.r;
+    else    return one.r &gt; ano.r;
+}
+
+void Plus_Cont(int x)
+{
+    x = isa[x];
+    if (cnt[x] == 0)
+    {
+        cla[x] = 1;
+        inv[100000 - x] = 1;
+    }
+    ++cnt[x];
+}
+
+void Mins_Cont(int x)
+{
+    x = isa[x];
+    --cnt[x];
+    if (cnt[x] == 0)
+    {
+        cla[x] = 0;
+        inv[100000 - x] = 0;
+    }
+}
+
+void Pare_v1()
+{
+    int l = 1, r = 0;
+    for (auto it : Mq)
+    {
+        while (l &gt; it.l)    Plus_Cont(--l);
+        while (l &lt; it.l)    Mins_Cont(l++);
+        while (r &gt; it.r)    Mins_Cont(r--);
+        while (r &lt; it.r)    Plus_Cont(++r);
+        if (it.t == 1)  ans[it.id] = ((cla &lt;&lt; it.x) &amp; cla).any();
+        else if (it.t == 2)  ans[it.id] = ((cla &lt;&lt; (100000 - it.x)) &amp; inv).any();
+        else if (it.t == 3)
+        {
+            bool flag = 0;
+            for (int i = 1; i * i &lt;= it.x; ++i)
+            {
+                if (it.x % i == 0 &amp;&amp; cla.test(i) &amp;&amp; cla.test(it.x / i))
+                {
+                    ans[it.id] = 1;
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag == 0)  ans[it.id] = 0;
+        }
+        else
+        {
+            bool flag = 0;
+            for (int i = 1; i * it.x &lt;= 100000; ++i)
+            {
+                if (cla.test(i) &amp;&amp; cla.test(i * it.x))
+                {
+                    ans[it.id] = 1;
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag == 0)  ans[it.id] = 0;
+        }
+    }
+}
+
+void Pare_v2()
+{
+    for (int x = 1; x &lt;= Maxv; ++x)
+    {
+        if (Vq[x].empty())  continue;
+        int now = 0;
+        for (int i = 1; i &lt;= n; ++i)
+        {
+            int y = isa[i];
+            pre[y] = i;
+            if (x * y &lt;= 100000)    now = max(now, pre[x * y]);
+            if (y % x == 0)     now = max(now, pre[y / x]);
+            mxp[i] = now;
+        }
+        for (auto it : Vq[x])
+        {
+            if (it.l &lt;= mxp[it.r])  ans[it.id] = 1;
+            else    ans[it.id] = 0; 
+        }
+        memset(pre, 0, sizeof pre);
+        memset(mxp, 0, sizeof mxp);
+    }
+}
+
+char ANS[2][10] = { &quot;yumi&quot;, &quot;yuno&quot; };
+signed main()
+{
+    scanf(&quot;%d %d&quot;, &amp;n, &amp;m);
+    each = 320;
+    cube = (n - 1) / each + 1;
+    for (int i = 1; i &lt;= n; ++i)    scanf(&quot;%d&quot;, &amp;isa[i]);
+    for (int i = 1; i &lt;= cube; ++i)
+    {
+        lps[i] = rps[i - 1] + 1;
+        rps[i] = rps[i - 1] + each;
+        if (i == cube)  rps[i] = n;
+        for (int j = lps[i]; j &lt;= rps[i]; ++j)  bel[j] = i;
+    }
+    for (int i = 1, t, l, r, x; i &lt;= m; ++i)
+    {
+        scanf(&quot;%d %d %d %d&quot;, &amp;t, &amp;l, &amp;r, &amp;x);
+        if (t == 4 &amp;&amp; x &lt;= Maxv)    Vq[x].emplace_back(Special(l, r, i));
+        else    Mq.emplace_back(Query(t, l, r, x, i));
+    }
+    sort(Mq.begin(), Mq.end(), cmp);
+    Pare_v1(), Pare_v2();
+    for (int i = 1; i &lt;= m; ++i)    puts(ANS[ans[i]]);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

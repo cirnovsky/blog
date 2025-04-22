@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P4690">Link</a>.</p>  
+<ul>  
+<li>区间推平；</li>  
+<li>区间数颜色。</li>  
+</ul>  
+<h2>Solution</h2>  
+<p>考虑无修的情况，我们是采用维护每个数的 $pre$ 来做的。具体一点就是对于每一个 $a_{i}$ 维护 $pre_{i}=\max{j\in[1,i),s.t.a_{j}=a_{i}}$。然后数区间内 $pre$ 严格小于左端点的元素个数。</p>  
+<p>区间推平不好做，考虑削弱这一层修改，考虑单点修改怎么做。</p>  
+<p>修改一个 $a_{i}=x$，则受影响的下标有：</p>  
+<ul>  
+<li>$j,s.t.pre_{j}=i$；</li>  
+<li>$i$；</li>  
+<li>$\min{j\in(i,n],s.t.a_{j}=x}$。</li>  
+</ul>  
+<p>这个东西套个 <code>std::map</code> 能直接维护。</p>  
+<p>对于区间修改，有这样的结论：</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p>对于所有修改，$pre$ 变化次数为 $\mathcal{O}(n+m)$。</p>  
+
+    </div>
+</div>  
+<p>~~做不来区间推平翻题解翻来的~~，至于证明不太会，摊还分析证复杂度没用过。</p>  
+<p>反正综上就能做了嘛，不知道为什么那么多人都喜欢写树套树，反正我是 CDQ。</p>  
+
+
+<pre><code class="language-cpp">//in the autumn sky
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define fs first
+#define sc second
+struct oper
+{
+    int opt,opl,opr,opx;
+    oper(int A=0,int B=0,int C=0,int D=0){opt=A,opl=B,opr=C,opx=D;}
+};
+struct ST_modify
+{
+    int ID,pos,pr,val;
+    ST_modify(int A=0,int B=0,int C=0,int D=0){ID=A,pos=B,pr=C,val=D;}
+    bool operator&lt;(const ST_modify &amp;ano)const{return pr&lt;ano.pr;}
+};
+struct ST_query
+{
+    int ID,l,r;
+    ST_query(int A=0,int B=0,int C=0){ID=A,l=B,r=C;}
+    bool operator&lt;(const ST_query &amp;ano)const{return l&lt;ano.l;}
+};
+vector&lt;int&gt; pri;
+vector&lt;ST_modify&gt; mod;
+vector&lt;ST_query&gt; que;
+int pre[100010],n,m,tr[100010],curInd,ans[100010];
+map&lt;int,int&gt; mapo[200010];
+map&lt;int,pair&lt;int,int&gt; &gt; exmapo; // for ODT
+#define lowbit(x) ((x)&amp;(-(x)))
+void ins(int pos,int delta)
+{
+    ++pos;
+    while(pos&lt;=n)
+    {
+        tr[pos-1]+=delta;
+        pos+=lowbit(pos);
+    }
+}
+int find(int pos)
+{
+    int res=0;
+    while(pos)
+    {
+        res+=tr[pos-1];
+        pos^=lowbit(pos);
+    }
+    return res;
+}
+void ODT_split(int pos)
+{
+    auto iter=exmapo.lower_bound(pos);
+    int stan=n;
+    if(iter!=exmapo.end())  stan=iter-&gt;fs;
+    if(stan^pos)
+    {
+        --iter;
+        exmapo.emplace(pos,iter-&gt;sc);
+        auto exiter=mapo[iter-&gt;sc.sc].emplace(pos,iter-&gt;sc.fs).fs;
+        iter-&gt;sc.fs=pos;
+        prev(exiter)-&gt;sc=pos;
+    }
+}
+void pushOp(int pos,int after,int ID)
+{
+    mod.emplace_back(ST_modify(ID,pos,pre[pos],-1));
+    pre[pos]=after;
+    mod.emplace_back(ST_modify(ID,pos,after,1));
+}
+void rawGrass(int onel,int oner,int anol,int anor,int parl,int parr)
+{
+    if(onel==oner || anol==anor)
+    {
+        sort(mod.begin()+onel,mod.begin()+oner);
+        sort(que.begin()+anol,que.begin()+anor);
+    }
+    else
+    {
+        int mid=(parl+parr)&gt;&gt;1,exmid1=onel,exmid2=anol;
+        while(exmid1&lt;oner &amp;&amp; mod[exmid1].ID&lt;mid)    ++exmid1;
+        while(exmid2&lt;anor &amp;&amp; que[exmid2].ID&lt;mid)    ++exmid2;
+        rawGrass(onel,exmid1,anol,exmid2,parl,mid);
+        rawGrass(exmid1,oner,exmid2,anor,mid,parr);
+        int ex=onel;
+        for(int i=exmid2;i&lt;anor;++i)
+        {
+            while(ex&lt;exmid1 &amp;&amp; mod[ex].pr&lt;que[i].l)    ins(mod[ex].pos,mod[ex].val),++ex;
+            ans[que[i].ID]+=find(que[i].r)-find(que[i].l);
+        }
+        for(int i=onel;i&lt;ex;++i)    ins(mod[i].pos,-mod[i].val);
+        inplace_merge(mod.begin()+onel,mod.begin()+exmid1,mod.begin()+oner);
+        inplace_merge(que.begin()+anol,que.begin()+exmid2,que.begin()+anor);
+    }
+}
+int main()
+{
+    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+    vector&lt;int&gt; a(n);
+    vector&lt;oper&gt; b(m);
+    for(int &amp;i:a)   scanf(&quot;%d&quot;,&amp;i),pri.emplace_back(i);
+    for(oper &amp;i:b)
+    {
+        scanf(&quot;%d %d %d&quot;,&amp;i.opt,&amp;i.opl,&amp;i.opr);
+        if(i.opt==1)    scanf(&quot;%d&quot;,&amp;i.opx),pri.emplace_back(i.opx);
+        --i.opl;
+    }
+    sort(pri.begin(),pri.end());
+    pri.erase(unique(pri.begin(),pri.end()),pri.end());
+    for(int &amp;i:a)   i=lower_bound(pri.begin(),pri.end(),i)-pri.begin();
+    for(oper &amp;i:b)
+    {
+        if(i.opt==1)    i.opx=lower_bound(pri.begin(),pri.end(),i.opx)-pri.begin();
+    }
+    curInd=0;
+    for(int i:a)
+    {
+        if(mapo[i].size()!=int(0))  pre[curInd]=prev(mapo[i].end())-&gt;fs;
+        else    pre[curInd]=-1;
+        mod.emplace_back(ST_modify(-1,curInd,pre[curInd],1));
+        mapo[i].emplace(curInd,curInd+1);
+        exmapo.emplace(curInd,make_pair(curInd+1,i));
+        ++curInd;
+    }
+    curInd=0;
+    for(oper i:b)
+    {
+        int ty=i.opt,l=i.opl,r=i.opr,x=i.opx;
+        if(ty==1)
+        {
+            ODT_split(l),ODT_split(r);
+            auto iter=mapo[x].lower_bound(l);
+            auto ptr=exmapo.lower_bound(l);
+            int rpe=(iter!=mapo[x].begin())?((iter=prev(iter))-&gt;sc-1):(-1); // for Suf
+            while(ptr!=exmapo.end())
+            {
+                if(ptr-&gt;fs==r)  break;
+                pushOp(ptr-&gt;fs,rpe,curInd);
+                int tmp=ptr-&gt;sc.sc;
+                auto exiter=mapo[tmp].erase(mapo[tmp].find(ptr-&gt;fs));
+                if(exiter!=mapo[tmp].end())
+                {
+                    if(exiter==mapo[tmp].begin())   pushOp(exiter-&gt;fs,-1,curInd);
+                    else    pushOp(exiter-&gt;fs,prev(exiter)-&gt;sc-1,curInd);
+                }
+                rpe=ptr-&gt;sc.fs-1;
+                ptr=exmapo.erase(ptr);
+            }
+            iter=mapo[x].lower_bound(r);
+            if(iter!=mapo[x].end()) pushOp(iter-&gt;fs,r-1,curInd);
+            exmapo.emplace(l,make_pair(r,x));
+            mapo[x].emplace(l,r);
+        }
+        else    que.emplace_back(ST_query(curInd,l,r));
+        ++curInd;
+    }
+    rawGrass(0,int(mod.size()),0,int(que.size()),-1,m);
+    curInd=0;
+    for(oper i:b)
+    {
+        if(i.opt==2)    printf(&quot;%d\n&quot;,ans[curInd]);
+        ++curInd;
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

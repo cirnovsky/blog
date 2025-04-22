@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <hr />  
+<p>date: '2023-10-08'  
+title: 'Solution Set -「LOC 4293」'</p>  
+<hr />  
+<p><a href="http://222.180.160.110:1024/contest/4293/">Link.</a></p>  
+<h3>A. 特种训练 (train)</h3>  
+<p>写不来这种 Ad-hoc 题.</p>  
+<h3>B. 红色改造 (modification)</h3>  
+<p>可以参考论文 <a href="../posts/sols-20231008/solution.pdf">万成章 - <em>Astral Birth 解题报告</em></a></p>  
+<p>把相同连续段合并起来, 将原 $0/1$ 序列转化成一个由二元组 $(0/1, c_i)$ 组成的长度为 $m$ 的序列, 问题有<strong>转化一</strong>:</p>  
+<ul>  
+<li>选出尽量长的子序列, 其段数不超过 $k+1$ ($+1$ 的原因是贡献分为三种, 打过朴素的 DP 都知道), 则子序列长度和为答案.</li>  
+</ul>  
+<p>倒过来考虑, 我们需要从中选择一些元素删去, 有以下的 Observation:</p>  
+<ul>  
+<li><strong>Observation 1</strong>: 我们不会删除相邻的元素.</li>  
+</ul>  
+<p>那么有<strong>转化二</strong>:</p>  
+<ul>  
+<li>对于每个 $k$, 选择一些价值之和为 $k$ 的元素并将它们删除, 要求元素两两不相邻, 且长度之和最小. 元素的价值就是 $1$ 或 $2$, 第一个和最后一个元素的价值为 $1$, 其余为 $2$.</li>  
+</ul>  
+<p>然后就是一个经典的反悔贪心问题.</p>  
+<h3>D. 车站爆破 (bomb)</h3>  
+<p>居然可以维护操作序列... 还是见识浅薄...</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

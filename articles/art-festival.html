@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>符号约定</h2>  
+<p>以下以 A 代指某艺术作品或娱乐产品，以 B 代表 26 班剩余同学。</p>  
+<h2>核心</h2>  
+<p>以艺术节前夕班内关于节目确定方向问题引起的争端为主线，采取舞台剧的形式，展现人物之间的矛盾冲突。</p>  
+<h2>剧本概览</h2>  
+<p>艺术节行将开幕，二十六班的同学们组成了程序导演组。组内的 A 受众占比较大，于是导演组决定将 A 中的某一桥段改做艺术节的节目。但是这在其他同学之间引起了争论，认为少数人的夹带私货会让其他同学的参与感大大降低，承担的义务与获得的回报与参与感并不相称。</p>  
+<p>导演组内部有人对其他同学的反对感到不满，认为在召集议会时没有主动选择参与的人并没有发言权，在一节晚自习将整件事情对全班同学摊开讲来后，全班同学展开了激烈的讨论……</p>  
+<h2>劣势分析</h2>  
+<p>并不知道这样投机取巧的选材究竟效果如何，如果要改成偏喜剧的形式比较困难。</p>  
+<h2>优势分析</h2>  
+<p>相比于歌舞类节目，更多同学能获得参与感。</p>  
+<p>相比于原本的剧本，该主题与 26 班联系更大，加之是最近刚发生的事情，演员可以很容易找到感觉，凑群演也相对容易，因为所有人都是现实事件的参与者，更好理解事件的中心与情感变化。</p>  
+<p>如果找一个不相干的话题来演，各路人都想来塞点私货。该主题可以有效解决众口难调的塞私货的问题。</p>  
+<p>原剧本的优势（据编剧本人所言）的一个优势是改现成的会比较容易。本主题基于现实事件，写剧本同样非常容易！</p>  
+<p>方便升华，可以讨论一些问题，比如唐铄果提到的 MBTI 人格问题，比如班级小型社会的矛盾问题，等等。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

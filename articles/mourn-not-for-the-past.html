@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h1>织</h1>  
+<p>今天是南大开放日，偶然进入 Auditorium，发现竟然是 TAISP 的讲座。台上的安波教授神情自若地陈述着 TAISP 的种种优势，一下使我激情澎湃——MIT 交换，姚班学习，无一不是一个（曾经的）竞赛学生憧憬的。好像进戒毒所半年的瘾君子突然搞到一卷叶子，我找到了很久没有如此憧憬得到的东西。</p>  
+<p>激动之下，我在讲座结束后飞到教授身边，询问如何才能进入，省级奖项有无帮助。教授顿了顿，然后说，这个没啥帮助的啊。他后面接着说了什么，我没有印象了。依稀记得个什么 IOI、IMO，金牌银牌。</p>  
+<p>好像飞完叶子，药效过了，我回寝室像只死狗一样躺了一个小时。疑似是“竞赛生就该追求卓越”的记忆又开始攻击我了。</p>  
+<h1>式</h1>  
+<p>你不是更喜欢书中的世界么？即使现实无数次嘲弄了没有天赋和努力的人，你就不能在其他地方找到成功吗？</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

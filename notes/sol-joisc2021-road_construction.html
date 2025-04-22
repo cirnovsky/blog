@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://loj.ac/p/3491">link。</a></p>  
+<p>非常离谱, 但它确实在 loj fastest rank 2 站着.</p>  
+<p>我们首先看得出来这是个无脑分讨题, 考虑怎么能减少点讨论 (motivation) (不).</p>  
+<p>constructive method: 令 $x'_i=x_i-y_i$, $y'_i=x_i+y_i$, 然后绝对值相加就变成绝对值取 $\max$ 蜡!</p>  
+<p>但是是个 trivial trick (?), 小丑了.</p>  
+<p>然后就排序第一个关键字, 二分答案再 check 构造答案即可.</p>  
+
+
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+#define pii pair&lt;int, int&gt;
+#define mp(x, y) make_pair(x, y)
+using namespace std;
+typedef long long ll;
+#define int ll
+int N, K, ans[250100], cnt;
+pii p[250100];
+set&lt;pii&gt; s;
+set&lt;pii&gt;::iterator it;
+ll dist(int x, int y) {
+  return max(abs(p[x].first - p[y].first), abs(p[x].second - p[y].second));
+}
+bool check(ll M) {
+  cnt = 0;
+  s.clear();
+  for (int i = 1, t = 1; i &lt;= N; ++i) {
+    while (t &lt; i &amp;&amp; p[i].first - p[t].first &gt; M) {
+      // 固定第一维
+      s.erase(mp(p[t].second, t));
+      t++;
+    }
+    it = s.lower_bound(mp(p[i].second - M, 0));
+    for (; it != s.end(); ++it) {
+      if (it-&gt;first - p[i].second &gt; M) {
+        break;
+      }
+      ans[++cnt] = dist(it-&gt;second, i);
+      if (cnt &gt;= K) return 0;
+    }
+    s.insert(mp(p[i].second, i));
+  }
+  return cnt &lt; K;
+}
+signed main() {
+  ios::sync_with_stdio(0), cin.tie(0);
+  cin &gt;&gt; N &gt;&gt; K;
+  for (int i = 1, x, y; i &lt;= N; ++i) {
+    cin &gt;&gt; x &gt;&gt; y;
+    p[i] = mp(x - y, x + y);
+  }
+  sort(p + 1, p + N + 1);
+  ll l = 0, r = 4e9, Mid, res = 0;
+  while (l &lt;= r) {
+    if (check(Mid = (l + r) / 2)) {
+      l = Mid + 1, res = Mid;
+    } else {
+      r = Mid - 1;
+    }
+  }
+  check(res);
+  sort(ans + 1, ans + cnt + 1);
+  for (int i = 1; i &lt;= cnt; ++i) {
+    cout &lt;&lt; ans[i] &lt;&lt; &quot;\n&quot;;
+  }
+  for (int i = cnt + 1; i &lt;= K; ++i) {
+    cout &lt;&lt; res + 1 &lt;&lt; &quot;\n&quot;;
+  }
+  return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

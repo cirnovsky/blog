@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://www.codechef.com/problems/STRQUER">link。</a></p>  
+<p>首先对原序列排序，考虑静态序列做法为：设 $f(n,k\in{0,1})$ 为对于前 $n$ 个数，第 $n$ 个数否 / 是已经决策完毕的最优方案，转移即</p>  
+<p>$$  
+\begin{cases}
+f(n,0)=f(n-1,1) \  
+\displaystyle
+f(n,1)=\lvert a(n)-a(n-1)\rvert+\min{f(n-1,{0,1})}  
+\end{cases}
+$$</p>
+<p>再由于增 / 减数操作，我们使用数据结构来维护，如果使用维护区间的数据结构那么区间 DP 是最好的选择。把状态换为 $f(l,r,k_1\in{0,1},k_2\in{0,1})$ 表示考虑区间 $[l,r]$，左 / 右端点分别否 / 是已经决策完毕。转移即</p>  
+<p>$$  
+f(l,r,k_1,k_2)=\min_{a+b&gt;1}{f(l,m,k_1,a),f(m,r,b,k_2)}  
+$$</p>
+<p>注意使用不同的数据结构转移会有不同，此处为平衡树情况的转移。不过代码写的是线段树，请注意区分。$m$ 为 $[l,r]$ 中一点，也需要注意 $r-l\leqslant2$ 情况的特判。</p>  
+<p><a href="https://www.cnblogs.com/orchid-any/articles/15153763.html">省去了一些东西，完整代码见此处，特征码 <code>cc-strquer</code>。</a></p>  
+
+
+<pre><code class="language-cpp">const long long inf = 1e18;
+namespace 😅😅 {
+struct node {
+  int ls, rs, num;
+  long long l, r, mx, mn;
+  long long dp[2][2];
+  long long *const operator[](const long long i) { return dp[i]; }
+} 😅[2 * 200000 * 60];
+int tot;
+int fuck😅(long long l, long long r) {
+  int shit = ++tot;
+  😅[shit].ls = 😅[shit].rs = 0;
+  😅[shit].l = l, 😅[shit].r = r;
+  😅[shit].num = 0;
+  return shit;
+}
+void Merge(node &amp;$😅, node x, node y) {
+  node ap;
+  bool flag = 0;
+  if (!x.num) {
+    ap = y;
+    flag = 1;
+  }
+  if (!y.num) {
+    ap = x;
+    flag = 1;
+  }
+  if (flag) {
+    $😅.mn = ap.mn;
+    $😅.mx = ap.mx;
+    for (int i = 0; i &lt; 2; ++i) {
+      for (int j = 0; j &lt; 2; ++j) $😅[i][j] = ap[i][j];
+    }
+    return;
+  }
+  $😅.mn = x.mn;
+  $😅.mx = y.mx;
+  for (int i = 0; i &lt; 2; ++i) {
+    for (int j = 0; j &lt; 2; ++j) {
+      $😅[i][j] = -inf;
+      for (int a = 0; a &lt; 2; ++a) {
+        for (int b = 0; b &lt; 2; ++b)
+          Max($😅[i][j], x[i][a] + y[b][j] + a * b * (y.mn - x.mx));
+      }
+    }
+  }
+}
+void add(int p, long long x, int v) {
+  auto &amp;l = 😅[p].l, &amp;r = 😅[p].r;
+  if (!p) p = ++tot;
+  😅[p].num += v;
+  if (l == r) {
+    😅[p].mx = 😅[p].mn = x;
+    😅[p][0][0] = 😅[p][1][1] = -inf;
+    😅[p][0][1] = 😅[p][1][0] = 0;
+    return;
+  }
+  long long mid = (l + r) &gt;&gt; 1;
+  if (mid &gt;= x) {
+    if (!😅[p].ls) 😅[p].ls = fuck😅(l, mid);
+    add(😅[p].ls, x, v);
+  } else {
+    if (!😅[p].rs) 😅[p].rs = fuck😅(mid + 1, r);
+    add(😅[p].rs, x, v);
+  }
+  Merge(😅[p], 😅[😅[p].ls], 😅[😅[p].rs]);
+}
+}  // namespace 😅😅
+signed main() {
+  int T;
+  for (cin &gt; T; T; --T) {
+    int n, q;
+    cin &gt; n &gt; q;
+    😅😅::fuck😅(0, inf);
+    for (long long x; n; --n) {
+      cin &gt; x;
+      😅😅::add(1, x, 1);
+    }
+    for (int t; q; --q) {
+      long long x;
+      cin &gt; t &gt; x;
+      if (t == 0)
+        😅😅::add(1, x, 1);
+      else
+        😅😅::add(1, x, -1);
+      cout &lt; 😅😅::😅[1].mx - 😅😅::😅[1].mn - imax(😅😅::😅[1][1][1], 0LL) &lt; '\n';
+    }
+    😅😅::tot = 0;
+  }
+  return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

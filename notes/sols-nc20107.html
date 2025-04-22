@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>发现终于最讨厌的还是和自己的相同的人的样子。</p>  
+<h2>A</h2>  
+<p>傻逼题，不算复杂度差不多得了，显然交换 $S$ / $T$ 的选出区间中的任意位置不影响答案，于是前缀和即可。</p>  
+<h2>B</h2>  
+<p>清新题，只不过我的确不会...部分分设置不太合理。</p>  
+<p>你考虑用 $O(h ^ 2 w ^ 2)$ 的时间钦定两个点 $(x_1, y_1), (x_2, y_2)$ 研究线段，同时令 $a = |x_1 - x_2|, b = |y_1 - y_2|$。如果你做过 <em>仪仗队</em> 那么很容易想到中间一共有 $\gcd(a, b)$ 个点，把这些点当作盒子，把它们拍到序列上，则我们有 $\gcd(a, b) - 1$ 个盒子，$n - 2$ 个点（钦定端点必选）。如果我们令 $k=\lfloor\frac{d}{{\rm dis}((0, 0), (\frac{a}{\gcd(a, b)}, \frac{b}{\gcd(a, b)}))}\rfloor$，则每个球放进的盒子编号需差 $\geqslant k$。</p>  
+<p>赋予组合意义，则每个球存在「体积」的概念，且该「体积」为 $k - 1$，考虑将其压缩， 那么答案式子就出来了 $\binom{\gcd(a, b) - 1 - (k - 1) - (n - 2)(k - 1)}{n - 2}$，那个 $k - 1$ 是右端点已经必选了，所以少了 $k - 1$ 个盒子。</p>  
+<p>考虑优化，注意答案取决于 $a$ 和 $b$，可以乘个系数来优化。</p>  
+<h2>C</h2>  
+<p>清新题，部分分非常暗示。</p>  
+<p>有个显然的 observation 是一个结点一定从<strong>子树</strong>中至多选两个未被选择的结点转移，那么就可以直接可并堆启发式合并什么的来转移。</p>  
+<p>主要问题是为什么不是儿子中选呢？你考虑一个结点 $x$，其父亲 $pre(x)$ 只有 $x$ 一个儿子，而 $x$ 有三个儿子，并且 $x$ 把其中两个儿子选完了，那么 $pre(x)$ 一定是从 $x$ 的另一个儿子转移上来，所以必须把子树考虑完。</p>  
+<h2>D</h2>  
+<p>你出你🐎的 BM 呢😅😅。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

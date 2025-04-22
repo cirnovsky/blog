@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h4>Prob. 1</h4>  
+<p><a href="http://222.180.160.110:1024/contest/1011/problem/1">Desc. &amp; Link.</a></p>  
+<p>行走的形式是比较自由的，因为只要走到了最优答案处就可以不管了，所以不需要考虑游戏的结束。</p>  
+<p>考虑二分答案。</p>  
+<p>然后预处理出每个节点到 $s$（另一棵树就是 $t$）的距离。</p>  
+<p>判断答案合法性：</p>  
+<p>首先枚举 $A$ 树的每个节点（节点编号小于当前二分的答案），然后判断需要构成答案的 $B$ 树上的节点距离 $t$ 的距离的奇偶性是否一致即可。</p>  
+<p>但是这样有一个问题：我们如何确保这个答案是整个一轮移动过程中最大的？</p>  
+<p>仔细考虑一下，我们判断成功的依据是行走过程中所有和不超过我们当前二分的值，那么转为判断这个问题（意思就是前面降智了）。</p>  
+<p>因为这是一棵树，所以该走的路径一定会走。</p>  
+<p>因为我们枚举了 $A$ 树中的节点，所以每次从哪两个节点走到 $s$、$t$ 是固定下来的。</p>  
+<p>草，直接 bfs 判断找可达最小值就行了。</p>  
+<p>$\Theta(n\log_{2}^{2}n)$，我觉得不行，先写。</p>  
+<p>草卡卡常过了。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#pragma GCC optimize(1)
+#pragma GCC optimize(2)
+#pragma GCC optimize(3)
+#pragma GCC optimize(4)
+#pragma GCC optimize(&quot;Ofast&quot;)
+#pragma GCC optimize(&quot;inline&quot;)
+#pragma GCC optimize(&quot;-fgcse&quot;)
+#pragma GCC optimize(&quot;-fgcse-lm&quot;)
+#pragma GCC optimize(&quot;-fipa-sra&quot;)
+#pragma GCC optimize(&quot;-ftree-pre&quot;)
+#pragma GCC optimize(&quot;-ftree-vrp&quot;)
+#pragma GCC optimize(&quot;-fpeephole2&quot;)
+#pragma GCC optimize(&quot;-ffast-math&quot;)
+#pragma GCC optimize(&quot;-fsched-spec&quot;)
+#pragma GCC optimize(&quot;unroll-loops&quot;)
+#pragma GCC optimize(&quot;-falign-jumps&quot;)
+#pragma GCC optimize(&quot;-falign-loops&quot;)
+#pragma GCC optimize(&quot;-falign-labels&quot;)
+#pragma GCC optimize(&quot;-fdevirtualize&quot;)
+#pragma GCC optimize(&quot;-fcaller-saves&quot;)
+#pragma GCC optimize(&quot;-fcrossjumping&quot;)
+#pragma GCC optimize(&quot;-fthread-jumps&quot;)
+#pragma GCC optimize(&quot;-funroll-loops&quot;)
+#pragma GCC optimize(&quot;-fwhole-program&quot;)
+#pragma GCC optimize(&quot;-freorder-blocks&quot;)
+#pragma GCC optimize(&quot;-fschedule-insns&quot;)
+#pragma GCC optimize(&quot;inline-functions&quot;)
+#pragma GCC optimize(&quot;-ftree-tail-merge&quot;)
+#pragma GCC optimize(&quot;-fschedule-insns2&quot;)
+#pragma GCC optimize(&quot;-fstrict-aliasing&quot;)
+#pragma GCC optimize(&quot;-fstrict-overflow&quot;)
+#pragma GCC optimize(&quot;-falign-functions&quot;)
+#pragma GCC optimize(&quot;-fcse-skip-blocks&quot;)
+#pragma GCC optimize(&quot;-fcse-follow-jumps&quot;)
+#pragma GCC optimize(&quot;-fsched-interblock&quot;)
+#pragma GCC optimize(&quot;-fpartial-inlining&quot;)
+#pragma GCC optimize(&quot;no-stack-protector&quot;)
+#pragma GCC optimize(&quot;-freorder-functions&quot;)
+#pragma GCC optimize(&quot;-findirect-inlining&quot;)
+#pragma GCC optimize(&quot;-fhoist-adjacent-loads&quot;)
+#pragma GCC optimize(&quot;-frerun-cse-after-loop&quot;)
+#pragma GCC optimize(&quot;inline-small-functions&quot;)
+#pragma GCC optimize(&quot;-finline-small-functions&quot;)
+#pragma GCC optimize(&quot;-ftree-switch-conversion&quot;)
+#pragma GCC optimize(&quot;-foptimize-sibling-calls&quot;)
+#pragma GCC optimize(&quot;-fexpensive-optimizations&quot;)
+#pragma GCC optimize(&quot;-funsafe-loop-optimizations&quot;)
+#pragma GCC optimize(&quot;inline-functions-called-once&quot;)
+#pragma GCC optimize(&quot;-fdelete-null-pointer-checks&quot;)
+#include &lt;cstdio&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int MAXN = 1e6 + 5;
+
+namespace IO{
+    const int sz=1&lt;&lt;22;
+    char a[sz+5],b[sz+5],*p1=a,*p2=a,*t=b,p[105];
+    inline char gc(){
+        return p1==p2?(p2=(p1=a)+fread(a,1,sz,stdin),p1==p2?EOF:*p1++):*p1++;
+    }
+    template&lt;class T&gt; void gi(T&amp; x){
+        x=0; char c=gc();
+        for(;c&lt;'0'||c&gt;'9';c=gc());
+        for(;c&gt;='0'&amp;&amp;c&lt;='9';c=gc())
+            x=x*10+(c-'0');
+    }
+    inline void flush(){fwrite(b,1,t-b,stdout),t=b; }
+    inline void pc(char x){*t++=x; if(t-b==sz) flush(); }
+    template&lt;class T&gt; void pi(T x,char c='\n'){
+        if(x==0) pc('0'); int t=0;
+        for(;x;x/=10) p[++t]=x%10+'0';
+        for(;t;--t) pc(p[t]); pc(c);
+    }
+    struct F{~F(){flush();}}f; 
+}
+using IO::gi;
+using IO::pi;
+
+template&lt;typename _T&gt; _T MIN ( const _T x, const _T y ) { return x &lt; y ? x : y; }
+
+struct GraphSet {
+    int to, nx;
+    GraphSet ( int T = 0, int N = 0 ) { to = T, nx = N; }
+} asA[MAXN * 2], asB[MAXN * 2];
+
+int n, s, t, cntA, cntB, beginA[MAXN], beginB[MAXN], disA[MAXN], disB[MAXN], visA[MAXN], visB[MAXN];
+
+void makeEdgeA ( const int u, const int v ) { asA[++ cntA] = GraphSet ( v, beginA[u] ), beginA[u] = cntA; }
+void makeEdgeB ( const int u, const int v ) { asB[++ cntB] = GraphSet ( v, beginB[u] ), beginB[u] = cntB; }
+
+void dfsA ( const int u, const int lst, const int dis ) {
+    disA[u] = dis;
+    for ( int i = beginA[u]; i; i = asA[i].nx ) {
+        int v = asA[i].to;
+        if ( v == lst ) continue;
+        dfsA ( v, u, dis + 1 );
+    }
+}
+
+void dfsB ( const int u, const int lst, const int dis ) {
+    disB[u] = dis;
+    for ( int i = beginB[u]; i; i = asB[i].nx ) {
+        int v = asB[i].to;
+        if ( v == lst ) continue;
+        dfsB ( v, u, dis + 1 );
+    }
+}
+
+void behaveOneSide ( int ark, int&amp; mnA, int&amp; mnB, int&amp; ord, priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;&amp; align ) {
+    int preSave = mnA;
+    while ( ! align.empty () ) {
+        int u = align.top ();
+        if ( u + mnB &gt; ark )    break;
+        else    align.pop ();
+        for ( int i = beginA[u]; i; i = asA[i].nx ) {
+            int v = asA[i].to;
+            if ( visA[v] )  continue;
+            visA[v] = 1, align.push ( v );
+            mnA = MIN ( mnA, v );
+        }
+    }
+    if ( mnA == preSave )   ++ ord;
+    else    ord = 0;
+}
+
+void behaveAnotherSide ( int ark, int&amp; mnA, int&amp; mnB, int&amp; ord, priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt;&amp; align ) {
+    int preSave = mnB;
+    while ( ! align.empty () ) {
+        int u = align.top ();
+        if ( u + mnA &gt; ark )    break;
+        else    align.pop ();
+        for ( int i = beginB[u]; i; i = asB[i].nx ) {
+            int v = asB[i].to;
+            if ( visB[v] )  continue;
+            visB[v] = 1, align.push ( v );
+            mnB = MIN ( mnB, v );
+        }
+    }
+    if ( mnB == preSave )   ++ ord;
+    else    ord = 0;
+}
+
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; oneQ, anotherQ;
+bool check ( const int x ) {
+    for ( int i = 1; i &lt;= n; ++ i ) visA[i] = visB[i] = 0;
+    for ( ; ! oneQ.empty (); oneQ.pop () ) ;
+    for ( ; ! anotherQ.empty (); anotherQ.pop () ) ;
+    oneQ.push ( s ), anotherQ.push ( t );
+    visA[s] = 1, visB[t] = 1;
+    int turn = 0, mnA = s, mnB = t, ord = 0;
+    while ( mnA &gt; 1 || mnB &gt; 1 ) {
+        turn ^= 1;
+        if ( turn ) behaveOneSide ( x, mnA, mnB, ord, oneQ );
+        else    behaveAnotherSide ( x, mnA, mnB, ord, anotherQ );
+        if ( ord &gt; 2 )  break;
+    }
+    if ( mnA == 1 &amp;&amp; mnB == 1 ) return 1;
+    else    return 0;
+}
+
+int solve ( int l, int r ) {
+    while ( l + 1 &lt; r ) {
+        int mid = ( l + r ) &gt;&gt; 1;
+        if ( check ( mid ) )    r = mid;
+        else    l = mid;
+    }
+    return r;
+}
+
+int main () {
+    int tCase;
+    gi ( tCase );
+    while ( tCase -- &gt; 0 ) {
+        gi ( n ), cntA = cntB = 0;
+        for ( int i = 1; i &lt;= n; ++ i ) beginA[i] = 0, beginB[i] = 0;
+        for ( int i = 1, u, v; i &lt; n; ++ i ) {
+            gi ( u ), gi ( v );
+            makeEdgeA ( u, v ), makeEdgeA ( v, u );
+        }
+        for ( int i = 1, u, v; i &lt; n; ++ i ) {
+            gi ( u ), gi ( v );
+            makeEdgeB ( u, v ), makeEdgeB ( v, u );
+        }
+        gi ( s ), gi ( t );
+        // dfsA ( s, 0, 0 ), dfsB ( t, 0, 0 );
+        pi ( solve ( 1, n &lt;&lt; 1 ) );
+    }
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h4>Prob. 2</h4>  
+<p><a href="http://222.180.160.110:1024/contest/1011/problem/2">Desc. &amp; Link.</a></p>  
+<p>$n$ 很小，$q$ 也很小。</p>  
+<p>感觉这个 $n$ 不是 $2^{n}$ 的算法也不是多项式算法欸。</p>  
+<p>但复杂度一定与 $n$ 有关……</p>  
+<p>草这玩意儿折半是不是可以折半搜索？</p>  
+<p>我们可以搜出两边我们可以凑出的价格，分别记为 $A_{i},i\in[1,C_{A}]$、$B_{i},i\in[1,C_{B}]$。</p>  
+<p>然后让 $A,B$ sorted。</p>  
+<p>然后枚举 $A_{i}$，找到 $B$ 中最大的能与 $A_{i}$ 相加小于等于需要的值，然后算下贡献即可（bullshit）。</p>  
+<p>不是为什么用快读本地过数据提交瓦爆啊。。。</p>  
+<details>
+
+
+
+
+<pre><code class="language-cpp">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+void read(long long &amp;hhh)
+{
+    long long x=0;
+    char c=getchar();
+    while(((c&lt;'0')|(c&gt;'9'))&amp;(c^'-'))    c=getchar();
+    if(c^'-')   x=c^'0';
+    char d=getchar();
+    while((d&gt;='0')&amp;(d&lt;='9'))
+    {
+        x=(x&lt;&lt;3)+(x&lt;&lt;1)+(d^'0');
+        d=getchar();
+    }
+    if(c^'-')   hhh=x;
+    else    hhh=-x;
+}
+void writing(long long x)
+{
+    if(!x)  return;
+    if(x&gt;9) writing(x/10);
+    putchar((x%10)^'0');
+}
+void write(long long x)
+{
+    if(x&lt;0)
+    {
+        putchar('-');
+        x=-x;
+    }
+    else if(!x)
+    {
+        putchar('0');
+        putchar('\n');
+        return;
+    }
+    writing(x);
+    putchar('\n');
+}
+long long n,q,endone,beginano,onesiz,onebuc[2000005],anosiz,anobuc[2000005],opl,opr,cud[45];
+void dfs(long long now,long long cur)
+{
+    if(now==endone+1)   onebuc[++onesiz]=cur;
+    else
+    {
+        dfs(now+1,cur+cud[now]);
+        dfs(now+1,cur);
+    }
+}
+void exdfs(long long now,long long cur)
+{
+    if(now==n+1)    anobuc[++anosiz]=cur;
+    else
+    {
+        exdfs(now+1,cur+cud[now]);
+        exdfs(now+1,cur);
+    }
+}
+long long solve(long long mos)
+{
+    long long now=anosiz;
+    long long res=0;
+    for(long long i=1;i&lt;=onesiz;++i)
+    {
+        while(now&amp;&amp;onebuc[i]+anobuc[now]&gt;mos)   now--;
+        res+=now;
+    }
+    return res;
+}
+int main()
+{
+//  read(n);
+//  read(q);
+    scanf(&quot;%lld%lld&quot;,&amp;n,&amp;q);
+//  for(long long i=1;i&lt;=n;++i) read(cud[i]);
+    for(long long i=1;i&lt;=n;++i) scanf(&quot;%lld&quot;,&amp;cud[i]);
+    endone=(n&gt;&gt;1);
+    beginano=endone+1;
+    dfs(1,0);
+    exdfs(beginano,0);
+    sort(onebuc+1,onebuc+onesiz+1);
+    sort(anobuc+1,anobuc+anosiz+1);
+    while(q--)
+    {
+        scanf(&quot;%lld%lld&quot;,&amp;opl,&amp;opr);
+//      read(opl);
+//      read(opr);
+//      write(solve(opr)-solve(opl-1));
+        printf(&quot;%lld\n&quot;,solve(opr)-solve(opl-1));
+    }
+    return 0;
+}
+</code></pre>
+
+
+</details>
+
+<h4>Prob. 4</h4>  
+<p><a href="http://222.180.160.110:1024/contest/1011/problem/4">Desc. &amp; Link.</a></p>  
+<p>相当于在树上对于每一个点找出找出一条以其为链顶的链。</p>  
+<p>设 $f_{u}$ 为 $u$ 的答案。  
+$$
+f_{u}=\max_{v\in\text{son}(u)}{f_{v}+(a_{u}-\text{dis}(u,v))\times b_{v},0}  
+$$</p>
+<p>有乘法，然后题目中一堆常数。</p>  
+<p>:-) 斜率优化</p>  
+<p>我们令 $s_{u}=\text{dis}(1,u)$，然后  
+$$
+\begin{aligned}
+f_{u}  
+&amp;=\max_{v\in\text{son}(u)}{f_{v}+(a_{u}+s_{u}-s_{v})\times b_{v},0} \
+&amp;=\max_{v\in\text{son}(u)}{(a_{u}-s_{u})\times b_{v}+f_{v}-s_{v}\times b_{v},0}
+\end{aligned}
+$$
+令 $y=f_{u},x=a_{u}-s_{u},k=b_{v},b=f_{v}-s_{v}\times b_{v}$，那么这个东西就是一个 $y=kx+b$。</p>  
+<p>那么我们现在需要在子树里维护凸包，并且能够支持合并凸包和插入直线。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

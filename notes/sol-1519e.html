@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://codeforces.com/problemset/problem/1519/E">link。</a></p>  
+<p>点 $A$ 与 $(0,0)$，$B$ 共线的充要条件是 $\frac{y_A}{x_A}=\frac{y_B}{x_B}$，即 $k_{OA}=k_{OB}$。又考虑到题目提出刻画斜率相等双点间的关系，所以不妨把所有斜率相同的点看作一个。再考虑刻画点的移动，由于与共线的点是移动后两者之间的哪一者无妨，所以我们可以在移动后的两点所代表的斜率集合之间连一条边，问题就转化成了在一张无向图中，删除或一条三点二边的链，或一个二点二边的环，询问最多可以删除多少次，并给出可行方案。那么答案中最大值的部分我们可以拿出来，即 $\lfloor\frac{\text{# edges}}{2}\rfloor$。</p>  
+<p>论删边的顺序，我们可以建出转化后图的任一生成树，并考虑非树边。考虑任一结点 $x$，设有非树边边 $\lang x,y\rang$，我们可以将 $y$ 给“拖下去”，意即新建一个点，并将 $x$ 连向该点。其正确性并非自明，但是考虑深度可以简单证明。至于答案的求解过程，参见常见 trick 树的最大匹配（但是略有不同，具体见代码）。</p>  
+<p>说一下如何精简实现，你的代码逻辑可以不是「建出原图 - 得到生成树 - 新建节点 - 求匹配」，更加优秀的逻辑可以是「建出原图并通过动态维护连通性新建节点 - 在求出生成树的同时获得深度信息 - 求匹配」。</p>  
+
+
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+using ll = long long;
+int n, rn, uset[500100], head[500100], to[1000100], nxt[1000100], ent;
+ll gcd(ll x, ll y) {
+    return y == 0 ? x : gcd(y, x%y);
+}
+int ldr(int x) {
+    while (x != uset[x]) x = uset[x] = uset[uset[x]];
+    return x;
+}
+bool sm(int x, int y) {
+    return ldr(x) == ldr(y);
+}
+void mrg(int x, int y) {
+    if (ldr(x) != ldr(y)) {
+        uset[ldr(y)] = ldr(x);
+    }
+}
+struct frac {
+    ll p, q;
+    frac() {}
+    explicit frac(ll a, ll b) : p(a), q(b) {
+        norm(*this);
+    }
+    bool operator&lt;(const frac&amp; o) const {
+        return p &lt; o.p || (p == o.p &amp;&amp; q &lt; o.q);
+    }
+    void norm(frac&amp; x) {
+        ll g = gcd(x.p, x.q);
+        x.p /= g, x.q /= g;
+    }
+};
+map&lt;frac, int&gt; mp;
+void add(int x, int y) {
+    to[++ent] = y, nxt[ent] = head[x], head[x] = ent;
+}
+bool vis[500100];
+int dep[500100], fa[500100], eid[500100], mxd;
+set&lt;int&gt; ch[500100], sd[500100];
+void dfs(int x) {
+    mxd = max(mxd, dep[x]);
+    vis[x] = 1;
+    sd[dep[x]].insert(x);
+    for (int i = head[x], y; i; i = nxt[i]) {
+        if (vis[y = to[i]]) {
+            continue;
+        }
+        fa[y] = x, dep[y] = dep[x]+1;
+        ch[x].insert(y);
+        eid[y] = (i+1)/2;
+        dfs(y);
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n;
+    for (int i = 1; i &lt;= n; ++i) {
+        ll a, b, c, d;
+        cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; d;
+        frac cur((a+b)*d, b*c);
+        if (!mp.count(cur)) {
+            ++rn;
+            mp[cur] = uset[rn] = rn;
+        }
+        int u = mp[cur], v;
+        cur = frac(a*d, b*(c+d));
+        if (!mp.count(cur)) {
+            ++rn;
+            mp[cur] = uset[rn] = rn;
+        }
+        v = mp[cur];
+        if (sm(u, v)) {
+            v = ++rn;
+        }
+        else mrg(u, v);
+        add(u, v), add(v, u);
+    }
+    for (int i = 1; i &lt;= rn; ++i) {
+        if (!vis[i]) dfs(i);
+    }
+    vector&lt;pair&lt;int, int&gt;&gt; ans;
+    for (int d = mxd; d &gt;= 1; --d) {
+        for (int x : sd[d]) {
+            if (int(ch[fa[x]].size()) &gt;= 2) {
+                ch[fa[x]].erase(x);
+                int bro = *ch[fa[x]].begin();
+                ch[fa[x]].erase(bro), sd[dep[bro]].erase(bro);
+                ans.emplace_back(eid[x], eid[bro]);
+            }
+            else if (fa[fa[x]]) {
+                ch[fa[x]].erase(x);
+                ch[fa[fa[x]]].erase(fa[x]);
+                sd[dep[fa[x]]].erase(fa[x]);
+                ans.emplace_back(eid[x], eid[fa[x]]);
+            }
+        }
+    }
+    cout &lt;&lt; ans.size() &lt;&lt; &quot;\n&quot;;
+    for (auto it : ans) {
+        cout &lt;&lt; it.first &lt;&lt; &quot; &quot; &lt;&lt; it.second &lt;&lt; &quot;\n&quot;;
+    }
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

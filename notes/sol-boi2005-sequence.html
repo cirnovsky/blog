@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="http://222.180.160.110:1024/problem/28828">Link</a>.</p>  
+<p>Given is a sequencen $A$ of $n$ intergers.</p>  
+<p>Construct a stricly increasing sequence $B$ of $n$ intergers that makes the sum of $|B_{i}-A_{i}|$ the smallest.</p>  
+<h2>Solution</h2>  
+<p>First, we make $a_{i}:=a_{i}-i$. Then we just make "strictly increasing" become "unstrictly increasing".</p>  
+<ol>  
+<li>  
+<p>for $a_{1}\le a_{2}\le\cdots\le a_{n}$:</p>  
+<p>When $B$ is the same as $A$, it gets the minimum answer.</p>  
+</li>  
+<li>  
+<p>for $a_{1}\ge a_{2}\ge\cdots\ge a_{n}$:</p>  
+<p>When for each $i$, $B_{i}=A_{\lfloor\frac{n}{2}\rfloor}$, it gets the minimum answer.</p>  
+</li>  
+</ol>  
+<p>Maybe we can divide $A$ into m parts.</p>  
+<p>Such like: $[l_{1},r_{1}],\cdots,[l_{m},r_{m}]$</p>  
+<p>that satisfies: for each $i$, sequence $A[l_{i},r_{i}]$ is unstrictly increasing/decreasing.</p>  
+<p>So we can get the answer to each interval.</p>  
+<p>Let's consider how to merge the answers.</p>  
+<p>When we're merging two intervals, we can just get the new median of the two intervals.</p>  
+<hr />  
+<p>So things above are just bullshit.</p>  
+<p>Parallel Searching!</p>  
+<p>FUCK YOU.</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const LL INF=1e18;
+int n;
+LL a[1000010],b[1000010],ans;
+void solve(LL l,LL r,int fr,int ba)
+{
+    if(l&gt;=r||fr&gt;ba) return;
+    LL mid=(l+r)&gt;&gt;1,tmp=0,mn=INF,pos=0;
+    for(int i=fr;i&lt;=ba;++i) tmp+=abs(a[i]-mid-1);
+    mn=tmp,pos=fr-1;
+    for(int i=fr;i&lt;=ba;++i)
+    {
+        tmp-=abs(a[i]-mid-1);
+        tmp+=abs(a[i]-mid);
+        if(tmp&lt;mn)  mn=tmp,pos=i;
+    }
+    for(int i=fr;i&lt;=pos;++i)    b[i]=mid;
+    for(int i=pos+1;i&lt;=ba;++i)  b[i]=mid+1;
+    solve(l,mid,fr,pos),solve(mid+1,r,pos+1,ba);
+}
+int main()
+{
+    scanf(&quot;%d&quot;,&amp;n);
+    for(int i=1;i&lt;=n;++i)   scanf(&quot;%lld&quot;,&amp;a[i]),a[i]-=i;
+    solve(-INF,INF,1,n);
+    for(int i=1;i&lt;=n;++i)   ans+=abs(a[i]-b[i]);
+    printf(&quot;%lld\n&quot;,ans);
+    for(int i=1;i&lt;=n;++i)   printf(&quot;%lld &quot;,b[i]+i);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

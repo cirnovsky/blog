@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://www.luogu.com.cn/problem/P7931">link。</a></p>  
+<p>哲学题。</p>  
+<p>以下标为横轴，$p_i$ 为纵轴，画出一个坐标系。然后你会发现每个点的后继在其右上方，以此为依据来分层（具体来说，就是求出每个位置的 LIS）。</p>  
+<p>我毛了张图给你看啊：</p>  
+<p><img alt="" src="uploads/7.png" />。</p>  
+<p>然后在每层搞事情。这里有个结论：</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p><strong>Claim</strong>：存在一种选择 LISs 的方案，使得每个 LIS 都不交叉。</p>  
+
+    </div>
+</div>  
+<p>证明应该不难吧，因为每两个之间交换了没有影响，每层都看得到。那么选择下标更小的点一定~~苏卡~~不劣。然后优化下搜索的方式就可以解决了，这个具体看代码。</p>  
+
+
+<pre><code class="language-cpp">int n,a[1000100],fwt[1000100],dp[1000100],st[1000100],ed[1000100],q[1000100],lis,ans,lst[1000100];
+vector&lt;int&gt; rec;
+void Add(int x,const int w) { for(; x&lt;=n; x+=x&amp;-x)  cmax(fwt[x],w); }
+int Sum(int x) { int res=0; for(; x; x^=x&amp;-x)   cmax(res,fwt[x]); return res; }
+void digger() {
+    printf(&quot;%d %d\n&quot;,ans,lis);
+    for(int i=1; i&lt;=ans; ++i) {
+        for(int j=(i-1)*lis+1; j&lt;=i*lis; ++j)   printf(&quot;%d &quot;,rec[j-1]);
+        puts(&quot;&quot;);
+    }
+    exit(0);
+}
+signed main() {
+    n=read();
+    for(int i=1; i&lt;=n; ++i) {
+        dp[i]=Sum((a[i]=read())-1)+1;
+        Add(a[i],dp[i]),cmax(lis,dp[i]);
+        ed[dp[i]]++;
+    }
+    for(int i=1; i&lt;=n; ++i) ed[i]+=ed[i-1],st[i]=ed[i];
+    for(int i=n; i; --i)    q[st[dp[i]]--]=i;
+    for(int i=1; i&lt;=n; ++i) st[i]=ed[i-1]+1;
+    for(int i=1; i&lt;=n; ++i) sort(q+st[i],q+ed[i]+1);
+    while(233) {
+        for(int i=1; i&lt;=lis; ++i) { // enumrating layers
+            if(st[i]&gt;ed[i]) digger();
+            if(a[q[st[i]]]&lt;a[lst[i-1]]) {
+                ----i; st[i+1]++;
+                continue;
+            }
+            while(q[st[i]]&lt;lst[i-1] &amp;&amp; st[i]&lt;=ed[i]) {
+                st[i]++;
+                if(a[q[st[i]]]&lt;a[lst[i-1]]) {
+                    ----i; st[i+1]++;
+                    goto Suc;
+                }
+            }
+            if(st[i]&gt;ed[i]) digger();
+            lst[i]=q[st[i]];
+            Suc:;
+        }
+        for(int i=1; i&lt;=lis; ++i)   rec.push_back(lst[i]),st[i]++;
+        ans++;
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

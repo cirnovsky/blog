@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://www.luogu.com.cn/problem/P1852">Link</a>.</p>  
+<p>在一个数轴上给你三个点，移动方法是彼此为中点进行跳跃，不能同时越过两颗棋子。</p>  
+<p>给出初始状态和目标状态，问能否从初始状态跳到目标状态。若能，输出最少步数。</p>  
+<p>棋子之间互相没有差别。</p>  
+<h2>Solution</h2>  
+<p>这道题是我们去年学倍增的时候LF给我们放的一道题（实际上和倍增没有半毛钱的关系。</p>  
+<p>啊对我就是一道题从去年做到今年（我不管做出来了就是我的题量XD/xyx</p>  
+<p>不扯了说正事儿。</p>  
+<p>其实拿到这道题我是很懵的，完全不知道该怎么入手。</p>  
+<p>然后我们拿出传统手艺手玩数据。我们可以发现对于一个三元组 $(x,y,z)$ 只有三种移动的方案：</p>  
+<p>（啊对了，说一下这里的三元组表示的是一种位置关系，即 $x$ 在左 $y$ 在中间 $z$ 在右）</p>  
+<p>中间往两边跳</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<ol>  
+<li>  
+<p>$y$ 以 $x$ 为中点进行跳跃，三元组变为：$(x-(y-x),x,z)\implies(2x-y,x,z)$</p>  
+</li>  
+<li>  
+<p>$y$ 以 $z$ 为中点进行跳跃，三元组变为：$(x,z,z+(z-y))\implies(x,z,2z-y)$</p>  
+</li>  
+</ol>  
+
+    </div>
+</div>  
+<p>两边往中间跳</p>  
+<p>这里方便讨论我们不妨设 $dis_{1}$ 为 $x$ 和 $y$ 之间的距离，$dis_{2}$ 为 $y$ 和 $z$ 之间的距离。</p>  
+<p>当 $dis_{1} &gt; dis_{2}$</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<ol>  
+<li>$x$ 以 $y$ 为中点进行跳跃，三元组变为：$(y,y+dis_{1},z)\implies(y,2y-x,z)$</li>  
+</ol>  
+
+    </div>
+</div>  
+<p>当 $dis_{1} &lt; dis_{2}$</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<ol>  
+<li>$z$ 以 $y$ 为中点进行跳跃，三元组变为：$(x,y-dis_{2},y)\implies(x,2y-z,y)$</li>  
+</ol>  
+
+    </div>
+</div>  
+<p>当 $dis_{1}=dis_{2}$</p>  
+<p>无法继续跳，也就是我们的边界。</p>  
+<p>好，现在把所有我们已知的条件串起来看：这不就是一棵二叉树吗？</p>  
+<p>对呀，这就是一棵二叉树（我在说什么</p>  
+<p>为什么这一定是一棵树呢？想一想就明白了，就像数学中的收敛一样，最后一定会出现 $dis_{1}=dis_{2}$ 的情况。</p>  
+<p>而且这棵树是唯一确定的。</p>  
+<p>那么这道题的答案是什么就很明确了。</p>  
+<p>首先判断YES或NO的情况我们只需要判断初始状态和目标状态是否在统一棵状态树上即可。</p>  
+<p>最小的步数就是他们两个在树上的距离。</p>  
+<p>暴力肯定是不可取的。</p>  
+<p>但是我们可以通过模拟暴力的情景来得到优化的策略。</p>  
+<p>比如我们思考一个数据：$x,y,z$。</p>  
+<p>其中 $y$ 是一个 <strong>远大于</strong> $x$ 的数。</p>  
+<p>方便起见我们令 $z=y+1$</p>  
+<p>暴力此时会不停的让 $z$ 以 $y$ 为中点跳。</p>  
+<p>此时我们回顾一下题面：</p>  
+<p>棋子之间互相没有差别。</p>  
+<p>没错，每颗棋子之间其实是没有任何差别的。</p>  
+<p>打个比方说，现在 $z$ 以 $y$ 为中点进行了跳跃，其本质就是 $z$ 和 $y$ 一起往左平移了 $z-y$ 步。</p>  
+<p>这就意味着，我们不需要老老实实的每次都跳，我们可以直接获得 $z$ 跳跃的次数即 $(y-x)\div(z-y)$ 次。</p>  
+<p>再推一下就是欧几里得最大公约数的形式了，也就是说我们在 $log_{2}$ 的复杂度解决了这个问题。</p>  
+<p>最后二分一下到LCA的距离，这道题就被你暴切啦</p>  
+
+
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+int a, b, c;
+int x, y, z;
+
+void sort(int&amp; x, int&amp; y, int&amp; z) {
+    vector &lt; int &gt; vec;
+    vec.push_back(x);
+    vec.push_back(y);
+    vec.push_back(z);
+    sort(vec.begin(), vec.end());
+    x = vec[0], y = vec[1], z = vec[2];
+}
+
+void Initialization() {
+    scanf(&quot;%d %d %d&quot;, &amp;a, &amp;b, &amp;c);
+    scanf(&quot;%d %d %d&quot;, &amp;x, &amp;y, &amp;z);
+    sort(a, b, c);
+    sort(x, y, z);
+}
+
+int GetRoot(int&amp; x, int&amp; y, int&amp; z) {
+    int dis1 = y - x;
+    int dis2 = z - y;
+    if (dis1 ^ dis2) {
+        int temp;
+        if (dis1 &lt; dis2) {
+            temp = dis2 / dis1;
+            if (!(dis2 % dis1)) --temp;
+            x += temp * dis1;
+            y += temp * dis1;
+        }
+        else {
+            temp = dis1 / dis2;
+            if (!(dis1 % dis2)) --temp;
+            z -= temp * dis2;
+            y -= temp * dis2;
+        }
+        return temp + GetRoot(x, y, z);
+    }
+    else return 0;
+}
+
+void ArriveK(int&amp; x, int&amp; y, int&amp; z, int key) {
+    int dis1 = y - x;
+    int dis2 = z - y;
+    if (dis1 &lt; dis2) {
+        int temp = dis2 / dis1;
+        if (!(dis2 % dis1)) --temp;
+        if (temp &gt;= key) {
+            x += key * dis1;
+            y += key * dis1;
+        }
+        else {
+            x += temp * dis1;
+            y += temp * dis1;
+            ArriveK(x, y, z, key - temp);
+        }
+    }
+    else {
+        int temp = dis1 / dis2;
+        if (!(dis1 % dis2)) --temp;
+        if (temp &gt;= key) {
+            z -= key * dis2;
+            y -= key * dis2;
+        }
+        else {
+            z -= temp * dis2;
+            y -= temp * dis2;
+            ArriveK(x, y, z, key - temp);
+        }
+    }
+}
+
+signed main() {
+    Initialization();
+    int a0 = a, b0 = b;
+    int c0 = c, x0 = x;
+    int y0 = y, z0 = z;
+    int rt1 = GetRoot(x0, y0, z0);
+    int rt2 = GetRoot(a0, b0, c0);
+    if (a0 ^ x0 || b0 ^ y0 || c0 ^ z0) return puts(&quot;NO&quot;) &amp; 0;
+    if (rt1 &lt; rt2) ArriveK(a, b, c, rt2 - rt1);
+    else ArriveK(x, y, z, rt1 - rt2);
+    int l = 0, r = min(rt1, rt2);
+    while (l &lt; r) {
+        int mid = (l + r) &gt;&gt; 1;
+        a0 = a, b0 = b, c0 = c;
+        x0 = x, y0 = y, z0 = z;
+        ArriveK(x0, y0, z0, mid);
+        ArriveK(a0, b0, c0, mid);
+        if (x0 == a0 &amp;&amp; y0 == b0 &amp;&amp; z0 == c0)
+            r = mid;
+        else
+            l = mid + 1;
+    }
+    printf(&quot;YES\n%d\n&quot;, max(rt1, rt2) - min(rt1, rt2) + (l &lt;&lt; 1));
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

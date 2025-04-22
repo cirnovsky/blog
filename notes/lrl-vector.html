@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h1>定义</h1>  
+<p>中心场问题中一个守恒量。定义：$\mathbf{A}=\mathbf{p}\times\mathbf{L}-mk\hat{\mathbf r}$，其中 $\mathbf p$ 是动量， $\mathbf L$ 是角动量，$m$ 是物体质量，$k$ 是平方反比中心场的一个参量，比如对于万有引力问题，$k = GMm$，$\hat{\mathbf r}$ 是位矢的单位。下面证明其守恒性：</p>  
+<h1>守恒性</h1>  
+<p>我们想要证明 $\dot{\mathbf A} = \mathbf 0$，也就是 $\dot{\mathbf A} = \dot{\mathbf p}\times \mathbf L - mk\dot{\hat{\mathbf r}} = \mathbf 0$。</p>  
+<ul>  
+<li>$\dot{\mathbf p}$：$\dot{\mathbf p} = \mathbf F = -\frac k{r^2}\hat{\mathbf r}$;</li>  
+<li>$\dot{\hat{\mathbf r}} = \dot{\hat\theta}\hat{\mathbf\theta}$;</li>  
+<li>$\mathbf L = \mathbf r \times m\mathbf v = m(r\hat{\mathrm r})\times(\dot r\hat{\mathbf r}+r\dot\theta\hat{\mathbf\theta})=mr^2\dot\theta\hat{\mathbf n}$.</li>  
+</ul>  
+<p>因此  
+$$
+\begin{align}
+\dot{\mathbf A}
+&amp; = (-\frac k{r^2}\hat{\mathbf r})\times \mathbf F - mk\hat{\dot\theta}\hat\theta \
+&amp; = -\frac k{r^2}\hat{\mathbf r}\times(mr^2\dot\theta\hat{\mathbf n})-mk\dot{\hat{\mathbf\theta}}\hat{\mathbf\theta} \
+&amp; = -mk\dot\theta(\hat{\mathbf r}\times\hat{\mathbf n}+\hat{\mathbf\theta}) \
+&amp; = \mathbf 0
+\end{align}
+$$
+Q.E.D.</p>  
+<h1>应用</h1>  
+<p>目前只见过用于证明开普勒第一定律，即天体运动的相对运动轨迹为圆锥曲线，或者数学地 $r=\frac p{1+\varepsilon\cos\theta}$。具体证明考虑 $\mathbf A \cdot\mathbf r$ 即可。</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

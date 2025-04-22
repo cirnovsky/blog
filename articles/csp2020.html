@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p>其实这次的 CSP 暴露出来了很多问题。</p>  
+<p>比如策略上的，在 T1 花了太多的时间直接心态爆炸，后面的题只想着把暴力打满。看到 T2 只想着打暴力，根本没有沉下心来想，白白丢了一道（水）题。</p>  
+<p>T3 连暴力都不打是不应该的。</p>  
+<p>T4 就不说了，好像很多人都是和我一样大样例有些多 1。</p>  
+<p>无论如何，作为第一次上联赛提高组的考场，没有考出水平，只能说很遗憾。</p>  
+<p>赛前和同校的学长们也打了很多次模拟赛，排名在前面的也就那么几次。</p>  
+<p>甚至在考前两个星期连着被 数学、信息（两个） 共计三个老师批评浮躁，也许静下来很难，但不静下来确实是不行的。</p>  
+<p>我在 <a href="https://www.cnblogs.com/orchid-any/p/13928614.html">赛前强基</a> 里写了这样一句话：沉心静气，少逼两句。</p>  
+<p>看来根本没有起到警示作用。</p>  
+<p>真正沉下气来想，如果 T4 的想法不出锅的话，打个 300+ 还是没有问题的。</p>  
+<p>（我天真，T4 多一标准错解）（改改就 70 了）</p>  
+<p>奈何时光无法重来，Time Machine 也只存在于幻想。</p>  
+<p>文化课和竞赛是相辅相成的，从赛前的文化课也能看出来自己状态的不对劲。</p>  
+<p>向来最拿手的英语（一般最差都是 140+）一次周考短填直接 -8。</p>  
+<p>数学直接 121，对没有解释就是这么低。</p>  
+<p>不过，人也不能一直活在失败里。我们总要走出阴影，去迎接下一个挑战，停滞不前是很没有意思的。</p>  
+<p>$$\texttt{I am a slow walker,but I never walk backwards.}$$</p>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

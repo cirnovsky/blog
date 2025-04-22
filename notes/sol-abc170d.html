@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <h2>Description</h2>  
+<p><a href="https://atcoder.jp/contests/abc170/tasks/abc170_d">Link</a>.</p>  
+<p>给出一个长度为 $n$ 的序列 $a$，求 $\sum_{i=1}^{n}[\forall j\in[1,i)\cup(i,n],a_{j}\nmid a_{i}]$。</p>  
+<h2>Solution</h2>  
+<p>首先特判序列中有 $1$ 的情况。</p>  
+<p>然后调和级数把每个数的倍数开桶记录。</p>  
+<p>最后扫一遍序列，看该元素在桶里面出现的次数不超过一就有贡献。</p>  
+
+
+<pre><code class="language-cpp">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+inline ll read()
+{
+    ll x=0,f=0; char ch=getchar();
+    while(ch&lt;'0'||ch&gt;'9') f|=(ch=='-'),ch=getchar();
+    while(ch&gt;='0'&amp;&amp;ch&lt;='9') x=x*10+(ch&amp;15),ch=getchar();
+    return f?-x:x;
+}
+const int N=200100,M=1000000;
+int a[N],bc[M];
+signed main()
+{
+    int n=read();
+    for(int i=1;i&lt;=n;++i) a[i]=read();
+    int cnt=0,ans=0;
+    for(int i=1;i&lt;=n;++i) (a[i]==1)&amp;&amp;(++cnt);
+    if(cnt) return printf(&quot;%d\n&quot;,cnt&gt;1?0:1),0;
+    for(int i=1;i&lt;=n;++i) for(int j=a[i];j&lt;=M;j+=a[i]) ++bc[j];
+    for(int i=1;i&lt;=n;++i) (bc[a[i]]&lt;=1)&amp;&amp;(++ans);
+    printf(&quot;%d\n&quot;,ans);
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+    <html lang=en>
+        <head>
+            <meta charset="UTF-8" />
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script>
+            <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ],
+                        throwOnError: false,
+                        errorColor: "#cc0000"
+                    });
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <p><a href="https://codeforces.com/problemset/problem/1633/F">link。</a></p>  
+<p>首先所有的 activated nodes 组合成了一棵以 $1$ 为根的有根树。询问即求由 activated nodes 组成的树的最大匹配。对于树上最大匹配有一个贪心策略：自底向上匹配当前点和其父亲，删除这两个点，直至只剩一个点或空树。若为空树，则树存在完美匹配。</p>  
+
+<div class="panel panel-success">
+    <div class="panel-heading">一言</div>
+    <div class="panel-body">
+  
+<p><strong>Claim：</strong> 对于树 $\textbf{T}=(\textbf{V},\textbf{E})$，若存在完美匹配，当且仅当 $\displaystyle\left(\sum_{u\in\textbf{V}}[|\text{subtree}(u)|\bmod2=1]\right)=\left(\sum_{u\in\textbf{V}}[|\text{subtree}(u)|\bmod2=0]\right)$</p>  
+<p><strong>Proof：</strong> 两个简单的观察即可证明：（1）每个子树大小为偶数的结点有且仅有一个子树大小为奇数的后继；（2）每个子树大小为奇数的结点的父亲子树大小为偶数。</p>  
+<p>所以偶数奇数两两对应，以上论断的充分性得证。其必要性的正确性比较平凡，故略。</p>  
+
+    </div>
+</div>  
+<p>然后我们需要支持的操作就只有加入一个叶子结点，反转一条无拐点的链上结点的标记。整棵树的形态是固定的，HLD 维护即可。具体方案的询问次数不超过 10 次，朴素 $O(n)$ 寻找即可。</p>  
+<p>然而翻转链部分暴力也能过而且和线段树没啥本质区别……</p>  
+
+
+<pre><code class="language-cpp">#pragma GCC optimize(&quot;Ofast,unroll-loops&quot;)
+#pragma GCC target(&quot;sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native&quot;)
+#include&lt;bits/stdc++.h&gt;
+#define cmin(x, y) x = std::min(x, y)
+#define cmax(x, y) x = std::max(x, y)
+#define fors(i, l, r, ...) for(int i = (l), REP##i = (r), ##__VA_ARGS__; i &lt;= REP##i; ++i)
+#define dfors(i, r, l, ...) for(int i = (r), REP##i = (l), ##__VA_ARGS__; i &gt;= REP##i; --i)
+int n, up[200100], all, on[200100], cnt, sz[200100], son[200100], top[200100], fa[200100], dfn[200100];
+// params: @up[i]: identity of edge (i, fa[i]); @on[i]: is rev[i] activated; @all: amout of nodes activated;
+//      @cnt: amout of odd nodes
+std::vector&lt;std::pair&lt;int, int&gt;&gt; adj[200100];
+std::set&lt;int&gt; S;
+long long ans;
+namespace hld {
+    int tt;
+    void dfs_sz(const int x, const int fa) {
+        sz[x] = 1, ::fa[x] = fa;
+        for(const auto [y, id] : adj[x]) if(y != fa) {
+            dfs_sz(y, x);
+            if(sz[y] &gt; sz[son[x]]) son[x] = y;
+        }
+    }
+    void dfs_hld(const int x, const int tp) {
+        top[x] = tp, dfn[x] = ++tt;
+        if(son[x]) dfs_hld(son[x], tp);
+        for(const auto [y, id] : adj[x]) {
+            if(y == fa[x]) up[dfn[x]] = id;
+            if(y != fa[x] &amp;&amp; y != son[x]) dfs_hld(y, y);
+        }
+    }
+    void init() { dfs_sz(1, 0), dfs_hld(1, 1); }
+}
+signed main() {
+    std::ios::sync_with_stdio(0);
+    std::cin &gt;&gt; n;
+    fors(i, 1, n-1, x, y) {
+        std::cin &gt;&gt; x &gt;&gt; y;
+        adj[x].emplace_back(y, i);
+        adj[y].emplace_back(x, i);
+    }
+    on[1] = all = cnt = 1, hld::init();
+    for(int op, x; &quot;eternal love&quot;; std::cout &lt;&lt; &quot;\n&quot;) {
+        if(std::cin &gt;&gt; op, S.clear(); op == 1) {
+            for(std::cin &gt;&gt; x, all++; x; x = fa[top[x]])
+                fors(i, dfn[top[x]], dfn[x]) cnt += (on[i]?-1:1),ans += (on[i]?-1:1)*up[i],on[i] ^= 1;
+            std::cout &lt;&lt; ((all == cnt*2)?ans:0);
+        } else if(op == 2) {
+            if(all != cnt*2) std::cout &lt;&lt; &quot;0&quot;;
+            else {
+                fors(i, 2, n) if(on[i]) S.emplace(up[i]);
+                std::cout &lt;&lt; cnt;
+                for(const int x : S) std::cout &lt;&lt; &quot; &quot; &lt;&lt; x;
+            }
+        } else break;
+    }
+    return 0;
+}
+</code></pre>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>
