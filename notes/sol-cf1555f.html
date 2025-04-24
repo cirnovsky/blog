@@ -34,7 +34,7 @@
             <div class="content">
                 <div id="header"></div>
                 <p><a href="https://codeforces.com/problemset/problem/1555/F">link。</a></p>  
-<p>来一个不用 HLD / LCT 的做法。~~其实没有什么本质上的差别~~</p>  
+<p>来一个不用 HLD / LCT 的做法。<del>其实没有什么本质上的差别</del></p>  
 <p>首先容易想到离线，并且满足条件的图一定是边仙人掌，我们把离线后得到的图缩点，形成一片森林，并且标记树边。树边显然必选，主要来看非树边。</p>  
 <p>维护 $pre(x)$ 表示从根到 $x$ 的边权异或和，设当前我们考虑的非树边是 $(x,y)$，那么如果 $x,y$ 已经处于同一个环里或者 $pre(x)\oplus pre(y)\oplus w(x,y)\neq1$ 是不行的，否则就可以加进去。</p>  
 <p>然后怎么实现查找是否在同一个环里之类的就用 time-stamp &amp; BIT 解决。</p>  

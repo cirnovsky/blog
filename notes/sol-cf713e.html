@@ -40,7 +40,7 @@
 <li>前 $i-1$ 个 bots 能够覆盖到 $i-1$，那么 bot $i$ 就可以往后面倒，即 $f(i) \gets p_i+x$；<element style="text-align:right">$(1)$</element></li>  
 <li>前 $i-1$ 个 bots 不能够覆盖到 $i-1$，但是可以覆盖到 $i-x-1$，那么 bot $i$ 就只能往前面倒来把序列连上。<element align="right">$(2)$</element></li>  
 </ul>  
-<p>乍看这样的分类讨论已经足够了，~~但是这个 dp 状态实际上是省略了一维的，即 $k$，$k$ 表示在 $1 \sim i$ 的 bots 当中是 bot $k$ 来将 $1 \sim f(i-1)$ 的殖民地连上的，基于贪心的策略我们把 $k$ 省掉，即尽量取靠后的 $k$。~~上述论证是有错误的，但大致上的意思没错，即转移如果最朴素地做并不是连续的。再看到我们的转移，如果 bot $i$ 连上了 $1 \sim f(i-2)$，则 bot $i-1$ 可以往后倒从而使 $f(i) \gets p_{i-1}+x$。<element align="right">$(3)$</element></p>  
+<p>乍看这样的分类讨论已经足够了，<del>但是这个 dp 状态实际上是省略了一维的，即 $k$，$k$ 表示在 $1 \sim i$ 的 bots 当中是 bot $k$ 来将 $1 \sim f(i-1)$ 的殖民地连上的，基于贪心的策略我们把 $k$ 省掉，即尽量取靠后的 $k$。</del>上述论证是有错误的，但大致上的意思没错，即转移如果最朴素地做并不是连续的。再看到我们的转移，如果 bot $i$ 连上了 $1 \sim f(i-2)$，则 bot $i-1$ 可以往后倒从而使 $f(i) \gets p_{i-1}+x$。<element align="right">$(3)$</element></p>  
 <p>考虑环。只需要分类讨论 bot $1$ 往左往右倒即可，比较容易。</p>  
 
 

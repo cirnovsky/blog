@@ -36,7 +36,7 @@
                 <p><a href="http://codeforces.com/problemset/problem/585/E">link。</a></p>  
 <p>设 $\displaystyle f(x) = # S', s.t. S' \subseteq S, S' \neq \varnothing, \gcd(S') = x$，$g(x) = # t, s.t. \gcd(t, x) = 1$，则答案为 $\sum f_i \times g_i$。</p>  
 <ul>  
-<li>$f$：这个的求解是老套路了，设 $\displaystyle F(x) = # S', s.t. S' \subseteq S, S' \neq \varnothing, x \mid S'$，则有 $\displaystyle F(x) = 2^{\sum_{x \mid t} \textit{cnt}<em>t}-1$，$cnt$ 是桶，$\displaystyle f(x) = \sum</em>{x \mid d} \mu(\frac{d}{x}) \times F(d)$，可以调和级数~~也可以逆 dirichlet 前后缀和~~（不可以）。</li>  
+<li>$f$：这个的求解是老套路了，设 $\displaystyle F(x) = # S', s.t. S' \subseteq S, S' \neq \varnothing, x \mid S'$，则有 $\displaystyle F(x) = 2^{\sum_{x \mid t} \textit{cnt}<em>t}-1$，$cnt$ 是桶，$\displaystyle f(x) = \sum</em>{x \mid d} \mu(\frac{d}{x}) \times F(d)$，可以调和级数<del>也可以逆 dirichlet 前后缀和</del>（不可以）。</li>  
 <li>$g$：写出 $\displaystyle g_T = \sum_i [(T, i) = 1] \textit{cnt}<em>i = \sum</em>{d \mid T} \mu(d) \sum_{d \mid i} cnt_i = \sum_{d \mid T} h_d$，其中 $h_d = \mu(d) \times w_d$，其中 $\displaystyle w_T = \sum_{T \mid i} \textit{cnt}_i$。都是 dirichlet 前后缀和的形式。</li>  
 </ul>  
 

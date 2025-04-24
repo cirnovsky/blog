@@ -263,7 +263,7 @@ signed main()
 <p>这样我们就做到了 $\operatorname{O}(1)$ 合并两个区间的结果。</p>  
 <p>最后再用树链剖分把这个过程搬到树上就好了。</p>  
 <p>这道题的两个端点的顺序是有影响的。所以要在树剖里分类讨论，还要维护区间倒着来的结果。</p>  
-<p>~~细节很多WA了很久，不愧是Ynoi~~</p>  
+<p><del>细节很多WA了很久，不愧是Ynoi</del></p>  
 <p>代码：</p>  
 
 
@@ -635,7 +635,7 @@ signed main( ){
 <p>看到这道题</p>  
 <p>WGY说：bitset优化轻松过掉</p>  
 <p>LJS说：bitset优化裸题</p>  
-<p>ljs说：~~暴力打表能过！~~</p>  
+<p>ljs说：<del>暴力打表能过！</del></p>  
 <p>那么这里是数据结构一百题，怎么能用这些方法呢？</p>  
 <p>所以我们来看看这道题吧：</p>  
 <p>有一个 $n\times m$的矩形框架，但其中有些边被删除了。$\operatorname{qmqmqm}$ 想知道剩余部分中还有多少完整的正方形。</p>  
@@ -757,7 +757,7 @@ int main()
 <ul>  
 <li>$\texttt{pass 1}$：询问</li>  
 </ul>  
-<p>我直接按 <em>一个简单的询问</em> 的方法讲。~~其实是把以前的题解 copy 过来了~~。</p>  
+<p>我直接按 <em>一个简单的询问</em> 的方法讲。<del>其实是把以前的题解 copy 过来了</del>。</p>  
 <p>由于是出现次数，满足区间加减性，所以我们可以这样表达 $\mathrm{get}(l,r,x)$（省略 $x$）:</p>  
 <p>$$  
 \mathrm{get}(l,r)=\mathrm{get}(1,r)-\mathrm{get}(1,l-1)
@@ -799,7 +799,7 @@ $$
 <ul>  
 <li>$\texttt{pass 2}$：修改</li>  
 </ul>  
-<p>现在我们面临着查询操作我们是用莫队整的，但这个修改貌似不单纯。~~其实也是从树剖模板缝合过来的~~。</p>  
+<p>现在我们面临着查询操作我们是用莫队整的，但这个修改貌似不单纯。<del>其实也是从树剖模板缝合过来的</del>。</p>  
 <p>分类讨论，设我们当前要换的根为 $rt$，现在来处理询问，设查询的节点为 $u$，$\text{LCA}(u,v)$ 为节点 $u$ 和节点 $v$ 的最近公共祖先。</p>  
 <ul>  
 <li>  
@@ -967,7 +967,7 @@ int main () {
 }
 </code></pre>
 <h1>66. CF1491H Yuezheng Ling and Dynamic Tree</h1>  
-<p>~~所以 Chinese Round 出 DS 是传统了对吧。~~</p>  
+<p><del>所以 Chinese Round 出 DS 是传统了对吧。</del></p>  
 <h2>Description</h2>  
 <p><a href="https://www.luogu.com.cn/problem/CF1491H">Link</a>.</p>  
 <p>Given is a rooted tree with the $\sf1$-th node as the root.</p>  

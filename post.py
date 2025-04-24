@@ -1,5 +1,6 @@
 import os
 import json
+import re
 
 paths = ["notes", "articles"]
 
@@ -11,6 +12,7 @@ for path in paths:
             filepath = os.path.join(path, meta['slug'] + '.html')
             with open(filepath, "r", encoding='utf-8') as f2:
                 content = f2.read()
-                content = content.replace('            <link rel="stylesheet" href="/src/styles/fonts.css" >\n            <link rel="stylesheet" href="/src/styles/style.css" >\n            <link rel="stylesheet" href="/src/styles/prism.css" >', '            <link rel="stylesheet" href="/src/styles/prism.css" >\n            <link rel="stylesheet" href="/src/styles/fonts.css" >\n            <link rel="stylesheet" href="/src/styles/style.css" >')
-                with open(filepath, "w", encoding='utf-8') as wr:
-                    wr.write(content)
+                if "~~" in content:
+                    content = re.sub(r"~~(.*?)~~", r"<del>\1</del>", content)
+                    with open(filepath, "w", encoding='utf-8') as wr:
+                        wr.write(content)

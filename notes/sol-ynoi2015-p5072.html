@@ -46,7 +46,7 @@
 <p>那么我们就可以用莫队维护<strong>区间中出现了 $k$ 次的所有数的和</strong>，然后乘上一个  $2^{r-l+1}-2^{r-l+1-k}$ 就是它的贡献了。</p>  
 <p>问题又来了：每次询问的模数是不确定的，我们需要每次都需要 $\Theta(n)$ 处理一遍2的幂。</p>  
 <p>有没有什么方法能把处理这个东西的复杂度降到 $\Theta(\sqrt{n})$ 或以下呢？</p>  
-<p>~~对此SyadouHayami表示我们可以打个高精。~~</p>  
+<p><del>对此SyadouHayami表示我们可以打个高精。</del></p>  
 <p>方法是有的。</p>  
 <p>我们可以每次询问都处理出 $2^{1},2^{2},\cdots,2^{\sqrt{n}}$ ，以及 $2^{2\sqrt{n}},2^{3\sqrt{n}},\cdots,2^{n}$，都只需要 $\Theta(\sqrt{n})$。当然，都是在模 $p$ 的意义下的。我们分别记为<code>pow1</code>和<code>pow2</code>。</p>  
 <p>那么 $2^{x}\operatorname{mod}p=(pow1_{x\operatorname{mod}\sqrt{n}}\times pow2_{\lfloor x\div\sqrt{n}\rfloor})\operatorname{mod}p$。</p>  
