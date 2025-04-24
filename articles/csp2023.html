@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-    <html lang=en>
+    <html lang="zh-cmn-Hans">
         <head>
             <meta charset="UTF-8" />
+            <title>CSP 2023 游记 | cirnovsky</title>
+
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
 
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
@@ -9,6 +11,7 @@
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
                 onload="renderMathInElement(document.body);"></script>
             <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/prism.css" >
             <link rel="stylesheet" href="/src/styles/fonts.css" >
             <link rel="stylesheet" href="/src/styles/style.css" >
             <script>
@@ -27,6 +30,7 @@
             </script>
         </head>
         <body>
+            <script src="/src/js/prism.js"></script>
             <div class="content">
                 <div id="header"></div>
                 <p>考前一天有点做不动题, 于是乎捯饬了半天博客, 加了个比较重要的功能. 现在这个博客在解析 M↓ 文档时可以获取 HTML Abstract Syntax Tree 了, 以后可以搞的事情就多了, 比如我目前先支持了内联图片和展示图片各用一个 CSS 类, 并且图片的加载模式全部改成了 Lazy loading 以提高网站效率. 果然自己造轮子才舒服, 用 unified.js 还是会出太多意料之外的问题, 光 JS 和 TS 混用就有很多 bugs 了. 顺便还找到了 <code>html-parse-stringify</code> 的小 bug, 第一次给开源社区做出了一点贡献?</p>  

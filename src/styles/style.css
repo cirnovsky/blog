@@ -1,5 +1,25 @@
+/*
+ * Some of these styles are taken from bootstrap.min.css
+*/
+body {
+ font-family: 'Times New Roman';
+ display: flex;
+ justify-content: center;
+}
 table, th, td {
   border: 1px solid black;
+}
+.no-wrap {
+  max-width: 100px;
+  overflow-x: auto;
+  white-space: nowrap;
+  
+  /* Hide scrollbar for WebKit browsers */
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE and Edge */
+}
+td::-webkit-scrollbar {
+  display: none;                 /* Safari and Chrome */
 }
 .currentPage {
   background-color: white

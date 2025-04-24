@@ -4,13 +4,14 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="src/styles/fonts.css" >
         <link rel="stylesheet" href="src/styles/style.css" >
-        <title>Wang Site | 汪站</title>
+        <title>文章 | 汪站</title>
         <script src="src/js/jquery.min.js"></script>
         <script src="src/js/basic.js"></script>
         <script src="src/js/file.js"></script>
         <script>
             currentBranch = "articles"
             $(document).ready(function() {
+                $("#header").load("/src/html/header.html")
                 let params = parseSearch(location.search)
                 currentPage = parseInt(params["page"] || '1')
                 console.log(currentPage)
@@ -27,21 +28,13 @@
         </script>
     </head>
     <body>
-        <div class="page">
-            <div class="navbar">
-                <button onclick="location.href='/'">Home</button>
-                <button onclick="location.href='notes.html'">Notes</button>
-                <button onclick="location.href='articles.html'">Articles</button>
-                <button onclick="location.href='friends.html'">Friends</button>
-                <button onclick="location.href='stories.html'">Stories</button>
-            </div>
-            <div class="content">
-                <div id="shelf">
-                    <div id="entries"></div>
-                    <div id="pageid"></div>
-                    <label for="page"></label>
-                    <input id="page" min="1"> / <span id="totpage"></span> pages
-                </div>
+        <div class="content">
+            <div id="header"></div>
+            <div id="shelf">
+                <div id="entries"></div>
+                <div id="pageid"></div>
+                <label for="page"></label>
+                <input id="page" min="1"> / <span id="totpage"></span> pages
             </div>
         </div>
     </body>

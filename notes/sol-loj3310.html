@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-    <html lang=en>
+    <html lang="zh-cmn-Hans">
         <head>
             <meta charset="UTF-8" />
+            <title>Solution -「LOJ 3310」丁香之路 | cirnovsky</title>
+
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
 
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
@@ -9,6 +11,7 @@
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
                 onload="renderMathInElement(document.body);"></script>
             <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/prism.css" >
             <link rel="stylesheet" href="/src/styles/fonts.css" >
             <link rel="stylesheet" href="/src/styles/style.css" >
             <script>
@@ -27,6 +30,7 @@
             </script>
         </head>
         <body>
+            <script src="/src/js/prism.js"></script>
             <div class="content">
                 <div id="header"></div>
                 <p>首先有两个前置技巧：<strong>1)</strong> 两点间的最短距离就是直接连接两点的边的长度；<strong>2)</strong> 遍历一个子图的最小花费是最小生成树的边权之和乘二。原问题让我们找出一条最短且必经过钦定边的 $( s, i )$ 路径，那么我们先将 $\lang s , i \rang$ 连上，问题就变成了找出一条最短且必经过钦定边 $( s, i)$ 的回路。虽然每条边不一定恰好经过一次，但是对于正确性的判断，每个点的度数为偶数依然是一个必要条件，再加上连通性的限制，一条回路的正确性就可以由这两条必要条件充要表示。</p>  

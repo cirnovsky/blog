@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-    <html lang=en>
+    <html lang="zh-cmn-Hans">
         <head>
             <meta charset="UTF-8" />
+            <title>「hdu - 4035」Maze | cirnovsky</title>
+
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
 
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
@@ -9,6 +11,7 @@
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
                 onload="renderMathInElement(document.body);"></script>
             <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/prism.css" >
             <link rel="stylesheet" href="/src/styles/fonts.css" >
             <link rel="stylesheet" href="/src/styles/style.css" >
             <script>
@@ -27,6 +30,7 @@
             </script>
         </head>
         <body>
+            <script src="/src/js/prism.js"></script>
             <div class="content">
                 <div id="header"></div>
                 <p>设 $dp_x$ 为从 $x$ 走出去的期望步数，可以写出转移 $\displaystyle dp_x = k_x \cdot dp_1 + e_x \cdot 0 + (1 - k_x - e_x) \cdot \sum_{(x, y) \in \mathbb E} \frac{dp_y + 1}{d_x}$。这个转移有环，又不能直接高消，于是考虑树的拓扑结构。首先令 $t_x = 1 - k_x - e_x$，把转移中那个 $\sum$ 中关于父亲结点的那一项提出来，并且把转移写成 $dp_x = a_x \cdot dp_1 + b_x \cdot dp_{\textit{fa}_x} + c_x$ 的形式，通过叶子结点没有儿子可以解方程，具体过程十分 dirty，参考其他博客。</p>  

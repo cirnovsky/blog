@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-    <html lang=en>
+    <html lang="zh-cmn-Hans">
         <head>
             <meta charset="UTF-8" />
+            <title>网络流 1 | cirnovsky</title>
+
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
 
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
@@ -9,6 +11,7 @@
             <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
                 onload="renderMathInElement(document.body);"></script>
             <script src="/src/js/jquery.min.js"></script>
+            <link rel="stylesheet" href="/src/styles/prism.css" >
             <link rel="stylesheet" href="/src/styles/fonts.css" >
             <link rel="stylesheet" href="/src/styles/style.css" >
             <script>
@@ -27,6 +30,7 @@
             </script>
         </head>
         <body>
+            <script src="/src/js/prism.js"></script>
             <div class="content">
                 <div id="header"></div>
                 <p><strong><a href="http://codeforces.com/problemset/problem/1592/F2">「codeforces - 1592F2」Alice and Recoloring 2</a></strong>：妙妙题，显然只会操作 $(1, 1)$ 和 $(n, m)$，分别记作操作 1 和操作 2。我们希望单点操作，所以考虑差分（trick），只是这个题的差分非常高妙。如果你直接对前缀做二维差分会发现操作 1 要修改四个点，操作 2 修改一个点，而操作 1 花费 $1$，2 花费 $2$，所以每个点可能被操作最多两次（考虑一种情况，即 $(1, 1)$，$(1, 2)$，$(2, 1)$ 是黑点，$(2, 2)$ 是白点）。xf 教我了一种高庙的差分，具体是 $c_{i, j} = a_{i,j} \oplus a_{i+1, j} \oplus a_{i, j+1} \oplus a_{i+1, j+1}$，这样差分操作 2 就修改四个点，操作 1 修改一个点，这样一个点就最多修改一次了，建出二分图即可。</p>  
