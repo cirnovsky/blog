@@ -31,11 +31,12 @@ function pagination(ent) {
     const tagsToLinks = (tags) => tags.map(tag => `<a href="/tags.html?tag=${tag}">${tag}</a>`)
 
     for (let i = start; i < Math.min(end, ent.length); ++i)
-        $(`tbody`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="${currentBranch}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
+        $(`tbody`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="${ent[i].category}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
 }
 
 function parseEntries(ent, params="") {
     // Dangerous if linux!!!!
+    ent = ent.filter(x => ((x.category == currentBranch) || (currentBranch != "notes" && currentBranch != "articles")));
     totalPage = Math.ceil(ent.length / ENTRIES_PER_PAGE)
     pagination(ent)
 

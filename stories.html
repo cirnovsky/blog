@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="src/styles/fonts.css" >
-        <link rel="stylesheet" href="src/styles/style.css" >
-        <title>动态 | 汪站</title>
-    </head>
-    <div class="page">
-        <div class="navbar">
-            <button onclick="window.location.href='/'">Home</button>
-            <button onclick="window.location.href='notes.html'">Notes</button>
-            <button onclick="window.location.href='articles.html'">Articles</button>
-            <button onclick="window.location.href='friends.html'">Friends</button>
-            <button onclick="window.location.href='stories.html'">Stories</button>
-        </div>
-        <div class="content">
-            <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
-        </div>
-    </div>
-</html>
+    <html lang="zh-cmn-Hans">
+        <head>
+            <meta charset="UTF-8" />
+            <title>动态 | 汪站</title>
+            <link rel="stylesheet" href="/src/styles/fonts.css" >
+            <link rel="stylesheet" href="/src/styles/style.css" >
+            <script src="/src/js/jquery.min.js"></script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    $("#giscus").load("/src/html/giscus.html")
+                    $("#header").load("/src/html/header.html")
+                })
+            </script>
+        </head>
+        <body>
+            <div class="content">
+                <div id="header"></div>
+                <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg" data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en" crossorigin="anonymous" async></script>
+            </div>
+        </body>
+    </html>

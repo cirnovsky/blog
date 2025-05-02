@@ -16,7 +16,7 @@
                 currentPage = parseInt(params["page"] || '1')
                 console.log(currentPage)
 
-                $.getJSON(currentBranch + "/meta.json", parseEntries)
+                $.getJSON("meta.json", parseEntries)
                 
                 $("#page").keydown(function(e) {
                     if (e.key == 'Enter') {

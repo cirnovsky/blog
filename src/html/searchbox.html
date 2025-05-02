@@ -1,0 +1,19 @@
+<meta charset="UTF-8">
+<script src="/src/js/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#searchbox").keydown(function(event) {
+            $("div").html(event.which)
+            if (event.which == 13) {
+                if (event.shiftKey)
+                    location.href = `/search?by=tag&key=${$("#searchbox").val()}`
+                else
+                    location.href = `/search?by=title&key=${$("#searchbox").val()}`
+            }
+        })
+    })
+</script>
+
+<input id="searchbox" placeholder="⎆: title. ⇧+⎆: tag..." title="Press Enter to search titles, or Shift+Enter to search tags." />
+
+<div></div>

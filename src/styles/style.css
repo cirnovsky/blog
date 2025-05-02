@@ -2,27 +2,67 @@
  * Some of these styles are taken from bootstrap.min.css
 */
 body {
- font-family: 'Times New Roman';
- display: flex;
- justify-content: center;
+  /* font-family: "Times New Roman"; */
+  display: flex;
+  justify-content: center;
 }
-table, th, td {
+table,
+th,
+td {
   border: 1px solid black;
+}
+h1::before {
+  content: "§ ";
+  color: #999;  /* Optional: give it a lighter tone */
+}
+h2::before {
+  content: "¶ ";
+  color: #999;
+}
+h3::before {
+  content: "▷ ";
+  color: #999;
+}
+h4::before {
+  content: "⊞ ";
+  color: #999;
+}
+h5::before {
+  content: "	↳ ";
+  color: #999;
+}
+h6::before {
+  content: "	• ";
+  color: #999;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+.navbar-left {
+  font-weight: bold;
+  color: #333;
+}
+.navbar-right a {
+  margin-left: 1rem;
+  transition: color 0.2s ease;
 }
 .no-wrap {
   max-width: 100px;
   overflow-x: auto;
   white-space: nowrap;
-  
   /* Hide scrollbar for WebKit browsers */
-  scrollbar-width: none;         /* Firefox */
-  -ms-overflow-style: none;      /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 td::-webkit-scrollbar {
-  display: none;                 /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
 }
 .currentPage {
-  background-color: white
+  background-color: white;
 }
 #page {
   max-width: 30px;
@@ -33,6 +73,7 @@ td::-webkit-scrollbar {
 }
 .content {
   max-width: 40em;
+  width: 100%;
 }
 blockquote {
   background-color: #e0e0e0;
