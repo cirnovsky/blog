@@ -534,3 +534,60 @@ img:hover {
 .panel-danger > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #ebccd1;
 }
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .content {
+    max-width: 100%;
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+
+  .navbar-right {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .navbar-right a {
+    margin: 0.3rem 0.5rem 0 0;
+    font-size: 1.1rem;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1.4em;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    font-size: 0.95rem;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .panel-body,
+  .panel-heading,
+  .panel-footer {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  .no-wrap {
+    max-width: 100%;
+  }
+}

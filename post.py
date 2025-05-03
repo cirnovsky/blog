@@ -13,8 +13,6 @@ result = traverse(".")
 for now in result:
     with open(now, "r", encoding='utf-8') as f:
         content = f.read()
-        content.replace("""            <button onclick="window.location.href='/'">Home</button>
-            <button onclick="window.location.href='notes.html'">Notes</button>
-            <button onclick="window.location.href='articles.html'">Articles</button>
-            <button onclick="window.location.href='friends.html'">Friends</button>
-            <button onclick="window.location.href='stories.html'">Stories</button>""",)
+        content = content.replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n        <meta name="viewport" content="width=device-width, initial-scale=1.0" />')
+        with open(now, "w", encoding='utf-8') as wr:
+            wr.write(content)
