@@ -50,8 +50,13 @@
     format("woff2");
 }
 body, .navbar {
-  font-family: Palatino, "Palatino Linotype", "Palatino LT STD",
+  font: 15pt Palatino, "Palatino Linotype", "Palatino LT STD",
     "Latin Modern Roman", "Source Han Serif CN", serif;
+}
+p {
+  /* font: 15pt 'Georgia', 'Times New Roman'; */
+  font: 15pt;
+  line-height: 1.7;
 }
 .home blockquote,
 .cn blockquote,

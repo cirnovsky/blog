@@ -72,7 +72,7 @@ td::-webkit-scrollbar {
   text-align: center;
 }
 .content {
-  max-width: 40em;
+  max-width: 30em;
   width: 100%;
 }
 blockquote {
