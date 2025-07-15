@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GLog - Portable Blog System Based on GitHub Discussion</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    <p>I've always believed that blogging should be free and flexible.</p>
+
+    <p>Ideas are precious and evaneous, they come and go at their will. Between the spark of inspiration and the act of
+      writing it down, there should be no barriers. However, the reality is somehow frustrating.</p>
+
+    <p>Third-party blogging platforms like <i>Zhihu</i>, <i>Xiaohongshu</i> often limit freedom of expression under
+      layers of
+      scrutiny. Self-hosted systems like <i>Typecho</i>, <i>Wordpress</i> require a server, which can get expensive. And
+      what
+      about static site generators hosted on GitHub, like <i>Hexo</i> or <i>Hugo</i>? Well, not everyone can or wants to
+      wrangle
+      with JavaScript, HTML and CSS before they can post a thought.</p>
+
+    <p>There seems no perfect solution, or is there?</p>
+
+    <p>Let's take a step further about static blogging. GitHub Discussions is an open forum built into every repository
+      (when enabled), and it has everything a minimalist blog needs: Markdown support, threaded comments, and category
+      organization. What more do we really need?</p>
+
+    <p>That's why I build <strong>Glog</strong> — a lightweight app to turn GitHub Discussions into a smooth,
+      frictionless blogging
+      experience. Give it a shot and hope you will like it!</p>
+
+    <p>Made with ❤️ and Cursor.</p>
+    <h1>Features</h1>
+    <ul>
+      <li>GitHub Discussion as backend. No need for a server.</li>
+      <LI>No need to tackle with local codes. Update anywhere.</LI>
+      <LI>Built-in comment system. Free and no log-on requirements.</LI>
+    </ul>
+    <p>Please check out the <a href="https://glog-cpli.vercel.app/">example site</a> and leave your thoughts under the
+      comment section!</p>
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
