@@ -33,22 +33,7 @@ function pagination(ent, year, start, end) {
         $(`#${year}`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="${ent[i].category}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
 }
 
-function parseEntries(ent, params="") {
-    // Dangerous if linux!!!!
-    // ent = ent.filter(x => ((x.category == currentBranch) || (currentBranch != "notes" && currentBranch != "articles")));
-    // totalPage = Math.ceil(ent.length / ENTRIES_PER_PAGE)
-    // pagination(ent)
-
-    // let pages = new Array()
-    // for (let i = Math.max(currentPage - 3, 0); i < Math.min(currentPage + 3, totalPage); ++i)
-    //     pages.push(i + 1)
-    // console.log(`${pages.length}, ${totalPage}`)
-    // $("#pageid").append(`<button onclick="location.href='${currentBranch}.html?${params}&page=${1}'">&lt;&lt;</button>`)
-    // for (let i of pages) {
-    //     $("#pageid").append(`<button onclick="location.href='${currentBranch}.html?${params}&page=${i}'" class="${i==currentPage?'currentPage':''}">${i}</button>`)
-    // }
-    // $("#pageid").append(`<button onclick="location.href='${currentBranch}.html?${params}&page=${totalPage}'">&gt;&gt;</button><br>`)
-    // $("#totpage").text(totalPage)
+function parseEntries(ent) {
     let pos = 0
     for (let i = 1; i <= ent.length; ++i) {
         if (i == ent.length || ent[i].date.slice(0, 4) != ent[pos].date.slice(0, 4)) {

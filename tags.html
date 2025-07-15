@@ -26,7 +26,7 @@
             objects.push(meta)
         $("#tag").attr("href", `/tags.html?tag=${tag}`)
         $("#tag").text(tag)
-        parseEntries(objects, `tag=${tag}`)
+        parseEntries(objects)
       })
     })
   </script>
@@ -35,15 +35,8 @@
 <body>
   <div class="content">
     <div id="header"></div>
-    <div class="content">
-      <p>All posts tagged <a id="tag"></a>:</p>
-      <div id="shelf">
-        <div id="entries"></div>
-        <div id="pageid"></div>
-        <label for="page"></label>
-        <input id="page" min="1"> / <span id="totpage"></span> pages
-      </div>
-    </div>
+    <p>All posts tagged <a id="tag"></a>:</p>
+    <div id="entries"></div>
   </div>
 </body>
 
