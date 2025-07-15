@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="src/styles/fonts.css">
-  <link rel="stylesheet" href="src/styles/style.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
   <title>标签 | 汪站</title>
-  <script src="src/js/jquery.min.js"></script>
-  <script src="src/js/basic.js"></script>
-  <script src="src/js/file.js"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <script src="/src/js/basic.js"></script>
+  <script src="/src/js/file.js"></script>
   <script>
     currentBranch = "tags"
     $(document).ready(function () {
@@ -19,12 +19,12 @@
       currentPage = parseInt(params["page"] || '1')
       console.log(tag)
 
-      $.getJSON("meta.json", metas => {
+      $.getJSON("/meta.json", metas => {
         let objects = []
         for (meta of metas.flat())
-          if (meta.tags.includes(tag))
+          if (tag == "all" || meta.tags.includes(tag))
             objects.push(meta)
-        $("#tag").attr("href", `/tags.html?tag=${tag}`)
+        $("#tag").attr("href", `/tags/?tag=${tag}`)
         $("#tag").text(tag)
         parseEntries(objects)
       })

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <title>归档 | 汪站</title>
+  <script src="/src/js/jquery.min.js"></script>
+  <script src="/src/js/basic.js"></script>
+  <script src="/src/js/file.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#header").load("/src/html/header.html")
+      $.getJSON("/meta.json", metas => {
+        renderbycategories(metas)
+        renderbytags(metas)
+      })
+    })
+  </script>
+</head>
+
+<body>
+  <div class="content">
+    <div id="header"></div>
+    <div id="categories">
+      <h1>分类</h1>
+    </div>
+    <div id="tags">
+      <h1>标签</h1>
+    </div>
+</body>
+
+</html>

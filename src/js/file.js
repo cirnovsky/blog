@@ -27,7 +27,7 @@ function pagination(ent, year, start, end) {
         <tbody id="${year}"></tbody>
     </table>`)
 
-    const tagsToLinks = (tags) => tags.map(tag => `<a href="/tags.html?tag=${tag}">${tag}</a>`)
+    const tagsToLinks = (tags) => tags.map(tag => `<a href="/tags/?tag=${tag}">${tag}</a>`)
 
     for (let i = start; i < end; ++i)
         $(`#${year}`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="${ent[i].category}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
@@ -42,6 +42,53 @@ function parseEntries(ent) {
             pos = i
         }
     }
+}
+
+function renderbycategories(metas)
+{
+    let count = new Map();
+    for (let meta of metas)
+    {
+        const category = meta.category
+        if (!count.has(category))
+            count.set(category, 0)
+        count.set(category, count.get(category) + 1)
+    }
+    let all = 0
+    for (let [x, y] of count)
+        all += y
+    let shelf = []
+    for (let [category, cnt] of count)
+    {
+        console.log(category, cnt)
+        const fs = Math.min(Math.floor(1.0 * cnt / all * 80), 40) + 15;
+        const html = `<span style="font-size: ${fs}px"><a href="/categories/?category=${category}">${category}</a> (${cnt})</span>`
+        shelf.push(html)
+    }
+    $("#categories").append(shelf.join(', '))
+}
+
+function renderbytags(metas)
+{
+    let count = new Map();
+    for (let meta of metas)
+        for (let tag of meta.tags)
+        {
+            if (!count.has(tag))
+                count.set(tag, 0)
+            count.set(tag, count.get(tag) + 1)
+        }
+    let all = 0;
+    for (let [x, y] of count)
+        all += y;
+    let shelf = []
+    for (let [tag, cnt] of count)
+    {
+        const fs = Math.floor(1.0 * cnt / all * 80) + 15;
+        const html = `<span style="font-size: ${fs}px"><a href="/tags/?tag=${tag}">${tag}</a> (${cnt})</span>`
+        shelf.push(html)
+    }
+    $("#tags").append(shelf.join(', '))
 }
 
 (function () {
