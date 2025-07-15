@@ -62,7 +62,7 @@ function renderbycategories(metas)
     {
         console.log(category, cnt)
         const fs = Math.min(Math.floor(1.0 * cnt / all * 80), 40) + 15;
-        const html = `<span style="font-size: ${fs}px"><a href="/categories/?category=${category}">${category}</a> (${cnt})</span>`
+        const html = `<span style="font-size: ${fs}px"><a href="/${category}">${category}</a> (${cnt})</span>`
         shelf.push(html)
     }
     $("#categories").append(shelf.join(', '))

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <title>项目 | 汪站</title>
+  <script src="/src/js/jquery.min.js"></script>
+  <script src="/src/js/basic.js"></script>
+  <script src="/src/js/file.js"></script>
+  <script>
+    currentBranch = "toys"
+    $(document).ready(function () {
+      $("#header").load("/src/html/header.html")
+      let params = parseSearch(location.search)
+
+      $.getJSON("/meta.json", metas => {
+        let objects = []
+        for (meta of metas.flat())
+          if (meta.category == currentBranch)
+            objects.push(meta)
+        $("#category").attr("href", `/${currentBranch}`)
+        $("#category").text(currentBranch)
+        parseEntries(objects)
+      })
+    })
+  </script>
+</head>
+
+<body>
+  <div class="content">
+    <div id="header"></div>
+    <p>All posts under <a id="category"></a>:</p>
+    <div id="entries"></div>
+  </div>
+</body>
+
+</html>
