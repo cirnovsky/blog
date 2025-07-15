@@ -30,7 +30,7 @@ function pagination(ent, year, start, end) {
     const tagsToLinks = (tags) => tags.map(tag => `<a href="/tags/?tag=${tag}">${tag}</a>`)
 
     for (let i = start; i < end; ++i)
-        $(`#${year}`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="${ent[i].category}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
+        $(`#${year}`).append(`<tr><td>${formatDate(ent[i].date)}</td><td>${ent[i].title}<td><a href="/${ent[i].category}/${ent[i].slug}.html">${ent[i].slug}</a></td></td><td class="no-wrap">${tagsToLinks(ent[i].tags)}</td></tr>`)
 }
 
 function parseEntries(ent) {
