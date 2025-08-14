@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Realtime Markdown Editor with KaTeX & jQuery</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #main {
+      flex: 1;
+      display: flex;
+    }
+
+    textarea {
+      width: 50%;
+      padding: 1rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    #preview {
+      width: 50%;
+      padding: 1rem;
+      overflow-y: auto;
+      border-left: 1px solid #ccc;
+    }
+
+    #toolbar {
+      padding: 0.5rem;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toolbar">
+    <button id="saveBtn">Save as .md</button>
+  </div>
+  <div id="main">
+    <textarea id="editor" placeholder="Write Markdown with KaTeX here...">---
+      title: Sample Post
+      date: 2025-08-13
+      tags: math, demo
+      ---
+
+      # Math Example
+
+      Inline math: $E = mc^2$
+      Block math:
+      $$
+      \\int_0^1 x^2 \\, dx = \\frac{1}{3}
+      $$</textarea>
+    <div id="preview"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script>
+    function extractFrontmatter(md) {
+      if (md.startsWith('---\n')) {
+        const end = md.indexOf('\n---', 4);
+        if (end !== -1) {
+          const fmRaw = md.slice(4, end).trim();
+          const data = jsyaml.load(fmRaw) || {};
+          const body = md.slice(end + 4).replace(/^\n+/, '');
+          return {data, body};
+        }
+      }
+      return {data: {}, body: md};
+    }
+
+    function updatePreview() {
+      const md = $('#editor').val();
+      localStorage.setItem('markdownContent', md); // Save to localStorage
+      const {data, body} = extractFrontmatter(md);
+      const html = marked.parse(body, {gfm: true});
+      $('#preview').html(html);
+      renderMathInElement(document.getElementById('preview'), {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      });
+    }
+
+    function saveAsFile(filename, content) {
+      const blob = new Blob([content], {type: 'text/markdown'});
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    $(document).ready(function () {
+      const saved = localStorage.getItem('markdownContent');
+      if (saved) {
+        $('#editor').val(saved);
+      }
+      updatePreview();
+
+      $('#saveBtn').on('click', function () {
+        const content = $('#editor').val();
+        const {data} = extractFrontmatter(content);
+        const filename = (data.title ? data.title.replace(/\s+/g, '_') : 'document') + '.md';
+        saveAsFile(filename, content);
+      });
+    });
+
+    $('#editor').on('input', updatePreview);
+  </script>
+</body>
+
+</html>
