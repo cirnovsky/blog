@@ -1,0 +1,31 @@
+name: Build Markdown to HTML
+
+on:
+  push:
+    paths:
+      - "posts/**/*.md"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc & jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc jq
+
+      - name: Convert Markdown to HTML with template
+        run: |
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add notes articles meta.json
+          git commit -m "Auto-build HTML from Markdown with template" || echo "No changes to commit"
+          git push
