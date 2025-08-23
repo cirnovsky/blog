@@ -5,3 +5,4 @@ typecho_contents.sql
 typecho_metas.sql
 typecho_relationships.sql
 test.html
+**/*.swp
