@@ -7,6 +7,14 @@ tags: [dp]
 
 [link.](https://codeforces.com/contest/2125/problem/E)
 
+$$
+test
+$$
+
+nima [^1].
+
+[^1]: https://codeforces.com/profile/cirnovlove
+
 ```cpp
 //dp[i+j+1]+=dp[i]
 #include <bits/stdc++.h>

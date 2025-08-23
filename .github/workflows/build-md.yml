@@ -3,7 +3,7 @@ name: Build Markdown to HTML
 on:
   push:
     paths:
-      - "posts/**/*.md"
+      - "posts/*.md"
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Convert Markdown to HTML with template
         run: |
-          done
+          python3 build.py
 
       - name: Commit and push changes
         run: |
