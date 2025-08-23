@@ -425,7 +425,7 @@ signed main() {
 
 选出的这两个数可以是同一个位置的数。
 
-![](https://cdn.luogu.com.cn/upload/pic/4629.png)
+![](uploads/20.webp)
 
 ---------
 

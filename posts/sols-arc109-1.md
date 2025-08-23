@@ -151,7 +151,7 @@ int main()
 
 这张图是在[这里](https://www.cnblogs.com/gmh77/archive/2004/01/13/14083072.html)嫖的：
 
-![](https://img2020.cnblogs.com/blog/1785205/202012/1785205-20201203205335125-902321676.png)
+![](uploads/13.png)
 
 注意特判一些奇怪的情况，具体自己看代码吧吧吧吧。
 

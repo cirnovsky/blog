@@ -22,7 +22,7 @@ Supporting the following operations:
 
 ## Solution
 
-![](http://codeforces.com/predownloaded/ff/89/ff8966699d3f169f29b1e05c06b36e1c3ab67a91.png)
+![](uploads/6.webp)
 
 经典永流传。
 

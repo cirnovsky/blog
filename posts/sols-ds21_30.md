@@ -1526,7 +1526,7 @@ signed main() {
 
 首先套路的讨论这两段的位置，我们可以发现有5种情况（画画图示意一下可能很丑反正意思你们能懂就行
 
-![Annotation 2020-02-07 210659.png](https://i.loli.net/2020/02/07/cM8KnGyrefCLwRk.png)
+![Annotation 2020-02-07 210659.png](uploads/18.png)
 
 总结出来我们需要在线段树里维护的东西有：
 

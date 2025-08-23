@@ -13,7 +13,7 @@ SAM 由两个东西构成，一个是一个 DAWG，还有一棵外向树，叫 p
 
 比如，给你一个字符串 $S=\sf abbabb$，它的 SAM 长成这样：
 
-![Graph](https://i.loli.net/2021/03/08/DirLSlP9CyjTwAz.png)
+![Graph](uploads/30.png)
 
 SAM 的 DAWG 大概可以理解为把字符串的所有后缀插入一个 Trie。当然如果你暴力插，点数为 $\mathcal{O}(n^2)$。
 

@@ -27,24 +27,24 @@ tags: [travel]
 ![21.jpg][20]
 
 
-  [1]: http://cirnov.ski/usr/uploads/2025/03/1003335321.jpg
-  [2]: http://cirnov.ski/usr/uploads/2025/03/504540538.jpg
-  [3]: http://cirnov.ski/usr/uploads/2025/03/2522614962.jpg
-  [4]: http://cirnov.ski/usr/uploads/2025/03/2548172966.jpg
-  [5]: http://cirnov.ski/usr/uploads/2025/03/1147249641.jpg
-  [6]: http://cirnov.ski/usr/uploads/2025/03/1850743558.jpg
-  [7]: http://cirnov.ski/usr/uploads/2025/03/792386745.jpg
-  [8]: http://cirnov.ski/usr/uploads/2025/03/431178381.jpg
-  [9]: http://cirnov.ski/usr/uploads/2025/03/3298247931.jpg
-  [10]: http://cirnov.ski/usr/uploads/2025/03/1520487894.jpg
-  [11]: http://cirnov.ski/usr/uploads/2025/03/3506592202.jpg
-  [12]: http://cirnov.ski/usr/uploads/2025/03/1455404396.jpg
-  [13]: http://cirnov.ski/usr/uploads/2025/03/4081028893.jpg
-  [14]: http://cirnov.ski/usr/uploads/2025/03/1763745937.jpg
-  [15]: http://cirnov.ski/usr/uploads/2025/03/3006231414.jpg
-  [16]: http://cirnov.ski/usr/uploads/2025/03/188039470.jpg
-  [17]: http://cirnov.ski/usr/uploads/2025/03/1346287933.jpg
-  [18]: http://cirnov.ski/usr/uploads/2025/03/2899364899.jpg
-  [19]: http://cirnov.ski/usr/uploads/2025/03/2509069187.jpg
-  [20]: http://cirnov.ski/usr/uploads/2025/03/1008323083.jpg
+  [1]: uploads/1.jpg
+  [2]: uploads/2.jpg
+  [3]: uploads/3.jpg
+  [4]: uploads/4.jpg
+  [5]: uploads/5.jpg
+  [6]: uploads/6.jpg
+  [7]: uploads/7.jpg
+  [8]: uploads/8.jpg
+  [9]: uploads/9.jpg
+  [10]: uploads/10.jpg
+  [11]: uploads/11.jpg
+  [12]: uploads/12.jpg
+  [13]: uploads/13.jpg
+  [14]: uploads/14.jpg
+  [15]: uploads/15.jpg
+  [16]: uploads/16.jpg
+  [17]: uploads/17.jpg
+  [18]: uploads/18.jpg
+  [19]: uploads/19.jpg
+  [20]: uploads/20.jpg
     

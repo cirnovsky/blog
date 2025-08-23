@@ -13,7 +13,7 @@ tags: [geometry,dp]
 
 我毛了张图给你看啊：
 
-![](https://img-blog.csdnimg.cn/img_convert/bc11a0ef9186b4536572ab0ad1d9a4a1.png)。
+![](uploads/7.png)。
 
 然后在每层搞事情。这里有个结论：
 

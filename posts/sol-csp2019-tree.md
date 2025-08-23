@@ -78,7 +78,7 @@ namespace SubtaskForce {
 
 我做了一个动图演示，如果洛谷博客不支持gif的话就直接到这个网址 [Click Here](https://i.loli.net/2020/03/15/fuU4CgWReOT8X2d.gif)
 
-![point.gif](https://i.loli.net/2020/03/15/fuU4CgWReOT8X2d.gif)
+![point.gif](uploads/9.gif)
 
 有了环这个结论，就有一个很显然的贪心构造环的方法：
 
@@ -242,7 +242,7 @@ namespace SubtaskChain {
 
 比如下图：
 
-![889V74.jpg](https://s1.ax1x.com/2020/03/15/889V74.jpg)
+![889V74.jpg](uploads/10.jpg)
 
 当我们把这一删除顺序写出来，就可以发现这其实构成了一个链。
 

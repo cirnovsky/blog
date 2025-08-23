@@ -153,7 +153,7 @@ signed main( )
 
 # 52.P5046 [Ynoi2019模拟赛]Yuno loves sqrt technology I
 
-![](https://cdn.luogu.com.cn/upload/pic/44003.png)
+![](uploads/21.webp)
 
 给你一个长为 $n$ 的**排列**，$m$ 次询问，每次查询一个区间的逆序对数，强制在线。
 
@@ -1255,11 +1255,11 @@ $\ \ \ \ $就是说：这个块覆盖的给定序列的前面的一部分和后�
 
 $\ \ \ \ $就像这样：
 
-![](https://s1.ax1x.com/2020/07/28/aAX7GQ.png)
+![](uploads/22.png)
 
 $\ \ \ \ $投射到给定序列上就像这样：
 
-![](https://s1.ax1x.com/2020/07/28/aAXTPg.png)
+![](uploads/23.png)
 
 $\ \ \ \ $那么我们直接查询（涂色的）这两段的最小值再取个$min$就好了。
 
@@ -1443,7 +1443,7 @@ $\text{depth}(x)$ 表示节点 $x$ 的深度，根节点的深度为 $1$。
 
 先上张图举个例子~
 
-![](https://s1.ax1x.com/2020/07/28/aEbJr6.png)
+![](uploads/24.png)
 
 其中涂成红色的点就是已经加入的点。
 

@@ -7,7 +7,7 @@ tags: [data-structures,dp,greedy,trees]
 
 ## NOI-Online-T1-序列
 
-![img spfaed](https://i.loli.net/2020/03/11/udq3oU6giOxYtD1.png)
+![img spfaed](uploads/27.png)
 
 其实这道题是全场最难的……
 
@@ -249,11 +249,11 @@ signed main() {
 
 给一下图示意一下：
 
-![Annotation 2020-03-11 094939.png](https://i.loli.net/2020/03/11/QtvJrcZ2FGb1doe.png)
+![Annotation 2020-03-11 094939.png](uploads/28.png)
 
 图中那个看起来像个五角星的东西其实就是个环
 
-![Annotation 2020-03-11 095158.png](https://i.loli.net/2020/03/11/NOaqFVdiP2jeM61.png)
+![Annotation 2020-03-11 095158.png](uploads/29.png)
 
 这个图中有 $\gcd(n,k)$ 个环，这就是我们的结论。
 
