@@ -114,7 +114,8 @@ def build():
         metadata = [m for m in metadata if m["slug"] != slug]
 
         # Insert new entry at front
-        print(meta_entry)
+        #print(meta_entry)
+        assert type(meta_entry["date"]) == "str"
         metadata.insert(0, meta_entry)
 
     metadata.sort(key=lambda m: m.get("date", ""), reverse=True)

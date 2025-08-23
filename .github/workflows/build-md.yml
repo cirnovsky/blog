@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/build-md.yml"
       - "posts/*.md"
+      - "build.py"
 
 jobs:
   build:
