@@ -82,7 +82,9 @@ def build():
     # Load existing meta.json or empty list
     if META_FILE.exists():
         with open(META_FILE, "r", encoding="utf-8") as f:
-            metadata = json.load(f)
+            metadata = []
+            pass
+            #metadata = json.load(f)
     else:
         metadata = []
 
@@ -114,9 +116,7 @@ def build():
         metadata = [m for m in metadata if m["slug"] != slug]
 
         # Insert new entry at front
-        #print(meta_entry)
-        assert type(meta_entry["date"]) == "str"
-        metadata.insert(0, meta_entry)
+        metadata.append(meta_entry)
 
     metadata.sort(key=lambda m: m.get("date", ""), reverse=True)
     # Save updated meta.json
