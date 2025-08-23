@@ -88,6 +88,7 @@ def build():
         metadata = []
 
     # Iterate over all markdown files in posts/*.md
+    cnt = 0;
     for md_file in POSTS_DIR.glob("*.md"):
         final_html, fm, slug = md_to_html(md_file)
 
@@ -100,6 +101,7 @@ def build():
 
         # Write HTML file
         with open(out_path, "w", encoding="utf-8") as out:
+            print(cnt += 1, fm["title"])
             out.write(final_html)
 
         # Create meta entry
