@@ -1,14 +1,9 @@
-name: Build Markdown to HTML
+name: Auto-compile markdown files to HTML
 
 permissions:
   contents: write
 
-on:
-  push:
-    paths:
-      - ".github/workflows/build-md.yml"
-      - "posts/*.md"
-      - "build.py"
+on: push
 
 jobs:
   build:
