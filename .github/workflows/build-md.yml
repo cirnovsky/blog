@@ -32,6 +32,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b publish
+          git push --set-upstream origin publish
           git add notes articles meta.json
           git commit -m "Auto-compiled HTML files" || echo "No changes to commit"
           git push
