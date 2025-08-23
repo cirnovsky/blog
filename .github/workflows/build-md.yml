@@ -6,6 +6,7 @@ permissions:
 on:
   push:
     paths:
+      - ".github/workflows/build-md.yml"
       - "posts/*.md"
 
 jobs:
