@@ -101,7 +101,8 @@ def build():
 
         # Write HTML file
         with open(out_path, "w", encoding="utf-8") as out:
-            print(cnt += 1, fm["title"])
+            cnt += 1
+            print(cnt, fm["title"])
             out.write(final_html)
 
         # Create meta entry
