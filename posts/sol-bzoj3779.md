@@ -1,0 +1,227 @@
+---
+date: 2021-03-05
+title: Solution -「BZOJ 3779」重组病毒
+category: notes
+tags: [data-structures]
+---
+
+## Description
+
+[Link](https://darkbzoj.tk/problem/3779).
+
+Given is a tree. Every node initially has a color which is different from others'. (called $col_{x}$)
+
+Def: $\text{dis}(x,y)$: the number of different colors on the simple path between x and y.
+
+Supporting the following operations:
+
+1. `RELEASE x`: For each $y$ on $\text{path}(x,rt)$, make $col_{y}$=a new color which doesn't exist before.
+2. `RECENTER x`: Make $x$ become the new root after running `RELEASE x`.
+3. `REQUEST x`: Print: for each $y$ in $\text{subtree}(x)$, the sum of $\text{dis}(y,rt)$ divided the number of nodes in $\text{subtree}(x)$.
+
+## Solution
+
+Link Cut Tree.
+
+We can know that $\text{dis}(x,rt)$ is the number of Fake Edges on $\text{path}(x,rt)$ pluses one.
+
+If we change a Real Edge $(u,v)$, where $dep_{u}<dep_{v}$ into a Fake Edge, for each node $x$ in $\text{subtree}(v)$, $\text{dis}(x,rt)$ will be decreased by $1$.
+
+Vice versa.
+
+In order to support such operation: decrease the subtree by $1$, we can fix the DFS order of the given tree.
+
+However, we also need to change the root. How can we fix the DFS order of the given tree?
+
+Let's have a discussion. Denote $x$ for the current operating node, $rt$ for the current root.
+
+1. if $rt=x$: modify the whole tree directly.
+2. if $rt$ isn't in $\text{subtree}(x)$: modify $\text{subtree}(x)$.
+3. if $rt$ is in $\text{subtree}(x)$: modify $\text{subtree}(x)$ and cancel the modfication of $\text{subtree}(rt)$
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+vector<int> e[100010];
+int n,m,indfn[100010],outdfn[100010],sjc,fa[100010][20],dep[100010],rtnow=1;
+#define check(x,f) ((indfn[x]<indfn[f])|(indfn[x]>outdfn[f])) // check whether x isn't in subtree(f)
+void dfs(int x,int las)
+{
+	dep[x]=dep[las]+1,fa[x][0]=las,indfn[x]=++sjc;
+	for(int i=1;i^20;++i)	fa[x][i]=fa[fa[x][i-1]][i-1];
+	for(unsigned int i=0;i<e[x].size();++i)	if(e[x][i]^las)	dfs(e[x][i],x);
+	outdfn[x]=sjc;
+}
+int getkth(int x,int k)
+{
+	if(k==0)	return x;
+	else
+	{
+		for(int i=0;i^20;++i)	if((k>>i)&1)	x=fa[x][i];
+		return x;
+	}
+}
+struct LinearTree
+{
+	struct node
+	{
+		LL val,tag;
+	}nodes[400010];
+	void turn(int x,int l,int r)
+	{
+		if(nodes[x].tag)
+		{
+			int mid=(l+r)>>1;
+			nodes[x<<1].val+=(mid-l+1)*nodes[x].tag;
+			nodes[x<<1|1].val+=(r-mid)*nodes[x].tag;
+			nodes[x<<1].tag+=nodes[x].tag;
+			nodes[x<<1|1].tag+=nodes[x].tag;
+			nodes[x].tag=0;
+		}
+	}
+	void ins(int l,int r,int x,int fr,int ba,int val)
+	{
+		if(fr>ba||l>ba||r<fr)	return;
+		if(l>=fr&&r<=ba)	nodes[x].val+=(r-l+1)*val,nodes[x].tag+=val;
+		else
+		{
+			int mid=(l+r)>>1;
+			turn(x,l,r);
+			ins(l,mid,x<<1,fr,ba,val);
+			ins(mid+1,r,x<<1|1,fr,ba,val);
+			nodes[x].val=nodes[x<<1].val+nodes[x<<1|1].val;
+		}
+	}
+	LL find(int l,int r,int x,int fr,int ba)
+	{
+		if(fr>ba||l>ba||r<fr)	return 0;
+		if(l>=fr&&r<=ba)	return nodes[x].val;
+		else
+		{
+			int mid=(l+r)>>1;
+			turn(x,l,r);
+			return find(l,mid,x<<1,fr,ba)+find(mid+1,r,x<<1|1,fr,ba);
+		}
+	}
+	void modify(int x,LL val)
+	{
+		if(rtnow==x)	ins(1,n,1,1,n,val);
+		else if(check(rtnow,x))	ins(1,n,1,indfn[x],outdfn[x],val);
+		else
+		{
+			int tmp=getkth(rtnow,dep[rtnow]-dep[x]-1);
+			ins(1,n,1,1,indfn[tmp]-1,val);
+			ins(1,n,1,outdfn[tmp]+1,n,val);
+		}
+	}
+}lrt;
+struct LinkCutTree
+{
+	#define wis(x) (nodes[nodes[x].fa].ch[1]==(x))
+	#define isrt(x) ((nodes[nodes[x].fa].ch[0]^(x))&&(nodes[nodes[x].fa].ch[1]^(x)))
+	struct node
+	{
+		int ch[2],fa;
+		bool rev;
+	}nodes[100010];
+	void turn_down(int x)
+	{
+		if(nodes[x].rev)
+		{
+			swap(nodes[x].ch[0],nodes[x].ch[1]);
+			if(nodes[x].ch[0])	nodes[nodes[x].ch[0]].rev^=1;
+			if(nodes[x].ch[1])	nodes[nodes[x].ch[1]].rev^=1;
+			nodes[x].rev=0;
+		}
+	}
+	void turn_whole(int x)
+	{
+		if(!isrt(x))	turn_whole(nodes[x].fa);
+		turn_down(x);
+	}
+	void rotate(int x)
+	{
+		int f=nodes[x].fa,ff=nodes[f].fa,t=wis(x);
+		nodes[x].fa=ff;
+		if(!isrt(f))	nodes[ff].ch[wis(f)]=x;
+		nodes[f].ch[t]=nodes[x].ch[t^1];
+		nodes[nodes[x].ch[t^1]].fa=f;
+		nodes[x].ch[t^1]=f;
+		nodes[f].fa=x;
+	}
+	void splay(int x)
+	{
+		turn_whole(x);
+		while(!isrt(x))
+		{
+			int f=nodes[x].fa;
+			if(!isrt(f))	rotate((wis(x)^wis(f))?x:f);
+			rotate(x);
+		}
+	}
+	int findleft(int x)
+	{
+		turn_down(x);
+		while(nodes[x].ch[0])	x=nodes[x].ch[0],turn_down(x);
+		return x;
+	}
+	void access(int x)
+	{
+		for(int y=0;x;y=x,x=nodes[x].fa)
+		{
+			splay(x);
+			if(nodes[x].ch[1])	lrt.modify(findleft(nodes[x].ch[1]),1);
+			if(y)	lrt.modify(findleft(y),-1);
+			nodes[x].ch[1]=y;
+		}
+	}
+	void makert(int x){access(x),splay(x),nodes[x].rev^=1;}
+}lct;
+char opt[20];
+int opx;
+template<typename T>
+void read(T &hhh)
+{
+	T x=0,f=1;
+	char c=getchar();
+	while(c<'0'||c>'9')
+	{
+		if(c=='-')	f=-1;
+		c=getchar();
+	}
+	while(c>='0'&&c<='9')	x=(x<<3)+(x<<1)+(c^'0'),c=getchar();
+	if(~f)	hhh=x;
+	else	hhh=-x;
+}
+int main()
+{
+	read(n),read(m);
+	for(int i=1,x,y;i<n;++i)
+	{
+		read(x),read(y);
+		e[x].emplace_back(y);
+		e[y].emplace_back(x);
+	}
+	dfs(1,0);
+	for(int i=1;i<=n;++i)	lrt.ins(1,n,1,indfn[i],indfn[i],dep[i]),lct.nodes[i].fa=fa[i][0];
+	while(m--)
+	{
+		scanf("%s",opt),read(opx);
+		if(strcmp(opt,"RELEASE")==0)	lct.access(opx);
+		else if(strcmp(opt,"RECENTER")==0)	lct.makert(opx),rtnow=opx;
+		else
+		{
+			if(rtnow==opx)	printf("%.10f\n",double(lrt.find(1,n,1,1,n))/n);
+			else if(check(rtnow,opx))	printf("%.10f\n",double(lrt.find(1,n,1,indfn[opx],outdfn[opx]))/(outdfn[opx]-indfn[opx]+1));
+			else
+			{
+				int tmp=getkth(rtnow,dep[rtnow]-dep[opx]-1);
+				printf("%.10f\n",double(lrt.find(1,n,1,1,indfn[tmp]-1)+lrt.find(1,n,1,outdfn[tmp]+1,n))/(indfn[tmp]+n-outdfn[tmp]-1));
+			}
+		}
+	}
+	return 0;
+}
+```
+    

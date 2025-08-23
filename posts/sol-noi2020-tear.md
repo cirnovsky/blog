@@ -1,0 +1,199 @@
+---
+date: 2021-06-26
+title: Solution -「NOI 2020」时代的眼泪
+category: notes
+tags: [data-structures,brute-force]
+---
+
+## Description
+
+[Link](https://loj.ac/p/3341)。
+
+给出一个二维平面以及一些点，保证点不在同行 / 同列。每次询问求出一个子矩阵里面的顺序对。
+
+## Solution
+
+卡常，卡你吗。
+
+> 膜拜 dX。
+>
+> 基本是把 dX 的题解贺了过来所以没啥参考的价值。
+>
+> 不过有很多细节的处理不一样，大概能算个 $\frac{1}{50}$ 成新？
+
+对序列分块，把贡献分成 整块 - 散块 / 整块 - 整块/ 散块 - 整块 / 散块 - 散块 以及 散块内部 / 整块内部 共六种贡献。
+
+记 $\textit{ans}_{0}(l,r,x,y)$ 为询问 $l,r,x,y$ 的答案。
+
+同时预处理出 $\textit{lb}(i,j),\textit{ub}(i,j)$ 分别表示在块 $i$ 中数 $j$ 的 `std::lower_bound` / `std::upper_bound` 值，下文如果写成单元函数的形式那么就是省去了第一维。
+
+以及预先做一个块内排序，记为 $\textit{ord}(i,j)$，表示块 $i$ 中排序后的第 $j$ 个元素。
+
+**注意本文在每个 subtask 定义的东西在其他 subtask 依然适用**。
+
+- 散块 - 散块；
+
+两边的都是 $\sqrt{n}$ 级别，拉出来分别排序后归并计算顺序对即可。
+
+- 散块内部
+
+考虑如何对 $\textit{ans}_{0}(l,r,x,y)$ 进行容斥。
+
+主要矛盾集中在：会出现 $(a\in[1,x),b\in[x,y])$ 这样的贡献。令 $\textit{cnt}_{0}(i,j)$ 表示 $[\textit{lp},i]$ 中 $\textit{rank}_{1}$ 小于 $j$ 的数的数量，其中 $\textit{lp}$ 是当前块的左端点，下同，如果出现 $\textit{rp}$ 同理，$\textit{rank}_{1}$ 的定义见下文。
+
+则容斥可以写为 $\textit{ans}_{0}(l,r,x,y)=\textit{ans}_{0}(l,r,1,y)-\textit{ans}_{0}(l,r,1,x-1)-\sum_{i=l}^{r}[a_{i}\in[x,y]]\cdot\textit{cnt}_{0}(i,\textit{lb}(x)-1)$。
+
+又有 $\textit{ans}_{0}(l,r,1,x)=\sum_{i=l}^{r}[a_{i}\leqslant x]\cdot\textit{cnt}_{0}(i,\textit{rank}_{1}(i))$，我们就可以做到单次 $\mathcal{O}(\sqrt{n})$，注意的 $l,r$ 触及散块边界者不同时，对 $\textit{cnt}_{0}$ 的容斥也有区别。
+
+- 整块 - 整块
+
+令 $\textit{cnt}_{1}(i,j)$ 为块 $[1,i]$ 中 $\leqslant j$ 的元素个数，$\textit{ans}_{1}(L,R,x,y)$ 为块 $[L,R]$ 的答案，以及 $\textit{rank}_{0}(i,j)$ 是块 $i$ 中排名 $j$ 的元素在原数组中的下标。
+
+我们掏出传统容斥：$\textit{ans}_{1}(L,R,x,y)=\textit{ans}_{1}(L,R,1,y)-\textit{ans}_{1}(L,R,1,x-1)-\sum_{i=L}^{R}P_{i}Q_{i}$，$P_{i}$ 是块 $[L,i)$ 中 $<x$ 的元素个数，$Q_{i}$ 是块 $i$ 种 $\in[x,y]$ 的元素个数。
+
+考虑算 $\textit{ans}_{1}(L,R,1,x)$。
+
+定义 $\textit{rank}_{1}(i,j)$ 为块 $i$ 中第 $j$ 个元素的排名（从小到大，下同），$\textit{rank}_{2}(i,j)$ 为块 $i$ 中满足 $<j$ 的最大元素的排名，$\textit{pre}_{b}(i,j)$ 为块 $[i,j]$ 中所有 $<\textit{rank}_{1}(i,j)$ 的元素数量。
+
+易知 $\textit{pre}_{b}(i,j)=\textit{cnt}_{1}(i,\textit{rank}_{1}(i,j)-1)$，再定义 $\overset{\sqrt{n},\sqrt{n},\sqrt{n}}{\textit{cp}_{0}(i,L,r)}$ 为块 $[1,L]$ 与块 $i$ 前 $r$ 小的元素组成的顺序对数量，同样易知 $\textit{cp}_{0}(i,L,r)=\sum_{k\in T}[\textit{rank}_{1}(i,k)\leqslant r]\cdot\textit{pre}_{b}(L,\textit{rank}_{1}(i,k))$，其中 $T$ 是块 $i$ 的元素集。但这样搞状态数 $\mathcal{O}(n\sqrt{n})$ 转移还要 $\mathcal{\sqrt{n}}$ 而且不好前缀和。
+
+不过可以发现使用 $\textit{ord}$ 数组 $\textit{cp}_{0}$ 就可以递推了：$\textit{cp}_{0}(i,L,r)=\sum_{k=lp}^{r+lp-1}\textit{pre}_{b}(L,k)=\textit{cp}_{0}(i,L,r-1)+\textit{pre}_{b}(L,r+lp-1)$。
+
+然后 $\textit{ans}_{1}(L,R,1,x)=\sum_{i=L+1}^{R}\textit{cp}_{0}(i,i-1,\textit{rank}_{2}(i,x))-\textit{cp}_{0}(i,L-1,\textit{rank}_{2}(i,x))$。
+
+预处理 $\textit{cp}_{0}$ 是 $\mathcal{O}(n\sqrt{n})$，单次回答 $\mathcal{O}(\sqrt{n})$。
+
+- 散块 - 整块
+
+枚举散块里面的元素，利用 $\textit{cnt}_{1}(i,j)$ 计算答案。
+
+具体是令散块元素集为 $T$，整块编号为 $L,R$， $\sum_{i\in T}\textit{cnt}_{1}(R,i)-\textit{cnt}_{1}(L-1,i)$。
+
+- 整块 - 散块
+
+和上面有什么区别吗？
+
+- 整块内部
+
+预处理数组 $\overset{\sqrt{n},\sqrt{n},\sqrt{n}}{\textit{cp}_{1}(i,x,y)}$ 表示取 $\textit{ord}(i,x\dots y)$ 组成的序列的顺序对数量。
+
+用 $\textit{rank}_{0}$ 来预处理：$\textit{cp}_{1}(i,x,y)=\textit{cp}_{1}(i,x,y-1)+\textit{cnt}_{0}(\textit{rank}_{0}(i,y),y-1)-\textit{cnt}_{0}(\textit{rank}_{0}(i,y),x-1)$。
+
+---
+
+综上，这个问题得以一个 $\mathcal{O}(n\sqrt{n})$ 的在线算法解决。
+
+代码也是抄的 dX，像个 shit 一样就折叠了。
+
+```cpp
+//almost copied from dead_X sry
+//kouhu has no qiantu
+#include<bits/stdc++.h>
+typedef long long ll;
+using namespace std;
+#define getchar() (p1==p2 && (p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++)
+char buf[1<<21],*p1=buf,*p2=buf;
+inline int Read()
+{
+	int x=0;char c=getchar();
+	while(c<'0' || c>'9') c=getchar();
+	while(c>='0' && c<='9') x=x*10+(c&15),c=getchar();
+	return x;
+}
+const int N=101111,A=460,BS=A+10;
+ll cp0[BS][BS][BS];
+int a[N],rk0[BS][BS],cnt0[BS][N],cp1[BS][BS][BS],lb[BS][N],rk1[N],cnt1[BS][N],L[BS],R[BS];
+bool cmp(int x,int y) { return a[x]<a[y]; }
+namespace IO{
+    const int sz=1<<22;
+    char a[sz+5],b[sz+5],*p1=a,*p2=a,*t=b,p[105];
+    inline char gc(){
+        return p1==p2?(p2=(p1=a)+fread(a,1,sz,stdin),p1==p2?EOF:*p1++):*p1++;
+    }
+    template<class T> void gi(T& x){
+        x=0; char c=gc();
+        for(;c<'0'||c>'9';c=gc());
+        for(;c>='0'&&c<='9';c=gc())
+            x=(x<<3)+(x<<1)+(c-'0');
+    }
+    inline void flush(){fwrite(b,1,t-b,stdout),t=b; }
+    inline void pc(char x){*t++=x; if(t-b==sz) flush(); }
+    template<class T> void pi(T x,char c='\n'){
+        if(x<0) x=-x;
+        if(x==0) pc('0'); int t=0;
+        for(;x;x/=10) p[++t]=x%10+'0';
+        for(;t;--t) pc(p[t]); pc(c);
+    }
+    struct F{~F(){flush();}}f; 
+}
+using IO::gi;
+using IO::pi;
+inline int read() { int r; gi(r); return r; }
+int main(){
+#ifdef ONLINE_JUDGE
+	freopen("tears.in","r",stdin);
+	freopen("tears.out","w",stdout);
+#endif
+	int n=read(),m=read(),B=n/A;
+	for(int i=0;i<n;++i)a[i]=read();
+	for(int i=n;i<(B+1)*A;++i)a[i]=i;
+	for(int i=0;i<=B;++i){
+		for(int j=i*A,k=0;k<A;++j,++k)rk0[i][k]=j;
+		sort(rk0[i],rk0[i]+A,[](int x,int y){return a[x]<a[y];});
+		for(int j=0;j<A;++j)rk1[rk0[i][j]]=j,cnt0[j][rk0[i][j]]=1;
+		for(int j=i*A+1;j<(i+1)*A;++j)
+			for(int k=0;k<A;++k)cnt0[k][j]+=cnt0[k][j-1];
+		for(int j=i*A;j<(i+1)*A;++j)
+			for(int k=1;k<A;++k)cnt0[k][j]+=cnt0[k-1][j];
+		for(int j=i*A;j<(i+1)*A;++j)++cnt1[i][a[j]];
+		if(i)for(int j=1;j<=101000;++j)cnt1[i][j]+=cnt1[i-1][j];
+		for(int j=1,k=0;j<=101000;++j)(k<A)&&(j>=a[rk0[i][k]])&&(++k),lb[i][j]=k;
+	}
+	for(int i=0;i<=B;++i)
+		for(int j=1;j<=101000;++j)cnt1[i][j]+=cnt1[i][j-1];
+	for(int i=1;i<B;++i)for(int j=0;j<i;++j)for(int k=0;k<A;++k)
+		cp0[i][j][k+1]=cnt1[j][a[rk0[i][k]]]+cp0[i][j][k];
+	for(int i=0;i<B;++i)for(int j=0;j<A;++j)for(int k=j+1;k<A;++k)
+		cp1[i][j][k]=cp1[i][j][k-1]+cnt0[k-1][rk0[i][k]]-((j==0)?0:cnt0[j-1][rk0[i][k]]);
+	for(;m;--m){
+		int l=read()-1,r=read()-1,x=read(),y=read(),bl=l/A,br=r/A;
+		if(bl==br){
+			int ans=0;
+			for(int i=l;i<=r;++i){
+				if(x<=a[i]&&a[i]<=y&&rk1[i])ans+=cnt0[rk1[i]-1][i]-((l%A)?cnt0[rk1[i]-1][l-1]:0);
+				if(lb[bl][x-1]&&x<=a[i]&&a[i]<=y)ans-=cnt0[lb[bl][x-1]-1][i]-((l%A&&lb[bl][x-1])?cnt0[lb[bl][x-1]-1][l-1]:0);
+			}
+			pi(ans);
+		}
+		else{
+			ll ans=0;
+			for(int i=l;i<(bl+1)*A;++i){
+				if(x<=a[i]&&a[i]<=y&&rk1[i])ans+=cnt0[rk1[i]-1][i]-((l%A)?cnt0[rk1[i]-1][l-1]:0);
+				if(lb[bl][x-1]&&x<=a[i]&&a[i]<=y)ans-=cnt0[lb[bl][x-1]-1][i]-((l%A&&lb[bl][x-1])?cnt0[lb[bl][x-1]-1][l-1]:0);
+				if(x<=a[i]&&a[i]<=y)ans+=cnt1[br-1][y]-cnt1[bl][y]-cnt1[br-1][a[i]]+cnt1[bl][a[i]];
+			}
+			for(int i=br*A;i<=r;++i){
+				if(x<=a[i]&&a[i]<=y&&rk1[i])ans+=cnt0[rk1[i]-1][i];
+				if(lb[br][x-1]&&x<=a[i]&&a[i]<=y)ans-=cnt0[lb[br][x-1]-1][i];
+				if(x<=a[i]&&a[i]<=y)ans+=cnt1[br-1][a[i]]-cnt1[bl][a[i]]-cnt1[br-1][x-1]+cnt1[bl][x-1];
+			}
+			int lt=0,rt=0;
+			for(int i=0;i<A;++i){
+				if(rk0[bl][i]>=l&&x<=a[rk0[bl][i]]&&a[rk0[bl][i]]<=y)L[++lt]=rk0[bl][i];
+				if(rk0[br][i]<=r&&x<=a[rk0[br][i]]&&a[rk0[br][i]]<=y)R[++rt]=rk0[br][i];
+			}
+			for(int i=1,t=1;i<=rt;++i){
+				while(t<=lt&&a[L[t]]<a[R[i]])++t;
+				ans+=t-1;
+			}
+			for(int i=bl+1;i<br;++i)if(lb[i][y])ans+=cp1[i][lb[i][x-1]][lb[i][y]-1];
+			for(int i=bl+2;i<br;++i)
+				ans+=cp0[i][i-1][lb[i][y]]-cp0[i][bl][lb[i][y]]-cp0[i][i-1][lb[i][x-1]]+cp0[i][bl][lb[i][x-1]],
+				ans-=ll(cnt1[i][y]-cnt1[i-1][y]-cnt1[i][x-1]+cnt1[i-1][x-1])*(cnt1[i-1][x-1]-cnt1[bl][x-1]);
+			pi(ans);
+		}
+	}
+	return 0;
+}
+```
+    

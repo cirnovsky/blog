@@ -1,0 +1,313 @@
+---
+date: 2021-05-18
+title: Solution Set -「CF 1525」
+category: notes
+tags: [maths,data-structures,dp]
+---
+
+# 「CF 1525A」Potion-making
+
+[Link](https://codeforces.com/problemset/problem/1525/A).
+
+显然。
+
+<details>
+
+```cpp
+#include<bits/stdc++.h>
+typedef long long ll;
+template<typename T>void sf(T &x){x=0;T f=0;char c=getchar();for(;c<'0'||c>'9';c=getchar())if(c=='-')f=1;for(;c>='0'&&c<='9';c=getchar())x=(x<<3)+(x<<1)+(c^'0');if(f)x=-x;}
+template<typename T>void pf(T x,char l='\n'){static T s[100],t;if(x<0)putchar('-'),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^'0');putchar(l);}
+int gcd(int x,int y){return !y?x:gcd(y,x%y);}
+int main()
+{
+	int T,k;
+	sf(T);
+	while(T-->0)
+	{
+		sf(k);
+		int p1=k,p2=100-k,x=gcd(p1,p2);
+		p1/=x;
+		p2/=x;
+		pf(p1+p2);
+	}
+	return 0;
+}
+```
+
+</details>
+
+# 「CF 1525B」Permutation Sort
+
+[Link](https://codeforces.com/problemset/problem/1525/B).
+
+注意到答案只有 $0/1/2/3$，分类讨论即可。
+
+~~吃了三发罚时~~
+
+<details>
+
+```cpp
+#include<bits/stdc++.h>
+typedef long long ll;
+template<typename T>void sf(T &x){x=0;T f=0;char c=getchar();for(;c<'0'||c>'9';c=getchar())if(c=='-')f=1;for(;c>='0'&&c<='9';c=getchar())x=(x<<3)+(x<<1)+(c^'0');if(f)x=-x;}
+template<typename T>void pf(T x,char l='\n'){static T s[100],t;if(x<0)putchar('-'),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^'0');putchar(l);}
+int T,n,a[60];
+int main()
+{
+	for(sf(T);T;--T)
+	{
+		sf(n);
+		for(int i=1;i<=n;++i)	sf(a[i]);
+		int flag=1;
+		for(int i=2;i<=n;++i)
+		{
+			if(a[i]!=a[i-1]+1)
+			{
+				flag=0;
+				break;
+			}
+		}
+		if(!flag)
+		{
+			if(a[1]==n && a[n]==1)	puts("3");
+			else if(a[n]==n || a[1]==1)	puts("1");
+			else	puts("2");
+		}
+		else	puts("0");
+	}
+	return 0;
+}
+```
+
+</details>
+
+# 「CF 1525C」Robot Collisions
+
+[Link](https://codeforces.com/problemset/problem/1525/C).
+
+显然我不会。
+
+<details>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+#define mp make_pair
+template<typename T>void sf(T &x) {
+    x = 0;
+    T f = 0;
+    char c = getchar();
+
+    for (; c < '0' || c > '9'; c = getchar())
+        if (c == '-')
+            f = 1;
+
+    for (; c >= '0' && c <= '9'; c = getchar())
+        x = (x << 3) + (x << 1) + (c^'0');
+
+    if (f)
+        x = -x;
+}
+template<typename T>void pf(T x, char l = '\n') {
+    static T s[100], t;
+
+    if (x < 0)
+        putchar('-'), x = -x;
+
+    do
+        s[++t] = x % 10, x /= 10;
+
+    while (x)
+        ;
+
+    while (t)
+        putchar(s[t--]^'0');
+
+    putchar(l);
+}
+struct st {
+    int a, b, id;
+} Sts[300005], Uji[300005], Qql[300005];
+bool cmp(st A, st B) {
+    return A.a < B.a;
+}
+int reait[300005];
+int n, m;
+int U(int x, int y) {
+    int res = 0;
+
+    if (Sts[x].a < Sts[y].a) {
+        if (Sts[x].b == 0)
+            res += Sts[x].a, Sts[x].a = 0;
+
+        if (Sts[y].b == 1)
+            res += (m - Sts[y].a), Sts[y].a = m;
+
+        return (res + abs(Sts[x].a - Sts[y].a)) / 2;
+    } else {
+        if (Sts[x].b == 1)
+            res += (m - Sts[x].a), Sts[x].a = m;
+
+        if (Sts[y].b == 0)
+            res += Sts[y].a, Sts[y].a = 0;
+
+        return (res + abs(Sts[x].a - Sts[y].a)) / 2;
+    }
+}
+signed main() {
+    int T;
+    sf(T);
+
+    while (T--) {
+        sf(n), sf(m);
+
+        for (int i = 1; i <= n; i++)
+            reait[i] = -1;
+
+        int rks = 0, tss = 0;
+
+        for (int i = 1; i <= n; i++) {
+            sf(Sts[i].a);
+            Sts[i].id = i;
+        }
+
+        for (int i = 1; i <= n; i++) {
+            char res = getchar();
+
+            while (res != 'L' && res != 'R')
+                res = getchar();
+
+            Sts[i].b = res == 'R';
+        }
+
+        for (int i = 1; i <= n; i++) {
+            if (Sts[i].a & 1)
+                Qql[++tss] = Sts[i];
+            else
+                Uji[++rks] = Sts[i];
+        }
+
+        sort(Uji + 1, Uji + rks + 1, cmp);
+        sort(Qql + 1, Qql + tss + 1, cmp);
+        stack <int> Q;
+        Q.push(1);
+
+        for (int i = 2; i <= rks; i++) {
+            if (Uji[i].b == 0 && !Q.empty()) {
+                int u = Q.top();
+                Q.pop();
+                reait[Uji[i].id] = reait[Uji[u].id] = U(Uji[i].id, Uji[u].id);
+            } else
+                Q.push(i);
+        }
+
+        while (!Q.empty()) {
+            int u = Q.top();
+            Q.pop();
+
+            if (!Q.empty()) {
+                int v = Q.top();
+                Q.pop();
+                reait[Uji[u].id] = reait[Uji[v].id] = U(Uji[u].id, Uji[v].id);
+            }
+        }
+
+        Q.push(1);
+
+        for (int i = 2; i <= tss; i++) {
+            if (Qql[i].b == 0 && !Q.empty()) {
+                int u = Q.top();
+                Q.pop();
+                reait[Qql[i].id] = reait[Qql[u].id] = U(Qql[i].id, Qql[u].id);
+            } else
+                Q.push(i);
+        }
+
+        while (!Q.empty()) {
+            int u = Q.top();
+            Q.pop();
+
+            if (!Q.empty()) {
+                int v = Q.top();
+                Q.pop();
+                reait[Qql[u].id] = reait[Qql[v].id] = U(Qql[u].id, Qql[v].id);
+            }
+        }
+
+        for (int i = 1; i <= n; i++)
+            printf("%lld ", reait[i]);
+
+        printf("\n");
+    }
+
+    return 0;
+}
+```
+
+</details>
+
+# 「CF 1525D」Armchairs
+
+[Link](https://codeforces.com/problemset/problem/1525/D).
+
+设 $f(i,j)$ 表示考虑把第 $j$ 个人放进前 $i$ 个座位里的方案，转移。
+
+多久没写 DP 了啊，这种水平的 DP 都写漏一堆东西。
+
+<details>
+
+```cpp
+#include<bits/stdc++.h>
+typedef long long ll;
+template<typename T>void sf(T &x){x=0;T f=0;char c=getchar();for(;c<'0'||c>'9';c=getchar())if(c=='-')f=1;for(;c>='0'&&c<='9';c=getchar())x=(x<<3)+(x<<1)+(c^'0');if(f)x=-x;}
+template<typename T>void pf(T x,char l='\n'){static T s[100],t;if(x<0)putchar('-'),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^'0');putchar(l);}
+int n,a[5010],fr[5010],t0,oc[5010],t1,op[5010];
+ll dp[5010][5010],ans=std::numeric_limits<ll>::max();
+inline int fs(int x){return x<0?-x:x;}
+int main()
+{
+	sf(n);
+	for(int i=1;i<=n;++i)
+	{
+		sf(a[i]);
+		if(a[i])	oc[++t1]=i;
+		else	fr[++t0]=i;
+	}
+	for(int i=1;i<=t1;++i)	for(int j=0;j<=n;++j)	dp[i][j]=1e18;
+	for(int i=1;i<=t1;++i)	for(int j=1;j<=n;++j) {
+		dp[i][j]=dp[i][j-1];
+		if(!a[j])	dp[i][j]=std::min(dp[i][j],dp[i-1][j-1]+fs(oc[i]-j));
+	}
+	pf(dp[t1][n]);
+	return 0;
+}
+```
+
+</details>
+
+# 「CF 1525E」Assimilation IV
+
+[Link](https://codeforces.com/problemset/problem/1525/E).
+
+<details>
+
+```cpp
+// Oops, something went wrong.
+```
+
+</details>
+
+# 「CF 1525F」Goblins And Gnomes
+
+[Link](https://codeforces.com/problemset/problem/1525/F).
+
+<details>
+
+```cpp
+// Oops, something went wrong.
+```
+
+</details>
+    

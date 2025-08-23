@@ -1,0 +1,256 @@
+---
+date: 2021-04-09
+title: Solution -「九省联考 2018」劈配
+category: notes
+tags: [flows]
+---
+
+## Description
+
+[Link](https://loj.ac/p/2477).
+
+一年一度的综艺节目《中国新代码》又开始了。Zayid 从小就梦想成为一名程序员，他觉得这是一个展示自己的舞台，于是他毫不犹豫地报名了。
+
+轻车熟路的 Zayid 顺利地通过了海选，接下来的环节是导师盲选，这一阶段的规则是这样的：
+总共 $n$ 名参赛选手（编号从 $1$ 至 $n$）每人写出一份代码并介绍自己的梦想。接着由所有导师对这些选手进行排名。为了避免后续的麻烦，规定**不存在**排名并列的情况。
+
+同时，每名选手都将**独立地**填写一份志愿表，来对总共 $m$ 位导师（编号从 $1$ 至 $m$）作出评价。志愿表上包含了共 $m$ 档志愿。对于每一档志愿，选手被允许填写最多 $C$ 位导师，每位导师**最多**被每位选手填写一次（放弃某些导师也是被允许的）。
+
+在双方的工作都完成后，进行录取工作。每位导师都有自己战队的人数上限，这意味着可能有部分选手的较高志愿、甚至是全部志愿无法得到满足。
+
+节目组对 ‘‘前 $i$ 名的录取结果最优’’ 作出如下定义：
+* 前 $1$ 名的录取结果最优，当且仅当第 $1$ 名被其最高非空志愿录取（特别地，如果第 $1$ 名没有填写志愿表，那么该选手出局）。
+* 前 $i$ 名的录取结果最优，当且仅当在前 $i − 1$ 名的录取结果最优的情况下：第 $i$ 名被其理论可能的最高志愿录取（特别地，如果第 $i$ 名没有填写志愿表、或其所有志愿中的导师战队均已员，那么该选手出局）。
+
+如果一种方案满足 ‘‘前 $n$ 名的录取结果最优’’，那么我们可以简称这种方案是最优的。
+
+举例而言，$2$ 位导师 T 老师、F 老师的战队人数上限分别都是 $1$ 人；$2$ 位选手 Zayid、DuckD 分列第 $1$、$2$ 名。那么下面 $3$ 种志愿表及其对应的最优录取结果如表中所示：
+
+| 选手 | 第 $1$ 志愿 | 第 $2$ 志愿 | 录取志愿 | 加入战队 |
+| :-: | :-: | :-: | :-: | :-: |
+| Zayid | N/A | T 老师、F 老师 | 2 | F 老师 |
+| DuckD | T 老师 | F 老师 | 1 | T 老师 |
+
+| 选手 | 第 $1$ 志愿 | 第 $2$ 志愿 | 录取志愿 | 加入战队 |
+| :-: | :-: | :-: | :-: | :-: |
+| Zayid | T 老师 | F 老师 | 1 | T 老师 |
+| DuckD | T 老师 | F 老师 | 2 | F 老师 |
+
+| 选手 | 第 $1$ 志愿 | 第 $2$ 志愿 | 录取志愿 | 加入战队 |
+| :-: | :-: | :-: | :-: | :-: |
+| Zayid | F 老师 | N/A | 1 | F 老师 |
+| DuckD | F 老师 | N/A | 出局 | N/A |
+
+可以证明，对于上面的志愿表，对应的方案都是**唯一的**最优录取结果。
+每个人都有一个自己的理想值 $s_i$，表示第 $i$ 位同学希望自己被第 $s_i$ 或更高的志愿录
+取，如果没有，那么他就会非常沮丧。
+现在，所有选手的志愿表和排名都已公示。巧合的是，每位选手的排名都恰好与它
+们的编号相同。
+对于**每一位**选手，Zayid 都想知道下面两个问题的答案：
+* 在最优的录取方案中，他会被第几志愿录取。
+* 在其他选手**相对排名**不变的情况下，至少上升多少名才能使得他不沮丧。
+作为《中国新代码》的实力派代码手，Zayid 当然轻松地解决了这个问题。不过他
+还是想请你再算一遍，来检验自己计算的正确性。
+
+~~你可能注意到了根本没有概括因为太 tm 长了妈妈我不想概括~~
+
+## Solution
+
+这份题面真难读。
+
+对于第一问，网络流;
+
+我们把学生和导师分别放到左右两列弄成一个二分图.
+
+源点连容量为 $1$ 的学生边，然后让第一个学生连第一志愿，容量为 $1$，如果能流量有增就下一个，否则删除这条边下一个；
+
+导师往汇点连人数限制的边。
+
+对于第二问，同样网络流。
+
+每个学生二分其最终排名，若学生 $x$ 的最终排名为 $k$，就用第一问的条件把 $x-k-1$ 名学生的边连上看是否满流。
+
+```cpp
+#include<bits/stdc++.h>
+const int INF=1e9;
+std::queue<int> q;
+std::vector<int> a[210][210];
+int n,m,head[90010],nxt[180010],to[180010],cap[180010],Cur[900010],dep[900010],src,snk,cntot=1,up[210],s[210],ans[210];
+void addEdge(int one,int ano,int val)
+{
+	to[++cntot]=ano;
+	cap[cntot]=val;
+	nxt[cntot]=head[one];
+	head[one]=cntot;
+	
+	to[++cntot]=one;
+	cap[cntot]=0;
+	nxt[cntot]=head[ano];
+	head[ano]=cntot;
+}
+bool MF_bfs()
+{
+	for(int i=1;i<=n+m+2;++i)
+	{
+		Cur[i]=head[i];
+		dep[i]=INF;
+	}
+	q.push(src);
+	dep[src]=1;
+	while(!q.empty())
+	{
+		int now=q.front();
+		q.pop();
+		for(int i=head[now];i;i=nxt[i])
+		{
+			int y=to[i];
+			if(cap[i] && dep[y]==INF)
+			{
+				dep[y]=dep[now]+1;
+				q.push(y);
+			}
+		}
+	}
+	return dep[snk]^INF;
+}
+int MF_dfs(int x,int in)
+{
+	if(x==snk)	return in;
+	else
+	{
+		int out=0;
+		for(int &i=Cur[x];i;i=nxt[i])
+		{
+			int y=to[i];
+			if(cap[i] && dep[y]==dep[x]+1)
+			{
+				int tmp=MF_dfs(y,std::min(in,cap[i]));
+				cap[i]-=tmp;
+				cap[i^1]+=tmp;
+				in-=tmp;
+				out+=tmp;
+				if(!in)	break;
+			}
+		}
+		if(!out)	dep[x]=INF;
+		return out;
+	}
+}
+int Dinic()
+{
+	int res=0;
+	while(MF_bfs())	res+=MF_dfs(src,INF);
+	return res;
+}
+bool check(int x,int all)
+{
+	cntot=1;
+	for(int i=1;i<=n+m+2;++i)	head[i]=0;
+	addEdge(src,x,1);
+	for(int i=1;i<=m;++i)	addEdge(n+i,snk,up[i]);
+	int low=0;
+	for(int i=1;i<all;++i)
+	{
+		addEdge(src,i,1);
+		if(ans[i])
+		{
+			for(int now:a[i][ans[i]])	addEdge(i,n+now,1);
+		}
+		else	++low;
+	}
+	for(int i=1;i<=s[x];++i)
+	{
+		for(int now:a[x][i])	addEdge(x,now+n,1);
+	}
+	return low+Dinic()==all;
+}
+int search(int l,int r)
+{
+	int res=r+1,ID=r+1;
+	while(l<=r)
+	{
+		int mid=(l+r)>>1;
+		if(check(ID,ID-mid))
+		{
+			res=mid;
+			r=mid-1;
+		}
+		else	l=mid+1;
+	}
+	return res;
+}
+void Go()
+{
+	scanf("%d %d",&n,&m);
+	for(int i=1;i<=m;++i)	scanf("%d",&up[i]);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1,x;j<=m;++j)
+		{
+			scanf("%d",&x);
+			if(x)	a[i][x].emplace_back(j);
+		}
+	}
+	for(int i=1;i<=n;++i)	scanf("%d",&s[i]);
+	
+	src=n+m+1;
+	snk=n+m+2;
+	for(int i=1;i<=m;++i)	addEdge(n+i,snk,up[i]);
+	for(int i=1;i<=n;++i)
+	{
+		addEdge(src,i,1);
+		for(int j=1;j<=m;++j)
+		{
+			if(!a[i][j].empty())
+			{
+				for(int now:a[i][j])	addEdge(i,now+n,1);
+				if(MF_bfs())
+				{
+					int waste=MF_dfs(src,INF);
+					ans[i]=j;
+					break;
+				}
+				else
+				{
+					int cur=cntot;
+					for(int k=1;k<=int(a[i][j].size());++k)
+					{
+						cap[cur]=cap[cur^1]=0;
+						cur-=2;
+					}
+				}
+			}
+		}
+	}
+	
+	for(int i=1;i<=n;++i)
+	{
+		if(ans[i])	printf("%d ",ans[i]);
+		else	printf("%d ",m+1);
+	}
+	printf("\n");
+	
+	for(int i=1;i<=n;++i)
+	{
+		if(ans[i] && ans[i]<=s[i])	printf("0 ");
+		else	printf("%d ",search(1,i-1));
+	}
+	printf("\n");
+	
+	for(int i=1;i<=n+m+2;++i)	head[i]=0;
+	for(int i=1;i<=n;++i)	ans[i]=0;
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=m;++j)	a[i][j].clear();
+	}
+	cntot=1;
+}
+int main()
+{
+	int T,waste;
+	scanf("%d %d",&T,&waste);
+	while(T-->0)	Go();
+	return 0;
+}
+```
+    

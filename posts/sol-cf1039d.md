@@ -1,0 +1,102 @@
+---
+date: 2021-04-07
+title: Solution -「CF 1039D」You Are Given a Tree
+category: notes
+tags: [binary-search,dp]
+---
+
+## Description
+
+[Link](http://codeforces.com/problemset/problem/1039/D).
+
+有一棵 $n$ 个节点的树，其中一个简单路径的集合被称为 $k$ 合法当且仅当：树的每个节点至多属于其中一条路径，且每条路径恰好包含 $k$ 个点。
+
+对于 $k\in [1,n]$，求出 $k$ 合法路径集合的最多路径数。
+
+即：设 $k$ 合法路径集合为 $S$，求最大的 $|S|$。
+
+## Solution
+
+设 $f(i)$ 为 $k=i$ 时的答案，因为限定了每条路径的结点数，所以 $f(i)\le\lfloor\frac{n}{i}\rfloor$，差不多可以看出 $f(i)$ 是单调不增的。
+
+然后仔细看这个形式，是不是长得很像数论分块？所以连续 $f(i)$ 相同的值的块长为至少 $\sqrt{n}$。
+
+然后枚举左端点，二分找右端点，求解 $f(i)$ 应该是常见 trick。
+
+听说直接二分常数很大，所以要写整体二分。我也不会卡常，所以就写整体二分叭。
+
+```cpp
+#include<bits/stdc++.h>
+int n,ans[100010],delta,f[100010];
+int head[100010],nxt[200010],to[200010],cntot;
+void addEdge(int one,int ano) {
+	to[++cntot]=ano;
+	nxt[cntot]=head[one];
+	head[one]=cntot;
+}
+void dfs(int x,int las,int rule) {
+	int fs=0,sc=0;
+	for(int i=head[x];i;i=nxt[i]) {
+		int y=to[i];
+		if(y^las) {
+			dfs(y,x,rule);
+			if(f[y]>=fs) {
+				sc=fs;
+				fs=f[y];
+			}
+			else if(f[y]>=sc)	sc=f[y];
+		}
+	}
+	if(fs+sc+1>=rule) {
+		f[x]=0;
+		++delta;
+	}
+	else	f[x]=fs+1;
+}
+void rawGrass(int l,int r,int fr,int ba) {
+	if(l>r || fr>ba)	return;
+	if(l^r) {
+		int mid=(fr+ba)>>1;
+		delta=0;
+		dfs(1,0,mid);
+		ans[mid]=delta;
+		rawGrass(delta,r,fr,mid-1);
+		rawGrass(l,delta,mid+1,ba);
+	}
+	else {
+		for(int i=fr;i<=ba;++i)	ans[i]=l;
+	}
+}
+void read(int &hhh) {
+	int x=0,f=1;
+	char c=getchar();
+	while(c<'0' || c>'9')	c=getchar();
+	while(c>='0' && c<='9') {
+		x=(x<<3)+(x<<1)+(c^'0');
+		c=getchar();
+	}
+	hhh=x;
+}
+void write(int x,char las='\n') {
+	static int stack[100],top=0;
+	do {
+		stack[++top]=x%10;
+		x/=10;
+	}while(x);
+	while(top)	putchar(stack[top--]^'0');
+	putchar(las);
+}
+int main() {
+	read(n);
+	for(int i=1,x,y;i<n;++i) {
+		read(x);
+		read(y);
+		addEdge(x,y);
+		addEdge(y,x);
+	}
+	rawGrass(0,n,1,n);
+	for(int i=1;i<=n;++i)	write(ans[i]);
+	return 0;
+}
+```
+    

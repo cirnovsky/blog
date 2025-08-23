@@ -1,0 +1,165 @@
+---
+date: 2021-02-23
+title: Solution Set -「ARC 113」
+category: notes
+tags: [maths,number-theory,strings,combinatorics,implementation]
+---
+
+# 「ARC 113A」A\*B\*C
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_a).
+
+就是算 $\sum_{i=1}^{k}\sum_{j=1}^{\lfloor\frac{k}{i}\rfloor}\lfloor\frac{k}{j\times j}\rfloor$。
+
+直接调和级数。
+
+<details>
+
+```cpp
+#include<cstdio>
+long long k;
+int main()
+{
+	scanf("%lld",&k);
+	long long ans=0;
+	for(long long i=1;i<=k;++i)
+	{
+		for(long long j=1;j<=k/i;++j)	ans+=(k/i/j);
+	}
+	printf("%lld\n",ans);
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 113B」A\^B\^C
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_b).
+
+扩展欧拉定理裸题，$A^{B^{C}}\bmod10=A^{(B^{C}\bmod\varphi(10))+\varphi(10)}\bmod10$。
+
+<details>
+
+```cpp
+#include<cstdio>
+long long getphi(long long x)
+{
+	long long res=x;
+	for(long long i=2;i*i<=x;++i)
+	{
+		if(x%i==0)
+		{
+			res=res/i*(i-1);
+			while(x%i==0)	x/=i;
+		}
+	}
+	if(x>1)	res=res/x*(x-1);
+	return res;
+}
+long long cqpow(long long bas,long long fur,long long mod)
+{
+	long long res=1;
+	while(fur)
+	{
+		if(fur&1)	res=res*bas%mod;
+		bas=bas*bas%mod;
+		fur>>=1;
+	}
+	return res;
+}
+long long a,b,c;
+int main()
+{
+	scanf("%lld %lld %lld",&a,&b,&c);
+	printf("%lld\n",cqpow(a,cqpow(b,c,getphi(10))+getphi(10),10));
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 113C」String Invasion
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_c).
+
+正序枚举 $i\in[1,n]$，如果满足条件，那么后面的字符串都可以执行操作，则 $ans:=ans+n-i$。
+
+当然，由于后面可能存在一个字符就是 $s_{i}$，所以要记录当前操作的字符，特判 $ans:=ans-1$。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<cstring>
+int n;
+long long ans;
+char s[200010];
+int main()
+{
+	scanf("%s",s+1);
+	n=strlen(s+1);
+	char las=0;
+	for(int i=1;i<=n;++i)
+	{
+		if(i!=n&&s[i]==s[i+1]&&s[i]!=s[i+2]&&s[i]!=las)	ans+=n-i,las=s[i];
+		else if(s[i]==las)	--ans;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 113D」Sky Reflector
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_d).
+
+显然只要 $\forall i\in[1,m],b_{i}\ge a_{\max}$ 即可，那么枚举 $i\in[1,k]=a_{\max}$，有：
+$$
+ans=\sum_{i=1}^{k}(i^{n}-(i-1)^{n})\times(k-i+1)^{m}\bmod998244353
+$$
+
+<details>
+
+```cpp
+#include<cstdio>
+const int mod=998244353;
+long long cqpow(long long bas,int fur)
+{
+	long long res=1;
+	while(fur)
+	{
+		if(fur&1)	res=res*bas%mod;
+		bas=bas*bas%mod;
+		fur>>=1;
+	}
+	return res;
+}
+int n,m,k;
+long long ans;
+int main()
+{
+	scanf("%d %d %d",&n,&m,&k);
+	if(n==1)	ans=cqpow(k,m);
+	else if(m==1)	ans=cqpow(k,n);
+	else
+	{
+		for(int i=1;i<=k;++i)	ans=(ans+((cqpow(i,n)-cqpow(i-1,n)+mod)%mod)*cqpow(k-i+1,m)%mod)%mod;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 113E」Rvom and Rsrev
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_e).
+
+# 「ARC 113F」Social Distance
+
+[Link](https://atcoder.jp/contests/arc113/tasks/arc113_f).
+    

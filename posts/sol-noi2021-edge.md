@@ -1,0 +1,130 @@
+---
+date: 2021-07-30
+title: Solution -「NOI 2021」轻重边
+category: notes
+tags: [data-structures,trees]
+---
+
+## Description
+
+[Link](https://loj.ac/p/3532).
+
+给出一棵树，初始边权为 $0$，支持毛毛虫虫体赋 $1$，虫足赋 $0$，以及查询路径边权和操作，$n,m\leqslant 10^5$。
+
+## Solution
+
+立马想到按时间染色，那么判定一条边 $(u,v)$ 为重边的充要条件即 $col(u)=col(v)$（初始每个节点的颜色为 $1,\dots,n$）。
+
+然后修改就转化为链覆盖，查询就成了查询区间相邻颜色相同二元组个数。HLD & 线段树可以解决。
+
+说一下线段树的维护方法，维护区间左端点颜色、右端点颜色以及相邻颜色相同二元组个数（还有区间覆盖懒标）。向上 / 下更新均显。
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define getchar() (p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++);
+char buf[1<<21],*p1=buf,*p2=buf;
+inline ll read() {
+	ll x=0,f=0; char ch=getchar();
+	while(ch<'0'||ch>'9') f|=(ch=='-'),ch=getchar();
+	while(ch>='0'&&ch<='9') x=x*10+(ch&15),ch=getchar();
+	return f?-x:x;
+}
+const int N=100100;
+vector<int> G[N];
+int n,m,dep[N],son[N],top[N],fa[N],sz[N],dfn[N],sjc,ton[N],col[N],cnt;
+struct node { int lc,rc,num,tag; } tr[N*4],emp;
+void push_up(int now) {
+	tr[now].lc=tr[now<<1].lc;
+	tr[now].rc=tr[now<<1|1].rc;
+	tr[now].num=tr[now<<1].num+tr[now<<1|1].num+(tr[now<<1].rc==tr[now<<1|1].lc);
+}
+void push_down(int now,int l,int r) {
+	if(!tr[now].tag) return;
+	int mid=(l+r)>>1;
+	tr[now<<1].num=mid-l,tr[now<<1|1].num=r-mid-1;
+	tr[now<<1].lc=tr[now<<1|1].lc=tr[now].tag;
+	tr[now<<1].rc=tr[now<<1|1].rc=tr[now].tag;
+	tr[now<<1].tag=tr[now<<1|1].tag=tr[now].tag;
+	tr[now].tag=0;
+}
+void build(int l,int r,int now) {
+	tr[now]=emp;
+	if(l==r) return ++cnt,tr[now]=node{cnt,cnt,0,0},void();
+	int mid=(l+r)>>1;
+	build(l,mid,now<<1),build(mid+1,r,now<<1|1);
+	push_up(now);
+}
+void ins(int l,int r,int now,int x,int y,int v) {
+	if(l>y||r<x) return;
+	if(l>=x&&r<=y) return tr[now].tag=tr[now].lc=tr[now].rc=v,tr[now].num=r-l,void();
+	int mid=(l+r)>>1;
+	push_down(now,l,r);
+	ins(l,mid,now<<1,x,y,v),ins(mid+1,r,now<<1|1,x,y,v);
+	push_up(now);
+}
+int find0(int l,int r,int now,int x,int y) {
+	if(l>=x&&r<=y) return tr[now].num;
+	int mid=(l+r)>>1,res=0;
+	push_down(now,l,r);
+	if(mid>=x) res+=find0(l,mid,now<<1,x,y);
+	if(mid<y) res+=find0(mid+1,r,now<<1|1,x,y);
+	return res+(x<=mid&&y>mid&&tr[now<<1].rc==tr[now<<1|1].lc);
+}
+int find1(int l,int r,int now,int x) {
+	if(l==r) return tr[now].lc;
+	int mid=(l+r)>>1;
+	push_down(now,l,r);
+	return mid>=x?find1(l,mid,now<<1,x):find1(mid+1,r,now<<1|1,x);
+}
+void clear(int l,int r,int now) {
+	tr[now]=emp;
+	if(l==r) return;
+	int mid=(l+r)>>1;
+	clear(l,mid,now<<1),clear(mid+1,r,now<<1|1);
+}
+signed main() {
+	function<void(int,int)> dfs0=[&](int x,int las) {
+		fa[x]=las,dep[x]=dep[las]+1,sz[x]=1;
+		for(int y:G[x]) if(y!=las) dfs0(y,x),sz[x]+=sz[y],(sz[y]>sz[son[x]])&&(son[x]=y);
+	};
+	function<void(int,int,int)> dfs1=[&](int x,int las,int t) {
+		top[x]=t,ton[dfn[x]=++sjc]=x;
+		if(son[x]) dfs1(son[x],x,t);
+		for(int y:G[x]) if(y!=las&&y!=son[x]) dfs1(y,x,y);
+	};
+	for(int Case=read(); Case; --Case) {
+		n=read(),m=read();
+		for(int i=1,x,y; i<n; ++i) x=read(),y=read(),G[x].push_back(y),G[y].push_back(x);
+		dfs0(1,0),dfs1(1,0,1),build(1,n,1);
+		for(int t,x,y; m; --m) {
+			t=read(),x=read(),y=read();
+			if(t==1) {
+				++cnt;
+				while(top[x]!=top[y]) {
+					if(dep[top[x]]<dep[top[y]]) swap(x,y);
+					ins(1,n,1,dfn[top[x]],dfn[x],cnt);
+					x=fa[top[x]];
+				}
+				if(dep[x]>dep[y]) swap(x,y);
+				ins(1,n,1,dfn[x],dfn[y],cnt);
+			} else {
+				int res=0;
+				while(top[x]!=top[y]) {
+					if(dep[top[x]]<dep[top[y]]) swap(x,y);
+					res+=find0(1,n,1,dfn[top[x]],dfn[x])+(find1(1,n,1,dfn[top[x]])==find1(1,n,1,dfn[fa[top[x]]]));
+					x=fa[top[x]];
+				}
+				if(dep[x]>dep[y]) swap(x,y);
+				res+=find0(1,n,1,dfn[x],dfn[y]);
+				printf("%d\n",res);
+			}
+		}
+		for(int i=1; i<=n; ++i) dep[i]=son[i]=top[i]=fa[i]=sz[i]=dfn[i]=ton[i]=0,G[i].clear();
+		sjc=cnt=0,clear(1,n,1);
+	}
+	return 0;
+}
+```
+    

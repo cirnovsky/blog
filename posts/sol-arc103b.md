@@ -1,0 +1,81 @@
+---
+date: 2021-01-06
+title: Solution -「ARC 103B」Robot Arms
+category: notes
+tags: [maths,bitwise,constructive-algorithms]
+---
+
+## Description
+
+[Link](https://atcoder.jp/contests/abc111/tasks/arc103_b).
+
+给定 $n$ 组坐标。构造长度为 $m$ 的序列 $\{c_n\}$ 和 $n$ 组包含 `LRUD` 的路径，满足对于每一组坐标：
+
+- $c_i$ 表示第 $i$ 步「步长」。
+- 对于每个坐标，从 $(0,0)$ 开始走，共走 $m$ 步。第 $i$ 步可以让 $(x,y)$ 变成 $(x±c_i,y)$ 或 $(x,y±c_i)$ 。
+- 走完 $m$ 次之后，恰好走到这组坐标。
+- 要求 $m\leq 40,c_i\leq 10^{12}$ 。
+
+## Solution
+
+好强的题啊。
+
+先考虑无解的情况。
+
+即是 $x_{i}+y_{i}$ 的奇偶性不同的情况为无解。
+
+仔细看 $m$ 的限制疑似是 $\log(x+y)$ 级别的，考虑二进制拆分。
+
+于是考虑 $\{2^{k}\}$ 可以凑出的坐标。
+
+只考虑 1-dimension 的做法。
+
+我们能够维护的地方就是 $\sum_{i=0}^{k}2^{i}=2^{k+1}-1$（这里算的是曼哈顿距离）。
+
+那么这一定是个奇数，如果 $(x,y)$ 的曼哈顿距离是偶数就考虑换原点。
+
+那么这就做完了。
+
+[full ver.](https://www.luogu.com.cn/paste/x1re8ezs)
+
+```cpp
+using i64 = long long;
+using pii = std::pair<i64, i64>;
+
+std::vector<int> sL;
+std::vector<std::string> dR;
+std::pair<int, int> as[MAXN];
+int n, wax[4], way[4];
+char trans[4];
+
+int main () {
+	std::ios::sync_with_stdio ( 0 ); std::cin.tie ( 0 ); std::cout.tie ( 0 );
+	std::cin >> n; initial ();
+	rep ( i, 1, n )	std::cin >> as[i].first >> as[i].second;
+	rep ( i, 2, n ) if ( ( as[i].first + as[i].second + as[i - 1].first + as[i - 1].second ) & 1 )	return ( puts ( "-1" ), 0 );
+	sL.push_back ( 1 );
+	rep ( i, 1, 30 )	sL.push_back ( 1 << i );
+	if ( ( ( as[1].first + as[1].second ) & 1 ) ^ 1 )	sL.push_back ( 1 );
+	std::reverse ( sL.begin (), sL.end () );
+	rep ( i, 1, n ) {
+		dR.push_back ( std::string () );
+		i64 curx = as[i].first, cury = as[i].second;
+		if ( ( ( curx + cury ) & 1 ) ^ 1 )	dR[i - 1].push_back ( 'U' ), cury --;
+		per ( j, 30, 0 ) rep ( k, 0, 3 ) {
+			i64 nxtx = curx + ( i64 )wax[k] * ( ONE64 << j );
+			i64 nxty = cury + ( i64 )way[k] * ( ONE64 << j );
+			if ( std::abs ( nxtx ) + std::abs ( nxty ) < ( ONE64 << j ) ) {
+				curx = nxtx, cury = nxty;
+				dR[i - 1].push_back ( trans[k] );
+				break;
+			}
+		}
+	}
+	std::cout << sL.size () << '\n';
+	for ( int p : sL )	std::cout << p << ' ';
+	std::cout << '\n';
+	for ( std::string p : dR )	std::cout << p << '\n';
+	return 0;
+}
+```
+    

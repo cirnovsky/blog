@@ -1,0 +1,113 @@
+---
+date: 2022-04-10
+title: 「loj - 3489」「joisc 2021 day 1」Food Court
+category: notes
+tags: [data-structures,nag]
+---
+
+[link.](https://loj.ac/p/3489)
+
+感觉好久没写过题解了, 这就是永远在骚动的得不到吧.
+
+星尘 infinity 真的非常行, 就算是 ja voicebase 都不知道吊打那群日 v 多少圈. 我推荐你们都去听一听.
+
+chin voicebase 更是重量级, 乱杀 vs 那堆. 不得不说个体技术力质的进步才是社会发展的关键, 什么大家进步了总体就进步了就是扯淡.
+
+当然也不能像赫鲁晓夫那群天才一样鼓吹唯生产力论, 但是用 $+\infty$ 的 p 们确实交出了优秀的答卷, 时至今日的格局只能说是原本基础决定的.
+
+---
+
+首先如果没有删除操作的话, 这题可以 parallel search 随便做做了. 加上删除操作再套个 segment tree beats 就行.
+
+---
+
+题解大概就是这样, 我主要来说下这个 segment tree beats. 首先这里没有必要真的写一个出来, 因为注意到是单点询问. 但是这里的线段树有一些不同于传统的线段树, 尽管传统线段树也是一棵 leafy tree, 但是这里树的非叶结点上是没有信息需要维护的. 可以把 lazy propagation 和你维护的幺半群放到一个数组来写.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using i64 = int64_t;
+
+const i64 inf = 1e9;
+int N, M, Q, sz, h, ans[250100];
+i64 dat[250100];
+struct rec {
+  i64 p, q;
+} lz[524388];
+struct req {
+  i64 a, b, c, d;
+} q[250100];
+void add(int x, i64 v) {
+  for (; x <= N + 1; x += x & -x) dat[x] += v;
+}
+void add(int l, int r, i64 v) { add(l, v), add(r + 1, -v); }
+i64 sum(i64 x) {
+  i64 res = 0;
+  for (; x; x -= x & -x) res += dat[x];
+  return res;
+}
+rec composition(rec f, rec v) { return {v.p + f.p, max(v.q + f.p, f.q)}; }
+void propagate(int x, rec f) { lz[x] = composition(f, lz[x]); }
+void push(int x) {
+  propagate(x * 2, lz[x]), propagate(x * 2 + 1, lz[x]), lz[x] = {0, -inf};
+}
+void add(int l, int r, rec f) {
+  assert(0 <= l && l <= r && r <= N);
+  if (l == r) return;
+  l += sz, r += sz;
+  for (int i = h; i >= 1; --i) {
+    if (((l >> i) << i) != l) push(l >> i);
+    if (((r >> i) << i) != r) push((r - 1) >> i);
+  }
+  for (; l < r; l >>= 1, r >>= 1) {
+    if (l & 1) propagate(l++, f);
+    if (r & 1) propagate(--r, f);
+  }
+}
+i64 get(i64 x) {
+  assert(0 <= x && x < N);
+  for (i64 i = h; i >= 1; --i) push((x + sz) >> i);
+  return max(lz[x + sz].p, lz[x + sz].q);
+}
+
+void dac(int l, int r, const vector<int>& id) {
+  if (id.empty()) return;
+  if (l == r) {
+    for (auto&& it : id) ans[it] = l;
+    return;
+  }
+  int mid = (l + r) / 2;
+  for (int i = l; i <= mid; ++i)
+    if (q[i].c && q[i].d) add(q[i].a, q[i].b, q[i].d);
+  vector<int> ql, qr;
+  for (auto&& it : id) (sum(q[it].a) >= q[it].b ? ql : qr).emplace_back(it);
+  dac(mid + 1, r, qr);
+  for (int i = l; i <= mid; ++i)
+    if (q[i].c && q[i].d) add(q[i].a, q[i].b, -q[i].d);
+  dac(l, mid, ql);
+}
+
+signed main() {
+  ios::sync_with_stdio(0), cin.tie(0);
+  cin >> N >> M >> Q;
+  h = ceil(log2(N)), sz = 1 << h;
+  for (int i = 0; i <= N; ++i) lz[i + sz] = {0, -inf};
+  vector<int> is;
+  for (i64 o, l, r, c, k, i = 1; i <= Q; ++i) {
+    cin >> o >> l >> r, c = k = 0;
+    if (o == 1)
+      cin >> c >> k, add(l, r, k), add(l - 1, r, {k, 0});
+    else if (o == 2)
+      cin >> k, add(l - 1, r, {-k, 0});
+    else
+      r += sum(l) - get(l - 1), is.emplace_back(i);
+    q[i] = {l, r, c, k};
+  }
+  memset(dat, 0, sizeof(dat)), dac(1, Q + 1, is);
+  for (int i = 1; i <= Q; ++i)
+    if (q[i].c == 0 && q[i].d == 0)
+      cout << q[ans[i] > i ? 0 : ans[i]].c << "\n";
+  return 0;
+}
+```
+    

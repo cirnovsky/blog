@@ -1,0 +1,202 @@
+---
+date: 2021-04-03
+title: Solution -「YunoOI 2016」镜中的昆虫
+category: notes
+tags: [data-structures,binary-search]
+---
+
+## Description
+
+[Link](https://www.luogu.com.cn/problem/P4690).
+
+- 区间推平；
+- 区间数颜色。
+
+## Solution
+
+考虑无修的情况，我们是采用维护每个数的 $pre$ 来做的。具体一点就是对于每一个 $a_{i}$ 维护 $pre_{i}=\max\{j\in[1,i),s.t.a_{j}=a_{i}\}$。然后数区间内 $pre$ 严格小于左端点的元素个数。
+
+区间推平不好做，考虑削弱这一层修改，考虑单点修改怎么做。
+
+修改一个 $a_{i}=x$，则受影响的下标有：
+
+- $j,s.t.pre_{j}=i$；
+- $i$；
+- $\min\{j\in(i,n],s.t.a_{j}=x\}$。
+
+这个东西套个 `std::map` 能直接维护。
+
+对于区间修改，有这样的结论：
+
+> 对于所有修改，$pre$ 变化次数为 $\mathcal{O}(n+m)$。
+
+~~做不来区间推平翻题解翻来的~~，至于证明不太会，摊还分析证复杂度没用过。
+
+反正综上就能做了嘛，不知道为什么那么多人都喜欢写树套树，反正我是 CDQ。
+
+```cpp
+//in the autumn sky
+#include<bits/stdc++.h>
+using namespace std;
+#define fs first
+#define sc second
+struct oper
+{
+    int opt,opl,opr,opx;
+    oper(int A=0,int B=0,int C=0,int D=0){opt=A,opl=B,opr=C,opx=D;}
+};
+struct ST_modify
+{
+    int ID,pos,pr,val;
+    ST_modify(int A=0,int B=0,int C=0,int D=0){ID=A,pos=B,pr=C,val=D;}
+    bool operator<(const ST_modify &ano)const{return pr<ano.pr;}
+};
+struct ST_query
+{
+    int ID,l,r;
+    ST_query(int A=0,int B=0,int C=0){ID=A,l=B,r=C;}
+    bool operator<(const ST_query &ano)const{return l<ano.l;}
+};
+vector<int> pri;
+vector<ST_modify> mod;
+vector<ST_query> que;
+int pre[100010],n,m,tr[100010],curInd,ans[100010];
+map<int,int> mapo[200010];
+map<int,pair<int,int> > exmapo; // for ODT
+#define lowbit(x) ((x)&(-(x)))
+void ins(int pos,int delta)
+{
+    ++pos;
+    while(pos<=n)
+    {
+        tr[pos-1]+=delta;
+        pos+=lowbit(pos);
+    }
+}
+int find(int pos)
+{
+    int res=0;
+    while(pos)
+    {
+        res+=tr[pos-1];
+        pos^=lowbit(pos);
+    }
+    return res;
+}
+void ODT_split(int pos)
+{
+    auto iter=exmapo.lower_bound(pos);
+    int stan=n;
+    if(iter!=exmapo.end())  stan=iter->fs;
+    if(stan^pos)
+    {
+        --iter;
+        exmapo.emplace(pos,iter->sc);
+        auto exiter=mapo[iter->sc.sc].emplace(pos,iter->sc.fs).fs;
+        iter->sc.fs=pos;
+        prev(exiter)->sc=pos;
+    }
+}
+void pushOp(int pos,int after,int ID)
+{
+    mod.emplace_back(ST_modify(ID,pos,pre[pos],-1));
+    pre[pos]=after;
+    mod.emplace_back(ST_modify(ID,pos,after,1));
+}
+void rawGrass(int onel,int oner,int anol,int anor,int parl,int parr)
+{
+    if(onel==oner || anol==anor)
+    {
+        sort(mod.begin()+onel,mod.begin()+oner);
+        sort(que.begin()+anol,que.begin()+anor);
+    }
+    else
+    {
+        int mid=(parl+parr)>>1,exmid1=onel,exmid2=anol;
+        while(exmid1<oner && mod[exmid1].ID<mid)    ++exmid1;
+        while(exmid2<anor && que[exmid2].ID<mid)    ++exmid2;
+        rawGrass(onel,exmid1,anol,exmid2,parl,mid);
+        rawGrass(exmid1,oner,exmid2,anor,mid,parr);
+        int ex=onel;
+        for(int i=exmid2;i<anor;++i)
+        {
+            while(ex<exmid1 && mod[ex].pr<que[i].l)    ins(mod[ex].pos,mod[ex].val),++ex;
+            ans[que[i].ID]+=find(que[i].r)-find(que[i].l);
+        }
+        for(int i=onel;i<ex;++i)    ins(mod[i].pos,-mod[i].val);
+        inplace_merge(mod.begin()+onel,mod.begin()+exmid1,mod.begin()+oner);
+        inplace_merge(que.begin()+anol,que.begin()+exmid2,que.begin()+anor);
+    }
+}
+int main()
+{
+    scanf("%d %d",&n,&m);
+    vector<int> a(n);
+    vector<oper> b(m);
+    for(int &i:a)   scanf("%d",&i),pri.emplace_back(i);
+    for(oper &i:b)
+    {
+        scanf("%d %d %d",&i.opt,&i.opl,&i.opr);
+        if(i.opt==1)    scanf("%d",&i.opx),pri.emplace_back(i.opx);
+        --i.opl;
+    }
+    sort(pri.begin(),pri.end());
+    pri.erase(unique(pri.begin(),pri.end()),pri.end());
+    for(int &i:a)   i=lower_bound(pri.begin(),pri.end(),i)-pri.begin();
+    for(oper &i:b)
+    {
+        if(i.opt==1)    i.opx=lower_bound(pri.begin(),pri.end(),i.opx)-pri.begin();
+    }
+    curInd=0;
+    for(int i:a)
+    {
+        if(mapo[i].size()!=int(0))  pre[curInd]=prev(mapo[i].end())->fs;
+        else    pre[curInd]=-1;
+        mod.emplace_back(ST_modify(-1,curInd,pre[curInd],1));
+        mapo[i].emplace(curInd,curInd+1);
+        exmapo.emplace(curInd,make_pair(curInd+1,i));
+        ++curInd;
+    }
+    curInd=0;
+    for(oper i:b)
+    {
+        int ty=i.opt,l=i.opl,r=i.opr,x=i.opx;
+        if(ty==1)
+        {
+            ODT_split(l),ODT_split(r);
+            auto iter=mapo[x].lower_bound(l);
+            auto ptr=exmapo.lower_bound(l);
+            int rpe=(iter!=mapo[x].begin())?((iter=prev(iter))->sc-1):(-1); // for Suf
+            while(ptr!=exmapo.end())
+            {
+                if(ptr->fs==r)  break;
+                pushOp(ptr->fs,rpe,curInd);
+                int tmp=ptr->sc.sc;
+                auto exiter=mapo[tmp].erase(mapo[tmp].find(ptr->fs));
+                if(exiter!=mapo[tmp].end())
+                {
+                    if(exiter==mapo[tmp].begin())   pushOp(exiter->fs,-1,curInd);
+                    else    pushOp(exiter->fs,prev(exiter)->sc-1,curInd);
+                }
+                rpe=ptr->sc.fs-1;
+                ptr=exmapo.erase(ptr);
+            }
+            iter=mapo[x].lower_bound(r);
+            if(iter!=mapo[x].end()) pushOp(iter->fs,r-1,curInd);
+            exmapo.emplace(l,make_pair(r,x));
+            mapo[x].emplace(l,r);
+        }
+        else    que.emplace_back(ST_query(curInd,l,r));
+        ++curInd;
+    }
+    rawGrass(0,int(mod.size()),0,int(que.size()),-1,m);
+    curInd=0;
+    for(oper i:b)
+    {
+        if(i.opt==2)    printf("%d\n",ans[curInd]);
+        ++curInd;
+    }
+    return 0;
+}
+```
+    

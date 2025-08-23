@@ -1,0 +1,249 @@
+---
+date: 2021-03-22
+title: Solution Set -「ABC 196」
+category: notes
+tags: [maths,implementation,polynomials]
+---
+
+# 「ABC 196A」Difference Max
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_a).
+
+略。
+
+<details>
+
+```cpp
+#include<cstdio>
+long long a,b,c,d;
+int main(){
+	scanf("%lld %lld %lld %lld",&a,&b,&c,&d);
+	printf("%lld\n",b-c);
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 196B」Round Down
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_b).
+
+略。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<cstring>
+char s[10000];
+int main(){
+	scanf("%s",s);int len=strlen(s);
+	for(int i=0;i<len;++i)if(s[i]^'.')putchar(s[i]);else break;
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 196C」Doubled
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_c).
+
+分类讨论即可，可能会有点点细节需要注意。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+long long n;
+int dig[20],cnt;
+long long qpow(long long bas,long long fur){long long res=0;for(long long i=1;i<=fur;++i)res=res*10+9;return res;}
+long long getnum(int l,int r){long long res=0;for(int i=r;i>=l;--i)res=res*10+dig[i];return res;}
+int main(){
+	scanf("%lld",&n);long long bk=n;do dig[++cnt]=bk%10,bk/=10; while(bk);
+	if(cnt==1)return puts("0"),0;int lm=(cnt>>1);
+	long long pre=getnum(cnt-lm+1,cnt),suf=getnum(1,lm);
+	if(cnt&1)printf("%lld\n",qpow(9,lm));
+	else{
+		if(pre<=suf)printf("%lld\n",pre);
+		else printf("%lld\n",pre-1);
+	}
+	return 0;
+}
+/*
+23333
+
+3 3 3 3 2
+
+232
+*/
+```
+
+</details>
+
+# 「ABC 196D」Hanjo
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_d).
+
+暴搜。
+
+<details>
+
+```cpp
+#include<iostream>
+using namespace std;
+int h,w,a,b,ans;
+void dfs(int solvedNumber,int stateBoard,int leftLongerBlock,int leftCenterBlock)
+{
+	if(solvedNumber==h*w)	++ans;
+	else
+	{
+		if(stateBoard&(1<<solvedNumber))	return dfs(solvedNumber+1,stateBoard,leftLongerBlock,leftCenterBlock);
+		if(leftLongerBlock)
+		{
+			if((solvedNumber%w!=w-1)&&(!(stateBoard&(1<<(solvedNumber+1)))))	dfs(solvedNumber+1,stateBoard|(1<<solvedNumber)|(1<<(solvedNumber+1)),leftLongerBlock-1,leftCenterBlock);
+			if(solvedNumber+w<h*w)	dfs(solvedNumber+1,stateBoard|(1<<solvedNumber)|(1<<(solvedNumber+w)),leftLongerBlock-1,leftCenterBlock);
+		}
+		if(leftCenterBlock)	dfs(solvedNumber+1,stateBoard|(1<<solvedNumber),leftLongerBlock,leftCenterBlock-1);
+	}
+}
+int main()
+{
+	cin >> h >> w >> a >> b;
+	dfs(0,0,a,b); cout << ans << "\n";
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 196E」Filters
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_e).
+
+这是个 Segment Tree Beats 的板子，不打了。
+
+<details>
+
+```cpp
+// Oops, something went wrong.
+```
+
+</details>
+
+# 「ABC 196F」Substring 2
+
+[Link](https://atcoder.jp/contests/abc196/tasks/abc196_f).
+
+你 ABC 考 FFT 字符串匹配。
+
+定义匹配函数 $f(x)=\sum_{i=0}^{|T|-1}(S_{x+i}-T_{i})^{2}=\sum_{i=0}^{|T|-1}S^{2}_{x+i}-2\sum_{i=0}^{|T|-1}S_{x+i}T_{i}+\sum_{i=0}^{|T|-1}T_{i}^{2}$。
+
+然后反转 $T$ 卷积即可。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<numeric>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+typedef long long LL;
+const int MOD=998244353,INF=numeric_limits<int>::max();
+void exGCD(int one,int ano,int &x,int &y)
+{
+	if(ano==0)	x=1,y=0;
+	else	exGCD(ano,one%ano,y,x),y-=(one/ano)*x;
+}
+int getInv(int val){int res,w; exGCD(val,MOD,res,w); return (res+MOD)%MOD;}
+int qpow(int bas,int fur)
+{
+	int res=1;
+	while(fur)
+	{
+		if(fur&1)	res=LL(res)*bas%MOD;
+		bas=LL(bas)*bas%MOD;
+		fur>>=1;
+	}
+	return res%MOD;
+}
+namespace Poly
+{
+	typedef vector<int> poly;
+	#define len(x) (int((x).size()))
+	int lim,rev[4000010];
+	void ntt(poly &f,int op)
+	{
+		for(int i=0;i<lim;++i)	if(i<rev[i])	swap(f[i],f[rev[i]]);
+		for(int len=2;len<=lim;len<<=1)
+		{
+			int bas=qpow(op==1?3:332748118,(MOD-1)/len);
+			for(int fr=0;fr<lim;fr+=len)
+			{
+				int now=1;
+				for(int ba=fr;ba<fr+(len>>1);++ba,now=LL(now)*bas%MOD)
+				{
+					int tmp=LL(now)*f[ba+(len>>1)]%MOD;
+					f[ba+(len>>1)]=(f[ba]-tmp+MOD)%MOD;
+					f[ba]=(f[ba]+tmp)%MOD;
+				}
+			}
+		}
+		if(op==-1)
+		{
+			int tmp=getInv(lim);
+			for(int i=0;i<lim;++i)	f[i]=LL(f[i])*tmp%MOD;
+		}
+	}
+	poly operator*(poly f,poly g)
+	{
+		int n=len(f)+len(g)-1; lim=1;
+		while(lim<n)	lim<<=1;
+		f.resize(lim),g.resize(lim);
+		for(int i=0;i<lim;++i)	rev[i]=(rev[i>>1]>>1)|((i&1)?(lim>>1):0);
+		ntt(f,1),ntt(g,1);
+		for(int i=0;i<lim;++i)	f[i]=LL(f[i])*g[i]%MOD;
+		ntt(f,-1),f.resize(n);
+		return f;
+	}
+	poly operator*(int x,poly f){for(int i=0;i<len(f);++i)	f[i]=LL(f[i])*x%MOD; return f;}
+	poly operator-(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i<len(f);++i)	f[i]=(f[i]-g[i]+MOD)%MOD;
+		return f;
+	}
+	poly operator+(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i<len(f);++i)	f[i]=(f[i]+g[i])%MOD;
+		return f;
+	}
+}using namespace Poly;
+int main()
+{
+	string S,T;
+	cin >> S >> T; reverse(T.begin(),T.end());
+	poly onesi,anosi,onexsi,anoxsi;
+	#define Sqr(x) ((LL)(x)*(x)%MOD)
+	onesi.push_back(Sqr((*S.begin())-'0'));
+	anosi.push_back(Sqr((*T.begin())-'0'));
+	for(int i=1;i<len(S);++i)	onesi.push_back(onesi.back()+Sqr(S[i]-'0'));
+	for(int i=1;i<len(T);++i)	anosi.push_back(anosi.back()+Sqr(T[i]-'0'));
+	for(char c : S)	onexsi.push_back(c-'0'); for(char c : T)	anoxsi.push_back(c-'0');
+	poly tmp=2*onexsi*anoxsi; int ans=INF;
+	#define getValue(i) (((i)<(len(T)))?0:onesi[(i)-len(T)])
+	for(unsigned int i=T.size()-1;i<S.size();++i)	ans=min(ans,onesi[i]-getValue(i)+anosi[len(T)-1]-tmp[i]);
+	printf("%d\n",ans);
+	return 0;
+}
+```
+
+</details>
+    

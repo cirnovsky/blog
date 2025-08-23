@@ -1,0 +1,160 @@
+---
+date: 2022-07-28
+title: 模拟赛 - 3
+category: notes
+tags: [graph-theory,greedy,strings,expectations]
+---
+
+Flying2018 大爷放过我吧
+
+[link。](http://222.180.160.110:1024/contest/2766)
+
+> **A. contest**：在序列中选出 $7$ 个数 $p_{1, \dots, 7}$，满足单调不升（不需要是原序列的子序列），且 $p_1 < p_2+p_3 < p_4+p_5+p_6+p_7$，最大化 $\sum p_i$，要求复杂度不超过线性。
+
+有个容易想到并且错误的贪心，就是排序后选连续段。但这样是错误的，因为有可能 $p_2+p_3$ 会太大而导致判错无解。正解是个 $O(n^3)$ 暴力证了下正确性，以后再补证明吧……
+
+> **B. bridge**：给定无向连通带权图，边权均为 $1$，第一次走一条边时有 $0.5$ 的概率「破坏」这条边，没有被「破坏」的边可以直接走过去，被「破坏」的边走了有 $0.5$ 的概率不动，但依然需要 $1$ 的花费。求最优决策下的期望步数，要求复杂度 $O((m+g) \log_2 n)$。
+
+好题。
+
+考察点 $u$ 走到 $n$，定义 $d_x$ 表示从 $x$ 走到 $n$ 的最优期望步数，设 $u$ 有 $k$ 条出边，分别连到后继 $v_1, \dots, v_k$，不妨假设 $u$ 的后继都已经决策好了，并将后继按照 $d$ 排升序，第一个决策是 $d_u = d_{v_1}+1.5$，$1.5$ 是走过一条未知边的期望步数（$x = 0.5+0.5(x+1) = 2$，$0.5+0.5x = 1.5$），第二个决策 $u \rightarrow v_1 \rightarrow u \rightarrow v_2 \rightarrow v_1$，第三个决策 $u \rightarrow v_1 \rightarrow u \rightarrow v_2 \rightarrow u \rightarrow v_3 \rightarrow u \rightarrow v_1$，以此类推，令 $f_t(x) = 1+0.75 \times d_{v_t}+0.25x$，则转移为 $\displaystyle d_u = \min_{j \in [1, k]} f_1(f_2(...f_j(2+d_{v_1})))$，再推一下式子写成前缀和即可。
+
+```cpp
+using pdi = pair<double, int>;
+int n, m;
+double dp[200100];
+bastr<int> adj[200100];
+bitset<200100> vis, in;
+void csmin(double& x, double y) {
+    if (x == -1 || x > y) x = y;
+}
+void work(int st) {
+    queue<int> que;
+    que.push(st);
+    in.set(st);
+    while (!que.empty()) {
+        int x = que.front();
+        que.pop();
+        in.reset(x);
+        if (vis.test(x)) {
+            continue;
+        }
+        vis.set(x);
+        bastr<int> suc;
+        for (auto y : adj[x]) {
+            if (vis.test(y)) {
+                suc += y;
+            }
+            else {
+                que.push(y);
+                in.set(x);
+            }
+        }
+        if (!suc.empty()) {
+            dp[x] = -1;
+            sort(suc.begin(), suc.end(), [&](int x, int y) {
+                return dp[x] < dp[y];
+            });
+            double pre = 0, pw = 1;
+            for (int i=0; i<cs(suc); ++i) {
+                pre += pw*0.75*(dp[suc[i]]+i+1);
+                csmin(dp[x], pre+(dp[suc[0]]+3+i)*pw*0.25);
+                pw *= 0.25;
+            }
+        }
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> n >> m;
+    for (int i=1,x,y; i<=m; ++i) {
+        cin >> x >> y;
+        adj[x] += y, adj[y] += x;
+    }
+    work(n);
+    cout << fixed << setprecision(9) << dp[1] << "\n";
+}
+```
+
+> **C. language**：给定字典 $S$，定义 $f(t)$ 表示最多能将 $S$ 分成多少段，使得每一段中 $t$ 至少出现 $1$ 次，多次询问给定 $t$ 求 $f(t)$，保证询问个数、字典长度、询问串长度和均小于等于 $2 \times 10^5$。
+
+两个做法，复杂度是一样的。
+
+第一种是无脑对询问串长度根号分治，$> T$ 的直接暴力单次 $O(n+m)$ hash 或者 kmp 啥的；$\leqslant T$ 串的全部离线出来，$O(n)$ 枚举原串，$O(T)$ 枚举长度，哈希表啥的维护一下 last pos 的 cnt 就行了。
+
+第二种是 AC DFA，我们在 trie 树上打结尾标记，并且求出一个指针指向当前节点的失配指针指向的结点到根构成的链上深度最大的一个结点，满足这个结点是一个模式串的结尾。
+
+然后还要在 trie 上维护当前模式串上一次匹配文本串的下标（当且仅当当前节点是一个模式串的结尾时有意义）。我们让 DFA 接受文本串，每转移一次就跳我们求出的指针。
+
+需要分析复杂度的地方有两个，一个是预处理指针，一个是跳指针。第一个每个结点最多跳一次，所以复杂度等阶于建失配指针的复杂度；第二个复杂度最劣的形况就是文本串全 $\texttt{a}$，询问串 $\texttt{a}$，$\texttt{aa}$，$\texttt{aaa}$…… 询问串的数量级就只有根号，所以复杂度最劣带根号。
+
+```cpp
+char dc[100100], s[100100];
+int Q, ch[100100][26], cnt, fail[100100], id[100100], jp[100100];
+int lst[100100], len[100100], ans[100100];
+bitset<100100> ed;
+void ins(int c) {
+    int now = 0;
+    for (int i=0; s[i]; ++i) {
+        if (!ch[now][s[i]-'a']) {
+            ch[now][s[i]-'a'] = ++cnt;
+        }
+        now = ch[now][s[i]-'a'];
+    }
+    len[now] = strlen(s);
+    ed.set(now);
+    id[c] = now;
+}
+void getfail() {
+    queue<int> q;
+    for (int i=0; i<26; ++i) {
+        if (ch[0][i]) {
+            q.push(ch[0][i]);
+        }
+    }
+    while (!q.empty()) {
+        int x = q.front();
+        q.pop();
+        int o = fail[x];
+        while (o && !ed.test(o)) {
+            o = jp[o];
+        }
+        jp[x] = o;
+        for (int i=0; i<26; ++i) {
+            if (ch[x][i]) {
+                q.push(ch[x][i]);
+                fail[ch[x][i]] = ch[fail[x]][i];
+            }
+            else {
+                ch[x][i] = ch[fail[x]][i];
+            }
+        }
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> dc >> Q;
+    for (int i=1; i<=Q; ++i) {
+        cin >> s;
+        ins(i);
+    }
+    getfail();
+    int now = 0;
+    memset(lst, -1, sizeof lst);
+    for (int i=0; dc[i]; ++i) {
+        now = ch[now][dc[i]-'a'];
+        for (int x=now; x; x=jp[x]) {
+            if (lst[x] <= i-len[x]) {
+                lst[x] = i;
+                ans[x]++;
+            }
+        }
+    }
+    for (int i=1; i<=Q; ++i) {
+        cout << ans[id[i]] << "\n";
+    }
+}
+```
+    

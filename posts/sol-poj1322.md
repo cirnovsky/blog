@@ -1,0 +1,97 @@
+---
+date: 2021-03-20
+title: Solution -「POJ 1322」Chocolate
+category: notes
+tags: [combinatorics,polynomials]
+---
+
+## Description
+
+[Link](http://poj.org/problem?id=1322).
+
+包里有无穷多个巧克力，巧克力有 $c$ 种颜色，每次从包里拿出不同颜色巧克力的概率都是相等的，桌面的巧克力不允许颜色相同，若某次拿出的巧克力与桌上的巧克力颜色相同了，则将两颗巧克力都吃掉。计算进行 $n$ 次拿巧克力的操作后，桌上有 $m$ 颗巧克力的概率。
+
+## Solution
+
+本质是给在 $c$ 种颜色选 $m$ 种颜色每种选奇数次，剩下 $c-m$ 中每种选偶数次。
+
+构造那 $c-m$ 种和 $m$ 种的 egf：
+
+$$
+\begin{aligned}
+G_{1}(x)&=\sum_{i=0}^{\infty}\frac{x^{2i}}{(2i)!} \\
+G_{2}(x)&=\sum_{i=0}^{\infty}\frac{x^{2i+1}}{(2i+1)!}
+\end{aligned}
+$$
+
+换成 $e$ 的形式:
+
+$$
+\begin{aligned}
+G_{1}(x)&=\frac{e^{x}-e^{-x}}{2} \\
+G_{2}(x)&=\frac{e^{x}+e^{-x}}{2}
+\end{aligned}
+$$
+
+那么方案数的 ogf 为：
+
+$$
+G(x)=\left(\frac{e^{x}-e^{-x}}{2}\right)^{m}\times\left(\frac{e^{x}+e^{-x}}{2}\right)^{c-m}
+$$
+
+那么答案即为：
+
+$$
+\frac{[G_{n}]\times n!\times\binom{c}{m}}{c^{n}}
+$$
+
+考虑怎么求出 $[G_{n}]$。我们把 $G$ 看成关于 $e^{x}$，然后二项式展开后卷积：
+
+$$
+\begin{aligned}
+G(x)&=\left(\frac{e^{x}-e^{-x}}{2}\right)^{m}\times\left(\frac{e^{x}+e^{-x}}{2}\right)^{c-m} \\
+&=2^{-c}\times\left(\sum_{i=0}^{m}\binom{m}{i}(-1)^{i}e^{x(m-2i)}\right)\times\left(\sum_{i=0}^{c-m}\binom{c-m}{i}e^{(2i+m-c)x}\right) \\
+&=2^{-c}\times\left(\sum_{i=0}^{m}\sum_{j=0}^{c-m}(-1)^{i}\binom{m}{i}\binom{c-m}{j}e^{x(2m-2i+2j-c)}\right) \\
+&=2^{-c}\times\left(\sum_{i=0}^{m}\sum_{j=0}^{c-m}(-1)^{i}\binom{m}{i}\binom{c-m}{j}\left(\sum_{k=0}^{\infty}\frac{(x(2m-2i+2j-c))^{k}}{k!}\right)\right)
+\end{aligned}
+
+$$
+
+这份代码是在 POJ 上过的，至于 UVa 这边不想管了。
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+int comb[210][210],c,n,m;
+double ans;
+double qpow(double bas,int fur)
+{
+	double res=1;
+	while(fur)
+	{
+		if(fur&1)	res*=bas;
+		bas*=bas;
+		fur>>=1;
+	}
+	return res;
+}
+int main()
+{
+	for(int i=0;i<=100;++i)	comb[i][0]=comb[i][i]=1;
+	for(int i=2;i<=100;++i)	for(int j=1;j<i;++j)	comb[i][j]=comb[i-1][j]+comb[i-1][j-1];
+	while(~scanf("%d",&c)&&c)
+	{
+		ans=0;
+		scanf("%d %d",&n,&m);
+		if(m>c||m>n||(n-m)%2)	puts("0.000");
+		else
+		{
+			for(int i=0,now=1;i<=m;++i,now*=-1)	for(int j=0;j<=c-m;++j)	ans+=now*comb[m][i]*comb[c-m][j]*qpow(double(2*m-2*i+2*j-c)/c,n);
+			ans*=comb[c][m]; ans/=qpow(2,c);
+			printf("%.3f\n",ans);
+		}
+	}
+	return 0;
+}
+```
+    

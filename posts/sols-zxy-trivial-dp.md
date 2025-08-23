@@ -1,0 +1,282 @@
+---
+date: 2022-06-30
+title: zxy 简单 dp 大讲堂
+category: notes
+tags: [data-structures,dp]
+---
+
+讲课讲得非常清楚啊，我绝赞膜拜。节奏可以，思路清晰，解法自然，为讲师点赞。
+
+第一个题是 [*loj3282 / joisc2020 - Treatment Project*](https://loj.ac/p/3282)。原问题由 $\left(S, t, w\right)$ 三个维度构成，分别表示村民被治疗的状态，时间，花费。比较自然的思路是针对 $t$ 做规划，但是这样有一个问题——$t$ 和 $S$ 是息息相关的，若从 $t$ 入手则几乎不得不记录 $S$，这是不被接受的。考虑直接 $S$ 入手。如果我可以考虑一段连续的区间而不是子序列，是不是复杂度一定会降？那么考察前缀，具体，设 $f_i$ 表示将 $[1, i]$ 的村民治好的最小花费。进一步地，不妨将 $f_i$ 重新描述为将 $[1, r_i]$ 的村民治好的最小花费。
+
+为什么这样设计状态就不需要考虑时间的影响了（不是说整体，仅仅是在设计状态的时候）？我个人的理解是这样做将村民，或者说 $S$，作为第一个研究的对象，而时间则作为后续求解中对 $f$ 的限制，所以放到后面考虑即可。
+
+转移方程即为 $\displaystyle f_i\gets\min_{1\leqslant j<i,r_j-l_i+1\geqslant|t_i-t_j|}\{f_j\}+w_i$。将绝对值拆开，这里以 $t_i\geqslant t_j$ 为例。那么转移的条件就成了 $r_j+t_j+1\geqslant t_i+l_i$。那么现在转移有二维偏序的关系，即 $t_i\geqslant t_j,r_j+t_j+1\geqslant t_i+l_i$。在优化之前，首先注意到这是一个最短路模型，转移条件即连边的条件，考虑用最优的 $f_j$ 去松弛 $f_i$，那么每个 $f_i$ 就只会被松弛一次（几乎是自明的），于是按 $t$ 排序后用线段树维护即可。
+
+<details>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+// implementation: time-ordered
+using ll = long long;
+using pli = pair<ll, int>;
+const ll inf = 1e18;
+int n, m;
+ll dp[100100];
+struct node {
+    int l, r, t;
+    ll w;
+} a[100100];
+priority_queue<pli, vector<pli>, greater<pli>> q; // slacked
+struct segment_tree {
+    ll mix[400100], miy[400100];
+    void pull(int now) {
+        mix[now] = min(mix[now*2], mix[now*2+1]);
+        miy[now] = min(miy[now*2], miy[now*2+1]);
+    }
+    void ins(int pos, ll x, ll y, int now=1, int l=1, int r=n) {
+        if (l == r) {
+            mix[now] = x, miy[now] = y;
+            return;
+        }
+        int mid = (l+r)/2;
+        if (mid >= pos) ins(pos, x, y, now*2, l, mid);
+        else ins(pos, x, y, now*2+1, mid+1, r);
+        pull(now);
+    }
+    void slackx(int lq, int rq, ll lim, ll dlt, int now=1, int l=1, int r=n) {
+        if (lq > rq || l > rq || r < lq || mix[now] > lim) return;
+        if (l == r) {
+            dp[l] = dlt+a[l].w;
+            q.emplace(dp[l], l);
+            mix[now] = miy[now] = inf;
+            return;
+        }
+        int mid = (l+r)/2;
+        slackx(lq, rq, lim, dlt, now*2, l, mid);
+        slackx(lq, rq, lim, dlt, now*2+1, mid+1, r);
+        pull(now);
+    }
+    void slacky(int lq, int rq, ll lim, ll dlt, int now=1, int l=1, int r=n) {
+        if (lq > rq || l > rq || r < lq || miy[now] > lim) return;
+        if (l == r) {
+            dp[l] = dlt+a[l].w;
+            q.emplace(dp[l], l);
+            mix[now] = miy[now] = inf;
+            return;
+        }
+        int mid = (l+r)/2;
+        slacky(lq, rq, lim, dlt, now*2, l, mid);
+        slacky(lq, rq, lim, dlt, now*2+1, mid+1, r);
+        pull(now);
+    }
+} sgt;
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> m >> n;
+    for (int i=1;i<=n;++i) {
+        dp[i] = inf;
+        cin >> a[i].t >> a[i].l >> a[i].r >> a[i].w;
+    }
+    sort(a+1, a+n+1, [&](node a, node b) {
+        return a.t < b.t;
+    });
+    for (int i=1;i<=n;++i) {
+        if (a[i].l == 1) {
+            dp[i] = a[i].w;
+            q.emplace(dp[i], i);
+            sgt.ins(i, inf, inf);
+        }
+        else {
+            sgt.ins(i, a[i].l-a[i].t, a[i].l+a[i].t);
+        }
+    }
+    while (!q.empty()) {
+        // use nodes slacked to slack other nodes
+        int x = q.top().second;
+        q.pop();
+        sgt.slackx(1, x-1, a[x].r-a[x].t+1, dp[x]);
+        sgt.slacky(x+1, n, a[x].r+a[x].t+1, dp[x]);
+    }
+    ll ans = inf;
+    for (int i=1;i<=n;++i) {
+        if (a[i].r == m) {
+            ans = min(ans, dp[i]);
+        }
+    }
+    if (ans == inf) cout << "-1\n";
+    else cout << ans << "\n";
+    return 0;
+}
+```
+
+</details>
+
+第二个题是 [*codeforces - 1476F*](http://codeforces.com/problemset/problem/1476/F)，~~整个课上唯一一个自己想出来的题，还错了个细节~~。直接 dp 有着自明的后效性，说两种消除之的方法。第一个是「将 $i$ 点亮灯的能力挂到 $i$ 能够点亮的最右边的灯上」，这样一次操作只会影响前面的，这消除了后效性。第二个直接在 dp 状态上下手，也是正解的思路，即设 $f_i$ 表示以 $[1, i]$ 的灯能够点亮的最长前缀（完全可能超过 / 不足 $i$），这样相当于将「点灯的灯」和「被点的灯」隔离开了，影响就被消除了。
+
+因为我写的第二个，所以说一下第二个（其实是差不多的）。先考虑 $i$ 向右照的情况，转移非常简单 $f_i\gets\max\{f_i, i+p_i\}$（当然 $f_i$ 要先继承 $f_{i-1}$，这也昭示了其单调性）。$i$ 向左照的情况比较复杂。考虑有这样一个 $j$，满足 $f_j\geqslant i-p_i-1$（保证维护的是前缀），那么让 $\forall t,s.t.j<t<i$ 向右照是最优的，贪心地想，我们就需要使得 $j$ 最小，由于 $f$ 有单调性，直接二分即可，然后 RMQ 找 $(j, i)$ 区间中最大的 $t+p_t$ 即可。
+
+<details>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+int n, p[300100], dp[300100], dp2[20][300100], lgs[300100], pre[300100], isl[300100];
+int get(int l, int r) {
+    if (l > r) return 0;
+    int k = lgs[r-l+1];
+    return max(dp2[k][l], dp2[k][r-(1<<k)+1]);
+}
+void print(int now) {
+    if (now == 0) return;
+    print(pre[now]);
+    if (isl[now]) {
+        cout << "R";
+        return;
+    }
+    for (int i=pre[now]+1; i<now; ++i) cout << "R";
+    cout << "L";
+}
+void solve() {
+    cin >> n;
+    for (int i=1;i<=n;++i) {
+        cin >> p[i];
+        dp2[0][i] = i+p[i];
+    }
+    for (int i=1;(1<<i)<=n;++i) {
+        for (int j=1;j+(1<<i)-1<=n;++j) {
+            dp2[i][j] = max(dp2[i-1][j], dp2[i-1][j+(1<<(i-1))]);
+        }
+    }
+    pre[1] = 0, isl[1] = 1;
+    for (int i=2;i<=n;++i) {
+        dp[i] = dp[i-1], pre[i] = i-1, isl[i] = 1;
+        if (dp[i-1] >= i) {
+            dp[i] = max(dp[i], i+p[i]);
+        }
+        int l = 0, r = i-1, j = -1, mid;
+        while (l <= r) {
+            mid = (l+r)/2;
+            if (dp[mid] >= i-p[i]-1) r = mid-1, j = mid;
+            else l = mid+1;
+        }
+        if (j == -1) continue;
+        if (max(i-1, get(j+1, i-1)) >= dp[i]) {
+            isl[i] = 0, pre[i] = j;
+        }
+        dp[i] = max({dp[i], i-1, get(j+1, i-1)});
+    }
+    if (dp[n] >= n) {
+        cout << "YES\n";
+        print(n);
+        cout << "\n";
+        return;
+    }
+    cout << "NO\n";
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    int tt;
+    for (int i=2; i<300100; ++i) {
+        lgs[i] = lgs[i>>1]+1;
+    }
+    for (cin>>tt;tt--;) {
+        solve();
+    }
+}
+```
+
+</details>
+
+第三个题是 [*codeforces - 1523F*](http://codeforces.com/problemset/problem/1523/F)。再次考虑这个题的维度 $(S, t, i, w)$，分别表示点亮传送塔的集合，时间，所处位置（传送塔或任务点），完成任务数量。据此可以写出一个朴素的 dp，$f_{S, i, w}$ 表示点亮传送塔的集合为 $S$，当前在位置 $i$，完成了 $w$ 个任务，所花费的最小时间。这里把题目中的「答案」完成任务数量作为状态并非不自然，是单纯因为时间太大忍不下。这里有两个重要的观察：
+
+- 处在传送塔时，不关心自己的位置；
+- 处在任务点时，不关心当前的时间。
+
+正确性不必多言，关键在于观察到之的洞察力。于是我们可以优化状态（这里的根据是，传送塔 $\cup$ 任务点 $=$ 所有地址），分别定义 $f_{S, i}$，$g_{S, i}$ 表示点亮传送塔的集合为 $S$，完成了 $i$ 个任务，并且现在处于传送塔的最小时间，和点亮传送塔的集合为 $S$，在 $i$ 个地址，最大完成任务总数。转移分 传送塔 $\rightarrow$ 任务点、传送塔 $\rightarrow$ 传送塔、任务点 $\rightarrow$ 任务点、任务点 $\rightarrow$ 传送塔 讨论即可。同时还有转移顺序的问题，具体见代码。
+
+<details>
+
+```cpp
+#include <bits/stdc++.h>
+#define cmin(x, y) x = min(x, y)
+#define cmax(x, y) x = max(x, y)
+using namespace std;
+const int inf = 0x3f3f3f3f;
+int n, m, ans = -inf;
+int w[16484][120], up, f[16484][120], g[16484][120];
+struct pnt {
+    int x, y, t;
+} a[120];
+int dst(int i, int j) {
+    return abs(a[i].x-a[j].x)+abs(a[i].y-a[j].y);
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> n >> m;
+    up = 1<<n;
+    for (int i=0; i<n; ++i) {
+        cin >> a[i].x >> a[i].y;
+    }
+    for (int i=n; i<n+m; ++i) {
+        cin >> a[i].x >> a[i].y >> a[i].t;
+    }
+    sort(a+n, a+n+m, [&](pnt x, pnt y) {
+        return x.t < y.t;
+    });
+    for (int s=0; s<up; ++s) {
+        for (int i=0; i<n+m; ++i) {
+            w[s][i] = inf;
+            for (int j=0; j<n; ++j) {
+                if (s&(1<<j)) cmin(w[s][i], dst(i, j));
+            }
+        }
+    }
+    for (int s=0; s<up; ++s) {
+        for (int i=0; i<m; ++i) f[s][i] = inf, g[s][i] = -inf;
+        f[s][m] = inf;
+    }
+    for (int i=0; i<n; ++i) f[1<<i][0] = 0;
+    for (int i=0; i<m; ++i) g[0][i] = 1;
+    for (int s=0; s<up; ++s) {
+        for (int i=0; i<=m; ++i) {
+            if (f[s][i] != inf) {
+                for (int j=0; j<n; ++j) {
+                    if ((s&(1<<j)) == 0) {
+                        cmin(f[s|(1<<j)][i], f[s][i]+w[s][j]);
+                    }
+                }
+                for (int j=0; j<m; ++j) {
+                    if (f[s][i]+w[s][j+n] <= a[j+n].t) {
+                        cmax(g[s][j], i+1);
+                    }
+                }
+            }
+        }
+        for (int i=0; i<m; ++i) {
+            if (g[s][i] >= 0) {
+                for (int j=0; j<n; ++j) {
+                    if ((s&(1<<j)) == 0) {
+                        cmin(f[s|(1<<j)][g[s][i]], min(dst(i+n, j), w[s][j])+a[i+n].t);
+                    }
+                }
+                for (int j=i+1; j<m; ++j) {
+                    if (min(dst(i+n, j+n), w[s][j+n])+a[i+n].t <= a[j+n].t) {
+                        cmax(g[s][j], g[s][i]+1);
+                    }
+                }
+                cmax(ans, g[s][i]);
+            }
+        }
+    }
+    cout << ans << "\n";
+    return 0;
+}
+```
+
+</details>
+    

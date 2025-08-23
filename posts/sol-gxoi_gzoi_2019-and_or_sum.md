@@ -1,0 +1,87 @@
+---
+date: 2021-03-12
+title: Solution -「GXOI / GZOI 2019」AND OR Sum
+category: notes
+tags: [data-structures,bitwise]
+---
+
+## Description
+
+[Link](https://www.luogu.com.cn/problem/P5300).
+
+给定一个 $N \times N$ 的矩阵，她希望求出：
+
+1. 该矩阵的所有子矩阵的 $\texttt{AND}$ 值之和（所有子矩阵 $\texttt{AND}$ 值相加的结果）。
+2. 该矩阵的所有子矩阵的 $\texttt{OR}$ 值之和（所有子矩阵 $\texttt{OR}$ 值相加的结果）。
+
+## Solution
+
+对于每一个数的每一位，我们单独拉出来构成 $\log$ 个矩阵。
+
+对于 $\texttt{AND}$，显然只有全为 $1$ 的子矩阵能产生贡献。
+
+对于 $\texttt{OR}$，只有存在 $1$ 的子矩阵才能产生贡献。
+
+那么枚举右下角，单调栈统计。
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int MOD=1e9+7;
+int n,pre[1010][1010],stk[1010],top,a[1010][1010],b[1010][1010],ans,exans,mx;
+void work(int k,int t)
+{
+	for(int i=1;i<=n;++i)	for(int j=1;j<=n;++j)	b[i][j]=((a[i][j]>>k)&1);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+		{
+			if(b[i][j]==t)	pre[i][j]=pre[i-1][j]+1;
+			else	pre[i][j]=0;
+		}
+	}
+	int siz=0;
+	for(int i=1;i<=n;++i)
+	{
+		siz=top=0,stk[1]=stk[0]=0;
+		for(int j=1;j<=n;++j)
+		{
+			while(top&&pre[i][stk[top]]>=pre[i][j])	siz=(siz-LL(pre[i][stk[top]])*(stk[top]-stk[top-1])%MOD+MOD)%MOD,--top;
+//			siz=(siz+LL(pre[i][j])*(j-stk[top])%MOD)%MOD,stk[++top]=j;
+			siz+=LL(pre[i][j])*(j-stk[top]),stk[++top]=j;
+			if(t)	ans=(ans+LL(siz)*(1<<k)%MOD)%MOD;
+			else	exans=(exans+(LL(i)*j%MOD-LL(siz))*(1<<k)%MOD+MOD)%MOD;
+		}
+	}
+}
+inline char fgc()
+{
+	static char buf[1<<17],*p=buf,*q=buf;
+	return p==q&&(q=buf+fread(p=buf,1,1<<17,stdin),p==q)?EOF:*p++;
+}
+void read(int &hhh)
+{
+	int x=0;
+	char c=fgc();
+	while(!isdigit(c))	c=fgc();
+	while(isdigit(c))	x=(x<<3)+(x<<1)+(c^'0'),c=fgc();
+	hhh=x;
+}
+void write(int x,char las='\n')
+{
+	static int stk[100],top=0;
+	do stk[++top]=x%10,x/=10; while(x);
+	while(top)	putchar(stk[top--]^'0');
+	putchar(las);
+}
+int main()
+{
+	read(n);
+	for(int i=1;i<=n;++i)	for(int j=1;j<=n;++j)	read(a[i][j]),mx=max(mx,a[i][j]);
+	for(int k=0;(1ll<<k)<=mx;++k)	work(k,0),work(k,1);
+	write(ans,' '),write(exans);
+	return 0;
+}
+```
+    

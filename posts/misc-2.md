@@ -1,0 +1,13 @@
+---
+date: 2022-08-08
+title: 雑用 2
+category: articles
+tags: [maths]
+---
+
+平面旋转。应该是比较好理解的版本。
+
+我们对一个平面（逆时针）旋转 $\beta$ 度，无非就是对每一个有意义的向量 $\boldsymbol a = (x, y)$ 进行旋转。不妨考察单位向量 $\boldsymbol e = (\cos \alpha, \sin \alpha)$，令 $\boldsymbol a = k \cdot \boldsymbol e$，则由三角恒等变换得 $\boldsymbol e' = (\cos(\alpha + \beta), \sin (\alpha + \beta)) = (\cos \alpha \cos \beta - \sin \alpha \sin \beta, \sin \alpha \cos \beta + \sin \beta \cos \alpha)$，则 $\boldsymbol a' = k \cdot e'$。
+
+令 $\beta = \frac{\pi}{4}$ 再把 $k$ 除以 $\sqrt 2$ 就得到切比雪夫距离转曼哈顿距离的式子了。
+    

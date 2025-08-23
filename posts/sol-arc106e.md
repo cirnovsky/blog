@@ -1,0 +1,60 @@
+---
+date: 2023-10-04
+title: Solution -「ARC 106E」Medals
+category: notes
+tags: [maths,graph-theory]
+---
+
+---
+date: '2023-10-04'
+title: 'Solution -「ARC 106E」Medals'
+
+---
+
+## Desc.
+
+[Link.](https://atcoder.jp/contests/arc106/tasks/arc106_e)
+
+你有 $n$ 个朋友，他们会来你家玩，第 $i$ 个人 $1...A_i$  天来玩，然后 $A_i+1...2A_i$  天不来，然后 $2A_i+1...3A_i$ 
+  又会来，以此类推;
+
+每天你会选一个来玩的人，给他颁个奖，如果没人来玩，你就不颁奖。
+
+你要给每个人都颁 $K$ 个奖，问至少需要多少天。
+
+## Sol.
+
+前面的部分很[套路](https://atcoder.jp/contests/abc320/tasks/abc320_g)了，主要看看建出二分图后我们应该做什么。首先根据 Hall's marriage theorem，我们要做的是判断任意子集的邻域大小是否大于等于该子集的大小。把 $n$ 个人拆成 $n\times k$ 个点，可以发现进行判断时不需要把同一类点（由同一个工人拆出来的 $k$ 个点）分开。设 $f(S)$ 为满足存在集合 $S$ 中任一工人会来打工的天数，则有解的一个充要条件为 $\forall S\subseteq 2^{\{1,\dots,n\}},m-f(U\setminus S) \geqslant |S|\times k$。
+
+```cpp
+const int N = 18, K = 1e5;
+int n, k, a[N + 5], f[2 * N * K + 5], g[1 << N];
+bool check(int upp) {
+    const int LIM = 1 << n, U = LIM - 1;
+    for (int i=0;i<LIM;++i) g[i] = 0;
+    rep (i,1,upp) g[f[i]]++;
+    for (int j=0;j<n;++j) for (int i=0;i<LIM;++i) if (!(i&(1<<j))) g[i|(1<<j)] += g[i];
+    for (int i=0;i<LIM;++i) if (upp - g[U^i] < __builtin_popcount(i) * k) return false;
+    return true;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    rd(n, k); rds0i(a, n);
+    for (int i=0;i<n;++i) {
+        for (int t=0;;t+=2) for (int j=t*a[i]+1;j<(t+1)*a[i]+1;++j) {
+            if (j > 2 * n * k) goto label;
+            f[j] |= 1<<i;
+        }
+        label:;
+    }
+    int l = 0, r = 2 * n * k, res = -1;
+    while (l <= r) {
+        if (int mid = (l + r) / 2; check(mid)) r = mid - 1, res = mid;
+        else l = mid + 1;
+    }
+    cout << res << "\n";
+}
+```
+    

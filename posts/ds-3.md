@@ -1,0 +1,152 @@
+---
+date: 2022-08-16
+title: 数据结构 3
+category: notes
+tags: [data-structures,binary-search]
+---
+
+**[「codeforces - 1416D」Graph and Queries](http://codeforces.com/problemset/problem/1416/D)**：显然倒着做，考虑怎么维护合并连通块。有个 kruskal 重构树的 trick 是，合并连通块时建个虚点把两个连通块的根连起来，这样就造出来了个树，查询都在子树，直接做。注意到这样做一个连通块不可能成为令一个连通块的子树，于是就不用启发式合并 dfn 了，直接记录当前合并操作时的根结点即可。
+
+```cpp
+int n, m, q, fa[700100], a[700100], ldf[700100], rdf[700100], dfc, u[300100],
+    v[300100];
+bsi<int> adj[700100];
+int ldr(int x) {
+  while (x != fa[x]) x = fa[x] = fa[fa[x]];
+  return x;
+}
+void dfs(int x) {
+  ldf[x] = ++dfc;
+  for (auto y : adj[x]) dfs(y);
+  rdf[x] = dfc;
+}
+bitset<300100> tag;
+void mrg(int u, int v) {
+  u = ldr(u), v = ldr(v);
+  if (u == v) return;
+  n++, fa[n] = n, fa[u] = fa[v] = n;
+  adj[n] += u, adj[n] += v;
+}
+int ms, mh;
+vi<pii> md, qs;
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> n >> m >> q;
+  iota(fa + 1, fa + n + 1, 1);
+  for (int i = 1; i <= n; ++i) cin >> a[i];
+  for (int i = 1; i <= m; ++i) cin >> u[i] >> v[i];
+  for (int t, x; q--;) {
+    cin >> t >> x;
+    qs.eb(t, x);
+    if (t == 2) tag[x] = 1;
+  }
+  reverse(qs.begin(), qs.end());
+  for (int i = 1; i <= m; ++i)
+    if (!tag[i]) mrg(u[i], v[i]);
+  for (auto& [t, x] : qs) {
+    if (t == 2)
+      mrg(u[x], v[x]);
+    else
+      x = ldr(x);
+  }
+  for (int i = 1; i <= n; ++i)
+    if (ldr(i) == i) dfs(i);
+  mh = ceil(log2(n)), ms = 1 << mh;
+  md = vi<pii>(ms * 2, {0, 0});
+  auto upd = [&](int now) { md[now] = max(md[now * 2], md[now * 2 + 1]); };
+  auto mdf = [&](int now, const pii& w) {
+    md[now += ms - 1] = w;
+    for (int i = 1; i <= mh; ++i) upd(now >> i);
+  };
+  for (int i = 1; i <= n; ++i) md[ldf[i] + ms - 1] = pii(a[i], ldf[i]);
+  for (int i = ms - 1; i >= 1; --i) upd(i);
+  auto qry = [&](int l, int r) {
+    pii res({0, 0});
+    for (l += ms - 1, r += ms; l < r; l >>= 1, r >>= 1) {
+      if (l & 1) cmax(res, md[l++]);
+      if (r & 1) cmax(res, md[--r]);
+    }
+    return res;
+  };
+  reverse(qs.begin(), qs.end());
+  for (auto const& [t, x] : qs) {
+    if (t == 1) {
+      auto ret = qry(ldf[x], rdf[x]);
+      cout << ret.first << "\n";
+      if (ret.first > 0) mdf(ret.second, {0, 0});
+    }
+  }
+}
+```
+
+**[「codeforces - 1140F」Extending Set of Points](http://codeforces.com/problemset/problem/1140/F)**：考虑二分图，张集大小就是二分图所有连通块左部大小乘右部大小（i.e. 连通块会被补全为一个「左右部内部没边的团」）。如果没有删除就可以直接用并查集维护左右部大小做了，加了删除考虑线段树分治和可撤销并查集即可。
+
+这道题告诉了我们线段树分治的一点本质：可撤销并查集无非是拿个 stack 存操作，一次只能撤销一步，而线段树分治是一个，一个一个一个一个一个
+
+```cpp
+const int n = 3e5;
+int q, sl[600100], sr[600100], fa[600100], siz[600100];
+ll ans;
+mli mp;
+struct state {
+  int x, y, sl, sr, siz;
+  ll res;
+} stk[600100];
+state* top = stk;
+vi<pii> md[1200100];
+int ldr(int x) {
+  while (x != fa[x]) x = fa[fa[x]];
+  return x;
+}
+void mrg(int x, int y) {
+  x = ldr(x), y = ldr(y);
+  if (x == y) return;
+  if (siz[x] < siz[y]) swap(x, y);
+  *++top = {x, y, sl[x], sr[x], siz[x], ans};
+  ans -= 1ll * sl[x] * sr[x] + 1ll * sl[y] * sr[y] -
+         1ll * (sl[x] + sl[y]) * (sr[x] + sr[y]);
+  sl[x] += sl[y], sr[x] += sr[y], siz[x] += siz[x] == siz[y], fa[y] = x;
+}
+#define mid ((l + r) / 2)
+void mdf(int ql, int qr, const pii& w, int now, int l, int r) {
+  if (l > qr || r < ql) return;
+  if (l >= ql && r <= qr) return md[now].pb(w);
+  mdf(ql, qr, w, now * 2, l, mid), mdf(ql, qr, w, now * 2 + 1, mid + 1, r);
+}
+void rollback() {
+  assert(top != stk);
+  fa[top->y] = top->y, siz[top->x] = top->siz, sl[top->x] = top->sl,
+  sr[top->x] = top->sr, ans = top->res;
+  top--;
+}
+void solve(int now, int l, int r) {
+  int tmp = top - stk;
+  for (auto const& [x, y] : md[now]) mrg(x, y);
+  if (l == r)
+    cout << ans << " \n"[r == q];
+  else
+    solve(now * 2, l, mid), solve(now * 2 + 1, mid + 1, r);
+  while (top - stk > tmp) rollback();
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> q;
+  for (int i = 1, x, y; i <= q; ++i) {
+    cin >> x >> y;
+    if (mp.count(1ll * (x - 1) * n + y))
+      mdf(mp[1ll * (x - 1) * n + y], i - 1, {x, y + n}, 1, 1, q),
+          mp.erase(1ll * (x - 1) * n + y);
+    else
+      mp[1ll * (x - 1) * n + y] = i;
+  }
+  for (auto const& [x, y] : mp)
+    mdf(y, q, {(x + n - 1) / n, (x % n == 0 ? n : x % n) + n}, 1, 1, q);
+  iota(fa + 1, fa + n * 2 + 1, 1);
+  for (int i = 1; i <= n; ++i) sl[i] = 1;
+  for (int i = n + 1; i <= n + n; ++i) sr[i] = 1;
+  solve(1, 1, q);
+}
+```
+    

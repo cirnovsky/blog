@@ -1,0 +1,309 @@
+---
+date: 2021-02-02
+title: Note -「Maths」Euler 筛筛积性函数
+category: notes
+tags: [number-theory]
+---
+
+## Part. 1 Preface
+
+这个东西是我在做 [JZPTAB](https://www.luogu.com.cn/problem/P1829) 的时候 LYC 给我讲的。
+
+然后发现这是个通法，就写一写。
+
+~~本文除了例题所有代码均未经过编译，仅作为参考~~。
+
+## Part. 2 Untitled（怎么取标题呀）（哦 正文）
+
+### Part. 2-1 Worse ver.
+
+对于一个积性函数 $f(n)$，如果我们已知 $f(1),f(p),f(p^{k})$ （$p$ 是一个素数）并且可以在 $O(\log_{2}(n))$ 的时间内算出来的话，我们就可以在 $O(n\log_{2}(n))$ 的时间内利用 Euler 筛筛出 $f(1\cdots n)$ 的值。
+
+举个例子，假设
+$$
+f(n)=\sum_{d|n}d\times\varphi(\lfloor\frac{n}{d}\rfloor)
+$$
+由于 $\text{id}$ 卷 $\varphi$ 卷不出个什么现成的函数，所以我们得考虑自己把它筛出来。
+
+带个 $p$ 进去可知
+$$
+\begin{cases}
+f(1)=1 \\
+\displaystyle
+f(p)=2\times p-1 \\
+\displaystyle
+f(p^{k})=(k+1)\times p^{k}-k\times p^{k-1}
+\end{cases}
+$$
+以下内容请参考 Euler 筛代码来看：
+
+```cpp
+void sieve ( const int x ) {
+	tag[1] = 1, f[1] = /* DO SOMETHING 1 */;
+	for ( int i = 2; i <= x; ++ i ) {
+		if ( ! tag[i] ) {
+			pSet[++ psc] = i;
+			f[i] = /* DO SOMETHING 2 */;
+		}
+		for ( int j = 1; j <= psc && pSet[j] * i <= x; ++ j ) {
+			tag[pSet[j] * i] = 1;
+			if ( ! ( i % pSet[j] ) ) {
+				f[pSet[j] * i] = /* DO SOMETHING 3 */;
+				break;
+			}
+			else	f[pSet[j] * i] = /* DO SOMETHING */;
+		}
+	}
+}
+```
+
+函数 $\text{sieve}$ 就是 Euler 筛的过程。我在代码中留了四个空，分别来看我们需要做什么。
+
+- 第一个空很显然，把 $f(1)$ 赋给 `f[1]` 即可。
+
+- 第二个空也很显，把 $f(p)$ 付给 `f[i]`。
+
+- 我们重点来看第三个空。
+
+首先因为此时的 $i,\text{pSet}_{j}$ 不互质，所以不能直接照完全积性函数筛。
+
+首先，我们需要把 $i\times\text{pSet}_{j}$ 中 $\text{pSet}_{j}$ 因子全部除掉，除完后的结果记为 $\text{tmp}$，$\text{pSet}_{j}$ 因子数量记为 $\text{power}$，即 $i\times\text{pSet}_{j}=\text{pSet}_{j}^{\text{power}}\times c$。
+
+就是类似下面代码做的事情
+
+```cpp
+int tmp = i / pSet[j], power = 2;
+while ( ! ( i % pSet[j] ) )	i /= pSet[j], ++ power;
+```
+
+然后对 $\text{tmp}$ 进行分类讨论：
+
+- - $\text{tmp}=1$：此时 $i\times\text{pSet}_{j}$ 是 $\text{pSet}_{j}$ 的 $\text{power}$ 次方，把 $f(p^{k})$ 赋给 `f[pSet[j] * i]` 即可。
+
+- - $\text{tmp}>1$：此时 $\text{tmp}$ 与 $\frac{i\times\text{pSet}_{j}}{\text{tmp}}$ 互质，于是照积性函数 `f[pSet[j] * i] = f[pSet[j] * i / tmp] * f[tmp]`。
+
+于是第三个空做完了。
+
+- 第四个空中 $\text{pSet}_{j}$ 与 $i$ 互质，于是照积性函数 `f[pSet[j] * i] = f[pSet[j]] * f[i]`。
+
+于是我们得到了完整代码
+
+```cpp
+void sieve ( const int x ) {
+	tag[1] = 1, f[1] = 1;
+	for ( int i = 2; i <= x; ++ i ) {
+		if ( ! tag[i] ) {
+			pSet[++ psc] = i;
+			f[i] = 2 * i - 1;
+		}
+		for ( int j = 1; j <= psc && pSet[j] * i <= x; ++ j ) {
+			tag[pSet[j] * i] = 1;
+			if ( ! ( i % pSet[j] ) ) {
+				int tmp = i / pSet[j], power = 2;
+				while ( ! ( i % pSet[j] ) )	i /= pSet[j], ++ power;
+				if ( tmp == 1 )	f[pSet[j] * i] = ( power + 1 ) * cqpow ( pSet[j], power ) - power * cqpow ( pSet[j], power - 1 );
+				else	f[pSet[j] * i] = f[pSet[j] * i / tmp] * f[tmp];
+				break;
+			}
+			else	f[pSet[j] * i] = f[pSet[j]] * f[i];
+		}
+	}
+}
+```
+
+### Part. 2-2 Better ver.
+
+上述的方法的缺点显而易见：复杂度多出来个 $\log_{2}$。
+
+更好的方法是记录最小质因子，具体见 ljs 博客 [Link](https://www.luogu.com.cn/blog/cqbzljs/solution-sp3871)。
+
+## Part. 3 Example
+
+#### LOCAL 64388 - GCD SUM
+
+> 求
+>
+> $$
+> \sum_{i=1}^n\sum_{j=1}^m\textrm{gcd}(i,j)
+> $$
+>
+> 共有 $T$ 组询问
+>
+> | $\text{task_id}$ | 测试点数 | $n,m\leq$ | $T\leq$ | 特殊性质 |
+> | :--------------: | :------: | :-------: | :-----: | :------: |
+> |       $1$        |   `1`    |   $10$    | $10^3$  |    无    |
+> |       $2$        |   `2`    |  $10^3$   |  $10$   |    无    |
+> |       $3$        |   `3`    |  $10^3$   | $10^4$  |    无    |
+> |       $4$        |   `4`    |  $10^6$   |  $10$   | $n = m$  |
+> |       $5$        |   `5`    |  $10^6$   | $10^4$  | $n = m$  |
+> |       $6$        |   `2`    |  $10^6$   | $10^5$  | $n = m$  |
+> |       $7$        |   `3`    |  $10^7$   | $10^6$  | $n = m$  |
+> |       $8$        |   `2`    |  $10^6$   |  $10$   |    无    |
+> |       $9$        |   `3`    |  $10^6$   | $10^4$  |    无    |
+
+放个 task 7 以外的部分分的推导
+$$
+\sum_{i=1}^{n}\sum_{j=1}^{m}\gcd(i,j) \\
+\begin{aligned}
+&=\sum_{d=1}^{\min\{n,m\}}d\sum_{i=1}^{n}\sum_{j=1}^{m}[\gcd(i,j)=d] \\
+&=\sum_{d=1}^{\min\{n,m\}}d\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}\sum_{j=1}^{\lfloor\frac{m}{d}\rfloor}[\gcd(i,j)=1] \\
+&=\sum_{d=1}^{\min\{n,m\}}d\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}\sum_{j=1}^{\lfloor\frac{m}{d}\rfloor}\sum_{k|i,k|j}\mu(k) \\
+&=\sum_{d=1}^{\min\{n,m\}}d\sum_{k|(\lfloor\frac{n}{d}\rfloor),k|(\lfloor\frac{m}{d}\rfloor)}\mu(k)(\lfloor\frac{n}{d\times k}\rfloor)(\lfloor\frac{m}{d\times k}\rfloor) \\
+&=\sum_{d=1}^{\min\{n,m\}}d\sum_{k|(\lfloor\frac{n}{d}\rfloor),k|(\lfloor\frac{m}{d}\rfloor)}\mu(k)(\lfloor\frac{n}{d\times k}\rfloor)(\lfloor\frac{m}{d\times k}\rfloor) \\
+&=\sum_{T=1}^{\min\{n,m\}}\sum_{d|T}d\times\mu(\lfloor\frac{T}{d}\rfloor)\times(\lfloor\frac{n}{T}\rfloor)\times(\lfloor\frac{m}{T}\rfloor) \\
+&=\sum_{T=1}^{\min\{n,m\}}(\lfloor\frac{n}{T}\rfloor)\times(\lfloor\frac{m}{T}\rfloor)\times\sum_{d|T}d\times\mu(\lfloor\frac{T}{d}\rfloor) \\
+&=\sum_{T=1}^{n}(\lfloor\frac{n}{T}\rfloor)^{2}\times\varphi(T) \\
+\end{aligned}
+$$
+对于 task 7，$n=m$ 让我们很方便地直接少了一个变量，然后就继续推
+$$
+\sum_{i=1}^{n}\sum_{j=1}^{n}\gcd(i,j) \\
+\begin{aligned}
+&=\left(2\sum_{i=1}^{n}\sum_{j=1}^{i}\gcd(i,j)\right)-\frac{n(n+1)}{2} \\
+&=\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\sum_{j=1}^{i}[\gcd(i,j)=d]\right)-\frac{n(n+1)}{2} \\
+&=\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\sum_{j=1}^{\lfloor\frac{i}{d}\rfloor}[\gcd(\lfloor\frac{i}{d}\rfloor,j)=1]\right)-\frac{n(n+1)}{2} \\
+&=\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\varphi(\lfloor\frac{i}{d}\rfloor)\right)-\frac{n(n+1)}{2} \\
+\end{aligned}
+$$
+然后
+$$
+\text{let }f(n)=\sum_{d|n}d\times\varphi(\lfloor\frac{n}{d}\rfloor)
+$$
+后面的就是前面举的例子了，略。
+
+<details>
+
+```cpp
+/*
+\large\text{For 1e6 part} \\
+\sum_{i=1}^{n}\sum_{j=1}^{m}\gcd(i,j) \\
+\sum_{d=1}^{\min(n,m)}d\sum_{i=1}^{n}\sum_{j=1}^{m}[\gcd(i,j)=d] \\
+\sum_{d=1}^{\min(n,m)}d\sum_{i=1}^{n/d}\sum_{j=1}^{m/d}[\gcd(i,j)=1] \\
+\sum_{d=1}^{\min(n,m)}d\sum_{i=1}^{n/d}\sum_{j=1}^{m/d}\sum_{k|i,k|j}\mu(k) \\
+\sum_{d=1}^{\min(n,m)}d\sum_{k|(n/d),k|(m/d)}\mu(k)(n/(dk))(m/(dk)) \\
+\sum_{d=1}^{\min(n,m)}d\sum_{k|(n/d),k|(m/d)}\mu(k)(n/(dk))(m/(dk)) \\
+\sum_{T=1}^{\min(n,m)}\sum_{d|T}d\times\mu(T/d)\times(n/T)\times(m/T) \\
+\sum_{T=1}^{\min(n,m)}(n/T)\times(m/T)\times\sum_{d|T}d\times\mu(T/d) \\
+\sum_{T=1}^{n}(n/T)^{2}\times\varphi(T) \\
+\text{precalculate the last part} \\
+\large\text{For 1e7 part} \\
+n=m \\
+\left(2\sum_{i=1}^{n}\sum_{j=1}^{i}\gcd(i,j)\right)-\frac{n(n+1)}{2} \\
+\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\sum_{j=1}^{i}[\gcd(i,j)=d]\right)-\frac{n(n+1)}{2} \\
+\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\sum_{j=1}^{i/d}[\gcd(i/d,j)=1]\right)-\frac{n(n+1)}{2} \\
+\left(2\sum_{i=1}^{n}\sum_{d|i}d\times\varphi(i/d)\right)-\frac{n(n+1)}{2} \\
+f(i)=\sum_{d|i}d\times\varphi(i/d) \\
+\text{f(i) is able to be sieved;} \\
+f(1)=1,f(p)=p-1+p=2\times p-1,f(p^{k})=(k+1)\times p^{k}-k\times p^{k-1}
+*/
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+int id,t,n,m,tag[10000010],prime[10000010],cnt;
+long long f[10000010],phi[10000010];
+long long cqpow(long long bas,int fur)
+{
+	long long res=1;
+	while(fur)
+	{
+		if(fur&1)	res*=bas;
+		bas*=bas;
+		fur>>=1;
+	}
+	return res;
+}
+void search(int x)
+{
+	tag[1]=phi[1]=1;
+	for(int i=2;i<=x;++i)
+	{
+		if(!tag[i])
+		{
+			prime[++cnt]=i;
+			phi[i]=i-1;
+		}
+		for(int j=1;j<=cnt&&(long long)prime[j]*i<=x;++j)
+		{
+			tag[prime[j]*i]=1;
+			if(i%prime[j]==0)
+			{
+				phi[prime[j]*i]=phi[i]*prime[j];
+				break;
+			}
+			else	phi[prime[j]*i]=phi[i]*(prime[j]-1);
+		}
+	}
+	for(int i=1;i<=x;++i)	phi[i]+=phi[i-1];
+}
+long long calc(int x,int y)
+{
+	long long res=0;
+	int lim=min(x,y);
+	for(int l=1,r;l<=lim;l=r+1)
+	{
+		r=min(x/(x/l),y/(y/l));
+		res+=(long long)(n/l)*(m/l)*(phi[r]-phi[l-1]);
+	}
+	return res;
+}
+void exsearch(int x)
+{
+	tag[1]=f[1]=1;
+	for(int i=2;i<=x;++i)
+	{
+		if(!tag[i])
+		{
+			prime[++cnt]=i;
+			f[i]=(i<<1)-1;
+		}
+		for(int j=1;j<=cnt&&(long long)prime[j]*i<=x;++j)
+		{
+			tag[prime[j]*i]=1;
+			if(i%prime[j]==0)
+			{
+				int tmp=i/prime[j],power=2;
+				while(tmp%prime[j]==0)
+				{
+					tmp/=prime[j];
+					power++;
+				}
+				if(tmp==1)	f[prime[j]*i]=(power+1)*cqpow(prime[j],power)-power*cqpow(prime[j],power-1);
+				else	f[prime[j]*i]=f[prime[j]*i/tmp]*f[tmp];
+				break;
+			}
+			else	f[prime[j]*i]=f[prime[j]]*f[i];
+		}
+	}
+	for(int i=1;i<=x;++i)	f[i]+=f[i-1];
+}
+long long excalc(long long x)
+{
+	return (f[x]<<1)-((x*(x+1))>>1);
+}
+int main()
+{
+	scanf("%d%d",&id,&t);
+	if(id^7)
+	{
+		search(1000000);
+		while(t--)
+		{
+			scanf("%d%d",&n,&m);
+			printf("%lld\n",calc(n,m));
+		}
+	}
+	else
+	{
+		exsearch(10000000);
+		while(t--)
+		{
+			scanf("%d%d",&n,&m);
+			printf("%lld\n",excalc(n));
+		}
+	}
+	return 0;
+}
+```
+
+</details>
+    

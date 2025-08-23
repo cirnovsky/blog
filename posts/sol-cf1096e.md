@@ -1,0 +1,77 @@
+---
+date: 2021-04-06
+title: Solution -「CF 1096E」The Top Scorer
+category: notes
+tags: [combinatorics]
+---
+
+## Description
+
+[Link](http://codeforces.com/problemset/problem/1096/E).
+
+小明在打比赛，包括小明自己一共有 $p$ 名选手参赛，每个人的得分是一个非负整数。最后的冠军是得分最高的人，如果得分最高的人有多个，就等概率从这些人中选一个当冠军。
+
+现在小明已知了自己的得分大于等于 $r$，所有选手的得分和为 $s$。求小明获胜的概率，结果对 $998244353$ 取模。
+
+## Solution
+
+抄了个 LJC00118 的非 DP 做法。
+
+考虑直接统计总方案数和合法方案数。
+
+总方案数即把 $s-r$ 个无标号小球放进 $p$ 个可为空的有标号小盒里，那么式子就是 $\dbinom{s-r+p-1}{p-1}$。
+
+对于合法方案数，枚举有 $i$ 个人与自己同分为 $j$，则这部分的答案为 $\frac{\binom{n-1}{i-1}}{i}\times{\bf f}(n-i,s-ij,j)$。
+
+${\bf f}(a,b,c)$ 为 $a$ 个人，总分 $b$，所有人严格小于 $c$ 的方案，容斥算。
+
+```cpp
+#include<bits/stdc++.h>
+typedef long long LL;
+const int MOD=998244353;
+void exGCD(int one,int ano,int &x,int &y) {
+	if(ano==0) {
+		x=1;
+		y=0;
+	}
+	else {
+		exGCD(ano,one%ano,y,x);
+		y-=(one/ano)*x;
+	}
+}
+int inv(int val) {
+	int res,w;
+	exGCD(val,MOD,res,w);
+	return (res%MOD+MOD)%MOD;
+}
+int far[5110],exfar[5110];
+int C(int n,int k) {
+	if(n<k)	return 0;
+	else	return LL(far[n])*exfar[k]%MOD*exfar[n-k]%MOD;
+}
+int s,r,n,ans;
+int f(int a,int b,int c) { // a persons exist, sum of scores is b, everyone's score < c
+	if(a==0) {
+		if(b==0)	return 1;
+		else	return 0;
+	}
+	int res=0,cur=1;
+	for(int i=0;i<=a && i*c<=b;++i) {
+		res=(res+LL(cur)*C(b-i*c+a-1,a-1)%MOD*C(a,i)%MOD+MOD)%MOD;
+		cur=MOD-cur;
+	}
+	return res;
+}
+int main() {
+	scanf("%d %d %d",&n,&s,&r);
+	far[0]=1;
+	for(int i=1;i<=s+n;++i)	far[i]=LL(far[i-1])*i%MOD;
+	for(int i=0;i<=s+n;++i)	exfar[i]=inv(far[i]);
+	for(int i=1;i<=n;++i) {
+		for(int j=r;j<=s && i*j<=s;++j)	ans=(ans+LL(C(n-1,i-1))*f(n-i,s-i*j,j)%MOD*inv(i)%MOD)%MOD;
+	}
+	printf("%d\n",int(LL(ans)*inv(C(s-r+n-1,n-1))%MOD));
+	return 0;
+}
+```
+    

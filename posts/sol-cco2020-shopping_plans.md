@@ -1,0 +1,125 @@
+---
+date: 2023-10-27
+title: Solution -「CCO 2020」Shopping Plans
+category: notes
+tags: [dp]
+---
+
+
+## Desc.
+
+[Link.](https://www.luogu.com.cn/problem/P6646)
+
+有 $N$ 个商品, 每个商品有个种类 $a_i$, 有个价格 $c_i$.
+
+对于第 $j$ 个种类, 必须购买个数位于 $[x_j,y_j]$ 的商品, 即最少购买 $x_j$ 个, 最多购买 $y_j$ 个该种类的商品.
+
+您需要求出前 $K$ 种便宜的方案所需的价钱, 如果没有这样的方案, 请输出 `-1`.
+
+## Sol.
+
+学习了 command_block 做法.
+
+让我们用 $S$ 来表示一个方案, $\mathrm {trans} (S)$ 表示 $S$ 的后继 (不优于 $S$ 的方案, 具体有哪些需据情况而定). 如果 $\mathrm {trans} (S)$ 包含所有的后继显然是不优的. 对于这类题目, 我们要做的就是优化 $\mathrm {trans} (S)$ 的定义 (或构造方式) 使得其大小被时空限制所接受. 
+
+本题可以被分为两个部分, 分别是「$m = 1$」和「$l = r$」. 因为如果解决了后者, 我们就可以在此基础上用前者来求出答案了. 具体的优化过程就略过不述了, 仅作为方法在此记录.
+
+```cpp
+const int N = 2e5;
+const ll INF = 1.01e18;
+struct Getter {
+    struct Tuple {
+        int x, y, z;
+        ll w;
+        Tuple(int _x, int _y, int _z, ll _w)
+            : x(_x), y(_y), z(_z), w(_w) {}
+        bool operator<(const Tuple& rhs) const { return w > rhs.w; }
+    };
+    vll cseq;
+    vi seq;
+    priority_queue<Tuple> decisions;
+    int _n;
+    int lower, upper;
+    void init() {
+        _n = seq.size();
+        sort(allu(seq));
+        if (lower > _n) return void(cseq = vll{INF, INF});
+        chkmin(upper, _n);
+        decisions.emplace(lower-2, lower-1, _n-1,
+                accumulate(&seq[0], &seq[lower], 0ll));
+        next(0), next(1);
+    }
+    void next(int k) {
+        if (k < (int)cseq.size()) return;
+        if (decisions.empty()) return void(cseq.pb(INF));
+        const auto [x, y, z, w] = decisions.top();
+        decisions.pop();
+        cseq.pb(w);
+        if (z == _n-1 && x+1 == y && y+1 < upper)
+            decisions.emplace(x+1,y+1, z, w+seq[y+1]);
+        if (y >= 0 && y+1 <= z)
+            decisions.emplace(x, y+1, z, w-seq[y]+seq[y+1]);
+        if (x >= 0 && x+1 < y)
+            decisions.emplace(x-1, x+1, y-1, w-seq[x]+seq[x+1]);
+    }
+} total[N+5];
+struct Decision {
+    int p, idx;
+    ll w;
+    Decision(int _p, int _i, ll _w)
+        : p(_p), idx(_i), w(_w) {}
+    bool operator<(const Decision& rhs) const { return w > rhs.w; }
+};
+int n, m, k;
+int main() {
+    ignore = freopen("plan.in", "r", stdin);
+    ignore = freopen("plan.out", "w", stdout);
+    ios::sync_with_stdio(0);
+    IN.tie(nullptr);
+    IN > n > m > k;
+    for (int i=0,fu,ck;i<n;++i)
+        IN > fu > ck, total[fu].seq.pb(ck);
+    for (int i=1;i<=m;++i)
+        IN > total[i].lower > total[i].upper;
+    for (int i=1;i<=m;++i)
+        total[i].init();
+    sort(total+1, total+m+1, [&](const Getter& lhs, const Getter& rhs) {
+        return lhs.seq[1]-lhs.seq[0] < rhs.seq[1]-rhs.seq[0];
+    });
+    priority_queue<Decision> heap; {
+        ll s0 = 0;
+        for (int i=1;i<=m;++i)
+            s0 += total[i].cseq[0], chkmin(s0, INF);
+        heap.emplace(0, 0, s0);
+    }
+    int fuck = 0;
+    while (fuck < k && !heap.empty()) {
+        const auto [p, idx, w] = heap.top();
+        heap.pop();
+        if (w >= INF) break;
+        OUT < w < "\n"; ++fuck;
+        if (p < m && idx == 1)
+            heap.emplace(p+1, 1, w-total[p].cseq[1]+total[p].cseq[0]-total[p+1].cseq[0]+total[p+1].cseq[1]);
+        if (p < m)
+            heap.emplace(p+1, 1, w-total[p+1].cseq[0]+total[p+1].cseq[1]);
+        if (p >= 1) {
+            total[p].next(idx+1);
+            heap.emplace(p, idx+1, w-total[p].cseq[idx]+total[p].cseq[idx+1]);
+        }
+    }
+    for (;fuck<k;++fuck) OUT < "-1\n";
+}
+```
+
+---
+
+> / <span style="font-variant: small-caps;">When</span> that I was young and a little tiny boy, /
+>
+> / &emsp;With hey, ho, the wind and the rain, /
+>
+> / A foolish thing was but a toy, /
+>
+> / &emsp;For the rain it raineth every day. /
+>
+> —— [William Shakespeare - In *Twelfth Night*](https://en.wikipedia.org/wiki/Twelfth_Night)
+    

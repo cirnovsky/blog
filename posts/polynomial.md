@@ -1,0 +1,58 @@
+---
+date: 2021-03-14
+title: Note -「Polynomial」
+category: notes
+tags: [maths,geometry,polynomials]
+---
+
+## Part. 1 FFT
+
+### Part. 1-1 Main
+
+对于一个 $n$ 次多项式 $F(x)=\sum_{i=0}^{n}a_{i}x^{i}$，在平面直角坐标系中可以由 $n+1$ 个点唯一确定。
+
+考虑带什么样的 $x$ 进去，能够快速计算 $x^{n}$ 并且有一定的性质，DFT 采用的是复单位根。
+
+那么 DFT 就是把 $F(x)$ 转为点值表示。我们来推式子：
+
+先令 $L(x)=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}a_{2i}x^{2i},R(x)=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}a_{2i+1}x^{2i}$。
+$$
+\begin{aligned}
+F(\omega_{n}^{k})&=L((\omega_{n}^{k})^{2})+\omega_{n}^{k}R((\omega_{n}^{k})^{2}) \\
+&=L(\omega_{n}^{2k})+\omega_{n}^{k}R(\omega_{n}^{2k}) \\
+&=L(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})+\omega_{n}^{k}R(\omega_{\lfloor\frac{n}{2}\rfloor}^{2k}) \\
+\end{aligned}
+$$
+同时：
+$$
+\begin{aligned}
+F(\omega_{n}^{k+\lfloor\frac{n}{2}\rfloor})&=L(\omega_{n}^{2k})+\omega_{n}^{k+\lfloor\frac{n}{2}\rfloor}R(\omega_{n}^{2k}) \\
+&=L(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})-\omega_{n}^{k}R(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})
+\end{aligned}
+$$
+于是你直接分治，这是 DFT，注意要把多项式长度调整为 $2$ 的幂。
+
+递归常数大，考虑迭代。你会发现分治后的序列与原序列的关系是下标的二进制反转，然后就完了。
+
+```cpp
+void fft(Poly &f,int op)
+{
+	for(int i=0;i<lim;++i)	if(i<rev[i])	swap(f[i],f[rev[i]]);
+	for(int len=2;len<=lim;len<<=1)
+	{
+		comp bas(cos(2*bh_pi/len),op*sin(2*bh_pi/len));
+		for(int fr=0;fr<lim;fr+=len)
+		{
+			comp now(1,0);
+			for(int ba=fr;ba<fr+(len>>1);++ba,now*=bas)
+			{
+				comp tmp=now*f[ba+(len>>1)];
+				f[ba+(len>>1)]=f[ba]-tmp;
+				f[ba]+=tmp;
+			}
+		}
+	}
+	if(op==-1)	for(int i=0;i<lim;++i)	f[i]/=lim;
+}
+```
+    

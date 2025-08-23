@@ -1,0 +1,42 @@
+---
+date: 2022-07-12
+title: 「codeforces - 185D」Visit of the Great
+category: notes
+tags: [number-theory,combinatorics]
+---
+
+[link。](https://codeforces.com/problemset/problem/185/D)
+
+简单提一下做法，注意到 $k^{2^a}\equiv k^{2^b}\equiv-1\equiv (-1)^{2^{b-a}}=1\pmod{(k^{2^a}+1,k^{2^{b}}+1)}$，所以 $\gcd$ 只会是 $1$ 或 $2^{r-l}$，取决于 $k$ 的就行，于是求一个 product 即可。
+
+接下来是这篇题解的重点，聚焦 $\displaystyle \prod\left(k^{2^i}+1\right)=\sum_{i=0}^{2^{r-l+1}-1}\left(k^{2^l}\right)^i$ 做补充。
+
+不妨从二项式乘法的角度来看，举例 $\left(k^{2^i}+1\right)\left(k^{2^j}+1\right)\left(k^{2^w}+1\right)$，不妨将 $k^{2^x}$ 看作是选择，将 $1$ 看作是不选择，那么一个长度为 $r-l+1$ 的二进制数即可表示出这个乘积所有的状态，不妨设这个状态为 $S$，注意到 $S$ 对答案的贡献是在做加法，并且因为类似 $2^i+2^j+2^w$ 的指数相加正好可以凑出 $S$，所以 $S$ 的贡献就是 $\left(k^{2^l}\right)^S$，得证。
+
+```cpp
+void executer() {
+    int k, p;
+    LL l, r;
+    cin >> k >> l >> r >> p;
+    SetMod(p-1);
+    int e = qpow(2, l), e2 = qpow(2, r-l+1);
+    SetMod(p);
+    int K = k%p ? qpow(k, e) : 0, ans;
+    if (K == 0) {
+        ans = 1;
+    }
+    else {
+        if (K == 1) {
+            ans = qpow(2, r-l+1);
+        }
+        else {
+            ans = mul(sub(qpow(K, e2), 1), inv(sub(K, 1)));
+        }
+    }
+    if (k%2) {
+        mul_eq(ans, inv(qpow(2, r-l)));
+    }
+    cout << ans << "\n";
+}
+```
+    

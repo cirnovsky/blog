@@ -1,0 +1,398 @@
+---
+date: 2021-03-02
+title: Solution Set -「ABC 193」
+category: notes
+tags: [data-structures,number-theory,flows]
+---
+
+# 「ABC 193A」Discount
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_a).
+
+略。
+
+<details>
+
+```cpp
+#include<cstdio>
+int main()
+{
+	int a,b;
+	scanf("%d %d",&a,&b);
+	printf("%.2f\n",(1.0-(double)b/(double)a)*100.0);
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 193B」Play Snuke
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_b).
+
+排序。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+struct node
+{
+	int tim,pay,ps;
+}nodes[100010];
+bool cmp(node one,node ano)
+{
+	return one.pay<ano.pay;
+}
+int ans=-1;
+int main()
+{
+	int n;
+	scanf("%d",&n);
+	for(int i=1;i<=n;++i)	scanf("%d %d %d",&nodes[i].tim,&nodes[i].pay,&nodes[i].ps);
+	sort(nodes+1,nodes+n+1,cmp);
+	for(int i=1;i<=n;++i)
+	{
+		if(((int)((double)nodes[i].tim-0.5)+1)<nodes[i].ps)
+		{
+			ans=nodes[i].pay;
+			break;
+		}
+	}
+	printf("%d\n",ans);
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 193C」Unexpressed
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_c).
+
+可以容斥，也可以暴力枚举 `std::set` 去重。
+
+<details>
+
+```cpp
+#include<set>
+#include<iostream>
+#define int long long
+using namespace std;
+set<int> app;
+signed main()
+{
+	int n,ians=0;
+	cin>>n;
+	for(int i=2;i*i<=n;++i)
+	{
+		for(int j=i*i;j<=n;j*=i)
+		{
+			if(!app.count(j))
+			{
+				++ians;
+				app.insert(j);
+			}
+		}
+	}
+	cout<<n-ians;
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 193D」Poker
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_d).
+
+开个答案+单位贡献的结构体，然后模拟。
+
+<details>
+
+```cpp
+#include<iostream>
+#include<iomanip>
+using namespace std;
+#define int long long
+#define ID(c) ((c)-'0')
+int k,num[20];
+char s[20],t[20];
+struct node
+{
+	int iths[20],sum,c[20];
+	int spow(int fur)
+	{
+		int res=1;
+		for(int i=1;i<=fur;++i)	res*=10;
+		return res;
+	}
+	void getscor(char x[])
+	{
+		for(int i=1;i<=4;++i)	++c[ID(x[i])];
+		for(int i=1;i<=9;++i)
+		{
+			iths[i]=i*spow(c[i]);
+			sum+=iths[i];
+		}
+	}
+	void Op(int pos,int delta)
+	{
+		c[pos]+=delta;
+		sum-=iths[pos];
+		if(~delta)	iths[pos]*=10;
+		else	iths[pos]/=10;
+		sum+=iths[pos];
+	}
+}tak,aok;
+signed main()
+{
+		ios::sync_with_stdio(false);
+		cin.tie(0);
+		cout.tie(0);
+	cin>>k>>(s+1)>>(t+1);
+	for(int i=1;i<=9;++i)	num[i]=k;
+	for(int i=1;i<=4;++i)	--num[ID(s[i])],--num[ID(t[i])];
+	tak.getscor(s);
+	aok.getscor(t);
+	int winans=0,allans=0;
+	for(int i=1;i<=9;++i)
+	{
+		for(int j=1;j<=9;++j)
+		{
+			tak.Op(i,1);
+			aok.Op(j,1);
+			if(tak.sum>aok.sum)
+			{
+				if(i^j)	winans+=num[i]*num[j];
+				else	winans+=num[i]*(num[j]-1);
+			}
+			tak.Op(i,-1);
+			aok.Op(j,-1);
+		}
+	}
+	for(int i=1;i<=9;++i)
+	{
+		for(int j=1;j<=9;++j)
+		{
+			if(i^j)	allans+=num[i]*num[j];
+			else	allans+=num[i]*(num[j]-1);
+		}
+	}
+	cout<<fixed<<setprecision(6)<<(double)winans/(double)allans<<endl;
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 193E」Oversleeping
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_e).
+
+开始想到计算几何去了，打了很久。
+
+实际上因为 $500$ 的范围，你可以直接枚举余数然后 exCRT 合并。
+
+<details>
+
+```cpp
+#include<cstdio>
+#include<climits>
+#include<algorithm>
+using namespace std;
+typedef long long LL;
+const LL INF=LONG_LONG_MAX;
+namespace NumbTheo
+{
+	LL ftimes(LL bas,LL fur,LL mod)
+	{
+		LL res=0;
+		while(fur)
+		{
+			if(fur&1)	res=(res+bas)%mod;
+			bas=(bas+bas)%mod,fur>>=1;
+		}
+		return res;
+	}
+	LL exGCD(LL one,LL ano,LL &x,LL &y)
+	{
+		if(ano==0)	return (x=1,y=0,one);
+		else
+		{
+			LL tmp=exGCD(ano,one%ano,y,x);
+			y-=(one/ano)*x;
+			return tmp;
+		}
+	}
+	LL exCRT(LL n,LL one[],LL ano[])
+	{
+		LL x,y,res=one[1],M=ano[1];
+		for(int i=2;i<=n;++i)
+		{
+			LL a=M,b=ano[i],c=(one[i]-res%b+b)%b,tmp=exGCD(a,b,x,y),d=b/tmp;
+			if(c%tmp)	return -1;
+			x=ftimes(x,c/tmp,d);
+			res+=x*M,M*=d,res=(res%M+M)%M;
+		}
+		return (res%M+M)%M;
+	}
+};
+int t;
+LL one[10],ano[10],ans;
+int main()
+{
+	scanf("%d",&t);
+	while(t--)
+	{
+		LL X,Y,P,Q;
+		scanf("%lld %lld %lld %lld",&X,&Y,&P,&Q);
+		ans=INF;
+		for(LL i=X;i<X+Y;++i)
+		{
+			for(int j=P;j<P+Q;++j)
+			{
+				using namespace NumbTheo;
+				one[1]=i,ano[1]=((X+Y)<<1),one[2]=j,ano[2]=P+Q;
+				LL tmp=exCRT(2,one,ano);
+				if(~tmp)	ans=min(ans,tmp);
+			}
+		}
+		if(ans==INF)	printf("infinity\n");
+		else	printf("%lld\n",ans);
+	}
+	return 0;
+}
+```
+
+</details>
+
+# 「ABC 193F」Zebraness
+
+[Link](https://atcoder.jp/contests/abc193/tasks/abc193_f).
+
+把 $i+j$ 为奇数的地方反转一下，然后连边求最小割。
+
+<details>
+
+```cpp
+#include<queue>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+typedef long long LL;
+#define getID(x,y) (((x)-1)*n+(y))
+namespace MaxFlow
+{
+	queue<int> q;
+	const LL INF=1e9;
+	int S,T,head[10010],Cur[10010],cntot=1,all,vis[10010];
+	LL dep[10010];
+	struct Edge
+	{
+		int to,nxt;
+		LL c;
+		Edge(int A=0,int B=0,LL C=0){to=A,nxt=B,c=C;}
+	}as[500010];
+	bool bfs()
+	{
+		for(int i=1;i<=all;++i)	vis[i]=0,dep[i]=INF;
+		q.push(S),dep[S]=0,vis[S]=1;
+		while(!q.empty())
+		{
+			int now=q.front();
+			q.pop(),vis[now]=0;
+			for(int i=head[now];i;i=as[i].nxt)
+			{
+				int y=as[i].to;
+				LL c=as[i].c;
+				if(c&&dep[y]>dep[now]+1)
+				{
+					dep[y]=dep[now]+1;
+					if(!vis[y])	q.push(y),vis[y]=1;
+				}
+			}
+		}
+		return dep[T]<INF;
+	}
+	LL dfs(int x,LL lav)
+	{
+		if(x==T)	return lav;
+		LL used=0;
+		vis[x]=1;
+		for(int &i=Cur[x];i;i=as[i].nxt)
+		{
+			int y=as[i].to;
+			LL c=as[i].c;
+			if(c&&dep[y]==dep[x]+1&&!vis[y])
+			{
+				LL tmp=dfs(y,min(lav-used,c));
+				as[i].c-=tmp,as[i^1].c+=tmp,used+=tmp;
+				if(lav==used)	break;
+			}
+		}
+		if(used<lav)	dep[x]=INF;
+		vis[x]=0;
+		return used;
+	}
+	LL Dinic()
+	{
+		LL res=0;
+		while(bfs())
+		{
+			for(int i=1;i<=all;++i)	vis[i]=0,Cur[i]=head[i];
+			res+=dfs(S,INF);
+		}
+		return res;
+	}
+}using namespace MaxFlow;
+int n;
+int rop()
+{
+	char res=getchar();
+	while((res^'B')&&(res^'W')&&(res^'?'))	res=getchar();
+	if(res=='?')	return -1;
+	else if(res=='B')	return 1;
+	else	return 0;
+}
+void addEdge(int one,int ano,int lav)
+{
+	as[++cntot]=Edge(ano,head[one],lav);
+	head[one]=cntot;
+	as[++cntot]=Edge(one,head[ano],0);
+	head[ano]=cntot;
+}
+int main()
+{
+	scanf("%d",&n),all=n*n;
+	S=(++all),T=(++all);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+		{
+			int x=rop();
+			if(~x)
+			{
+				if((i+j)&1)	x^=1;
+				if(x)	addEdge(S,getID(i,j),INF);
+				else	addEdge(getID(i,j),T,INF);
+			}
+		}
+	}
+	for(int i=1;i<n;++i)
+	{
+		for(int j=1;j<=n;++j)	addEdge(getID(i,j),getID(i+1,j),1),addEdge(getID(i+1,j),getID(i,j),1);
+	}
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<n;++j)	addEdge(getID(i,j),getID(i,j+1),1),addEdge(getID(i,j+1),getID(i,j),1);
+	}
+	printf("%lld\n",2*n*(n-1)-Dinic());
+	return 0;
+}
+```
+
+</details>
+    

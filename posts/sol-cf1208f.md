@@ -1,0 +1,69 @@
+---
+date: 2022-08-02
+title: 「codeforces - 1208F」Bits and Pieces
+category: notes
+tags: [dp,greedy]
+---
+
+[link。](http://codeforces.com/problemset/problem/1208/F)
+
+考虑把原问题写成一个在 $\left(\log_2 \max v \right) \times n$ 的矩阵里选出三列，我们首先预处理出 $j \cap q$。具体，我们需要对于每一个权值 $v$ 求出一个最大的下标 $p$（$1 \leqslant p \leqslant n$）满足存在极大的 $q < p$ 且 $v \cap a_p \cap a_q = v$，即 $v \subseteq \left(a_p \cap a_q\right)$，这个可以做一个二元组 dp，即设 $f_v$ 为对于 $v$ 而言的答案，注意到 $p$ 和 $q$ 的实际意义是「满足左右两边存在有一个位置做并操作后是 $v$ 的超集的位置下标」的最大值和次大值，所以更新答案是容易的。
+
+考虑如何转移。对于一个左闭右开区间 $[0, 2^n)$，我们分治求出 $[0, 2^{n-1})$ 和 $[2^{n-1}, 2^n)$ 的 dp，当然左边区间的 dp 值不会对右边区间产生影响，所以我们考虑右边区间对左边区间的影响。$\forall i \in [l, m)$，我们需要从 $i$ 的超集转移到 $i$，因为在 dp 时我们实际上是把所有贡献放到一个点上，又注意到 $i-l+m$ 和 $i$ 的关系就是二进制意义下多了一个最高位的 $1$，所以只需要从 $i-l+m$ 转移到 $i$ 即可（有点谜语，但就这样吧）。
+
+然后就贪心取最高位，挨个取 max 就行了。
+
+```cpp
+int n, a[1000100], qwq;
+pii dp[3000100];
+pii upd(const pii& x, const pii& y) {
+    if (x.first > y.first) {
+        return pii(x.first, max(y.first, x.second));
+    }
+    else {
+        return pii(y.first, max(x.first, y.second));
+    }
+}
+void sos_dp(int l, int r) {
+    if (r-l == 1) {
+        return;
+    }
+    int mid = (l+r)/2;
+    sos_dp(l, mid), sos_dp(mid, r);
+    for (int i=l; i<mid; ++i) {
+        dp[i] = upd(dp[i], dp[i-l+mid]);
+    }
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> n;
+    for (int i=1; i<=n; ++i) {
+        cin >> a[i];
+        dp[a[i]] = upd(dp[a[i]], pii(i, 0));
+    }
+    qwq = 1;
+    for (int up=*max_element(a+1, a+n+1); (1<<qwq) <= up;) {
+        qwq++;
+    }
+    sos_dp(0, 1<<qwq);
+    int ans = 0;
+    for (int i=1; i<=n; ++i) {
+        int offset = 0;
+        bool f = 0;
+        for (int j=qwq; j>=0; --j) {
+            if (~(a[i]>>j)&1 && dp[offset|(1<<j)].second > i) {
+                offset |= 1<<j, f = 1;
+            }
+        }
+        if (dp[offset].second > i) {
+            f = 1;
+        }
+        if (f) {
+            cmax(ans, a[i]|offset);
+        }
+    }
+    cout << ans << "\n";
+}
+```
+    

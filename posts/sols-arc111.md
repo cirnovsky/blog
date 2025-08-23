@@ -1,0 +1,315 @@
+---
+date: 2021-01-15
+title: Solution Set -「ARC 111」
+category: notes
+tags: [maths,data-structures,graph-theory,greedy,number-theory]
+---
+
+# 「ARC 111A」Simple Math 2
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_a?lang=en).
+
+$\lfloor \frac{10^N - kM^2}{M} \rfloor \equiv \lfloor \frac{10^N}{M} - kM \rfloor \equiv \lfloor \frac{10^N}{M} \rfloor - kM \equiv \lfloor \frac{10^N}{M} \rfloor \pmod M (k \in \mathbb{Z})$
+
+<details>
+
+```cpp
+#include <iostream>
+
+using i64 = long long;
+
+int cpow ( int bas, i64 idx, const int p ) {
+	int res = 1;
+	while ( idx ) {
+		if ( idx & 1 )	res = ( i64 )res * bas % p;
+		bas = ( i64 )bas * bas % p, idx >>= 1;
+	}
+	return res;
+}
+
+int main () {
+	std::ios::sync_with_stdio ( 0 ); std::cin.tie ( 0 ); std::cout.tie ( 0 );
+	i64 n; int m; std::cin >> n >> m;
+	std::cout << ( cpow ( 10, n, m * m ) / m ) % m << '\n';
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 111B」Reversible Cards
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_b?lang=en).
+
+nowcoder 原题。
+
+<details>
+
+```cpp
+#include<cstdio>
+int n,cab[400010],fa[400010],a,b,ans;
+int findset(int x)
+{
+	if(fa[x])	return fa[x]=findset(fa[x]);
+	else	return x;
+}
+int main()
+{
+	scanf("%d",&n);
+	for(int i=1;i<=n;++i)
+	{
+		scanf("%d%d",&a,&b);
+		a=findset(a);
+		b=findset(b);
+		if((a^b)&&(!cab[a]||!cab[b]))
+		{
+			fa[a]=b;
+			cab[b]|=cab[a];
+			ans++;
+		}
+		else if(!cab[a])
+		{
+			cab[a]=1;
+			ans++;
+		}
+	}
+	printf("%d\n",ans);
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 111C」Too Heavy
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_c?lang=en).
+
+构造出一个操作序列。
+
+先不考虑最小，只考虑构造出来。
+
+参考某道 ABC D 题，直接连边。
+
+$i\rightarrow p_{i}\rightarrow p_{p_{i}}\rightarrow\cdots\rightarrow i$。
+
+![craft.png](http://61.186.173.89:2019/2021/01/13/93b01537c1307.png)
+
+$1\ 2$ 分别表示 person、baggage。
+
+再想，相当于我们想要让，$1$ and $2$ 一一对应。
+
+一个 $(u,v)$ 的 $2$（即 $v$）不能被交换只在 $a_{u}\le b_{v}$。
+
+所以无解就是这个环中存在 $a_{u}\le b_{v}$。
+
+剩下构造，先考虑满足规则。
+
+贪心的选一个最大的 $a_{i}$ 进行即可。
+
+<details>
+
+```cpp
+#include<queue>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+vector<pair<int,int> > ans;
+int n,a[200010],b[200010],p[200010],rev[200010],vis[200010];
+int main()
+{
+	scanf("%d",&n);
+	for(int i=1;i<=n;++i)	scanf("%d",&a[i]);
+	for(int i=1;i<=n;++i)	scanf("%d",&b[i]);
+	for(int i=1;i<=n;++i)
+	{
+		scanf("%d",&p[i]);
+		rev[p[i]]=i;
+	}
+	vector<int> per;
+	for(int i=1;i<=n;++i)
+	{
+		if(p[i]^i)
+		{
+			if(a[rev[i]]<=b[i])
+			{
+				printf("-1\n");
+				return 0;
+			}
+			if(!vis[i])
+			{
+				vis[i]=1;
+				per.clear();
+				per.push_back(i);
+				for(int j=p[i];j^i;j=p[j])
+				{
+					if(a[rev[j]]<=b[j])
+					{
+						printf("-1\n");
+						return 0;
+					}
+					vis[j]=1;
+					per.push_back(j);
+				}
+				int pos=0,val=0;
+				for(int j=0;j<per.size();++j)
+				{
+					if(a[per[pos]]<=a[per[j]])
+					{
+						pos=j;
+						val=per[j];
+					}
+				}
+				for(int j=pos+1;j<per.size();++j)	ans.push_back(make_pair(val,per[j]));
+				for(int j=0;j<pos;++j)	ans.push_back(make_pair(val,per[j]));
+			}
+		}
+	}
+	printf("%d\n",ans.size());
+	for(int i=0;i<ans.size();++i)	printf("%d %d\n",ans[i].first,ans[i].second);
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 111D」Orientation
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_d?lang=en).
+
+像个贪心？
+
+- $c_{u}\neq c_{v}$
+
+  - $c_{u}>c_{v}$：$\rightarrow$
+  - $c_{u}<c_{v}$：$\leftarrow$
+- $c_{u}=c_{v}$
+
+在一个环里，深搜即可。
+
+~~这 C D 放反了吧~~
+
+<details>
+
+```cpp
+#include<queue>
+#include<cstdio>
+#include<string>
+#include<algorithm>
+using namespace std;
+vector<pair<int,int> > e[110];
+vector<string> ans;
+int n,m,c[110],eve[110][110],vis[110];
+void dfs(int x)
+{
+	vis[x]=1;
+	for(int i=1;i<=n;++i)
+	{
+		if(eve[x][i])
+		{
+			eve[i][x]=0;
+			if(!vis[i])	dfs(i);
+		}
+	}
+}
+int main()
+{
+	scanf("%d%d",&n,&m);
+	for(int i=1;i<=m;++i)
+	{
+		int u,v;
+		scanf("%d%d",&u,&v);
+		e[u].push_back(make_pair(v,i));
+	}
+	for(int i=1;i<=n;++i)	scanf("%d",&c[i]);
+	ans.resize(m);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=0;j<e[i].size();++j)
+		{
+			int y=e[i][j].first,id=e[i][j].second-1;
+			if(c[i]>c[y])	ans[id]="->";
+			else if(c[i]<c[y])	ans[id]="<-";
+			else	eve[i][y]=eve[y][i]=1;
+		}
+	}
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=0;j<e[i].size();++j)
+		{
+			int y=e[i][j].first,id=e[i][j].second-1;
+			dfs(i);
+			if(eve[i][y])	ans[id]="->";
+			else if(eve[y][i])	ans[id]="<-";
+		}
+	}
+	for(int i=0;i<ans.size();++i)	printf("%s\n",ans[i].c_str());
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 111E」Simple Math 3
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_e?lang=en).
+
+即求：
+$$
+\sum_{i=1}^{\infty}[\lfloor\frac{A+B\times i-1}{D}\rfloor=\lfloor\frac{A+C\times i}{D}\rfloor]
+$$
+题目说这玩意儿是 finite，然后（没加思考）跑到 U 群问成功丢人。
+
+悲伤的故事，这告诉我们问前先思考。
+
+原因是 $i$ 大了 $[A+B\times i,A+C\times i]$ 的长度一定 $\ge D$。
+
+具体来说是 $i>\frac{D-2}{C-B}$ 的时候就完了。
+
+那么式子改写为：
+$$
+\sum_{i=1}^{\frac{D-2}{C-B}}[\lfloor\frac{A+B\times i-1}{D}\rfloor=\lfloor\frac{A+C\times i}{D}\rfloor]
+$$
+继续分析，此时的区间 $[A+B\times i,A+C\times i]$ 的长度小于 $D$，里面最多有一个数是 $D$ 的 multiple。
+
+不会了 看题解 要类欧 不会了 抄板子 过题了
+
+这种推不复杂考板的题好草人啊。。。。
+
+upd：
+
+official editorial 说可以用 AC lib 的 `floor_sum` 直接算。
+
+屑行为 [details](https://zhuanlan.zhihu.com/p/343777907)。
+
+<details>
+
+```cpp
+#include<cstdio>
+int T;
+long long a,b,c,d;
+long long dfs(long long a,long long b,long long c,long long n)
+{
+	if(a>=c||b>=c)	return dfs(a%c,b%c,c,n)+(a/c)*(n+1)*n/2+(b/c)*(n+1);
+	else if(a==0)	return 0;
+	else	return (a*n+b)/c*n-dfs(c,c-b-1,a,(a*n+b)/c-1);
+}
+int main()
+{
+	scanf("%d",&T);
+	while(T--)
+	{
+		scanf("%lld%lld%lld%lld",&a,&b,&c,&d);
+		printf("%lld\n",(d-2)/(c-b)-dfs(c,a,d,(d-2)/(c-b))+dfs(b,a-1,d,(d-2)/(c-b)));
+	}
+	return 0;
+}
+```
+
+</details>
+
+# 「ARC 111A」Simple Math 2
+
+[Link](https://atcoder.jp/contests/arc111/tasks/arc111_a?lang=en).
+
+missing。
+    

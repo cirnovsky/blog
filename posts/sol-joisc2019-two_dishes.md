@@ -1,0 +1,76 @@
+---
+date: 2022-08-15
+title: 「joisc 2019 - d2t2」ふたつの料理 Two Dishes
+category: notes
+tags: [geometry,dp]
+---
+
+[link。](https://atcoder.jp/contests/joisc2019/tasks/joisc2019_e)
+
+我要放假
+
+神仙题。
+
+首先可以把两根轴拉成平面（which is a common trick），把决策的过程看作从 $(0, 0)$ 走到 $(n, m)$，每次可以往上走或往右走（左下为 (0, 0)，右上是 (n, m)）。考虑相对于我们走出的决策路线表现出了怎样特征的点会对答案造成贡献。对于 A 套餐的操作 $i$ 处理出 $x_i$，表示做完了 A 套餐的前 i 个操作，最多还能做到 B 套餐的 x_i 操作，同理处理出 $y_j$。
+
+把 $(i, x_i)$，$(y_j, j)$ 看作点放到平面上，当 $(i, x_i)$ 在路径上方是获得 $p_i$ 的贡献，当 $(y_j, j)$ 在路径当中或下方时获得 $q_j$ 的贡献。可以先把 p_i 全部加上然后取反转化调整到和 q_j 同样的贡献条件。
+
+那么现在问题是：给出平面，找出一条从 (0, 0) 到 (n, m) 的路径，使得路径当中以及以下的点权和最大。
+
+考虑 dp，设 $f[i][j]$ 为走到 (i, j) 的最优答案。令 $s[i][j]$ 为点 $(i, j)$ 正下方以及自己的点权和，然后我们发现无论从上一行还是上一列转移写出来都不对劲（$dp[i][j] = dp[i-1][j]+f_1(i, j)+dp[i][j-1]+f_2(i, j)$ 的形式，不好优化），我们考虑从**拐点转移**（这一步很神奇，同时这一步也是我觉得整道题最 tricky 的地方，但是网上的题解都太草率了，给的转移也不能让我信服），写出的 transitions 是 $\displaystyle dp[i][j] = \max_{k \leqslant j}\{dp[i-1][k]\}+s[i][j]$，自己画一个先右再上的折箭头就理解了。
+
+考察转移发现我们有太多的无用转移，注意到平面中权重非 0 的点只有 $O(n+m)$ 个，于是我们考虑非 0 点。首先把 s[i][j] 拆成 $w_{0, j}+w_{1, j}+\dots +w_{i, j}$，这样我们的区间修改就是区间加定值而不是加一个毫无特征的序列了。再考虑前缀 max，因为我们是差分数组，我们只需要将 diff array 中的负项删除，并删除其影响，最后一位即是最大值。
+
+```cpp
+/*
+lyddnb
+dp[i][j] = max[k <= j]{dp[i-1][k]}+s[i][j]
+dp[i]: foreach j, j = premax, j += s[i][j]
+*/
+int n, m, p[1000100], q[1000100];
+ll a[1000100], b[1000100], s[1000100], t[1000100], ans, dif[1000100];
+vi<pil> g[1000100];  // g[i](x, y) point (i, x) with weight y
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> n >> m;
+  for (int i = 1; i <= n; ++i) cin >> a[i] >> s[i] >> p[i], a[i] += a[i - 1];
+  for (int i = 1; i <= m; ++i) cin >> b[i] >> t[i] >> q[i], b[i] += b[i - 1];
+  for (int i = 1; i <= n; ++i) {
+    if (a[i] > s[i]) continue;
+    int j = upper_bound(b + 1, b + m + 1, s[i] - a[i]) - b;
+    ans += p[i], g[i].eb(j, -p[i]);
+  }
+  for (int i = 1; i <= m; ++i) {
+    if (b[i] > t[i]) continue;
+    if (b[i] + a[n] <= t[i])
+      ans += q[i];
+    else {
+      int j = upper_bound(a + 1, a + n + 1, t[i] - b[i]) - a;
+      g[j].eb(i, q[i]);
+    }
+  }
+  set<int> st;
+  for (int i = 0; i <= n; ++i) {
+    sort(g[i].begin(), g[i].end());
+    for (auto const& [x, y] : g[i]) {
+      if (x <= m) {
+        if (!st.count(x)) st.insert(x), dif[x] = 0;
+        dif[x] += y;
+      }
+    }
+    for (auto const& [x, ignore] : g[i]) {
+      if (x > m) continue;
+      auto it = st.find(x);
+      while (it != st.end() && dif[*it] < 0) {
+        ll tmp = dif[*it];
+        it = st.erase(it);
+        if (it != st.end()) dif[*it] += tmp;
+      }
+    }
+  }
+  for (auto x : st) ans += dif[x];
+  cout << ans << "\n";
+}
+```
+    

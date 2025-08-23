@@ -1,0 +1,64 @@
+---
+date: 2023-09-28
+title: Solution -「JOISC 2020」建筑装饰 4
+category: notes
+tags: [dp]
+---
+
+---
+date: '2023-09-28'
+title: 'Solution -「JOISC 2020」建筑装饰 4'
+
+---
+
+朴素的 DP 形式是定义 $f_{i, j, A/B}$ 表示前 $i$ 个元素选择了 $j$ 个 $A$ 的可达性. $\mathcal O(n^2)$. 交换状态与值域, 定义 $f_{i, A/B, A/B}$ 表示前 $i$ 个元素中的最后一个元素 (即 $i$) 选择了 $A/B$, 在最大化 $A/B$ 的数量的目标下求得的 $A/B$ 的数量.
+
+转移在代码注释里, 答案倒着构造.
+
+```cpp
+/**
+ * dp[i][A/B][A/B]: 前 i 个, 第 i 个选 A 还是 B, 最大化 A/B 的数量
+ * a[i] >= a[i-1]: dp[i-1][A][A]+1 -> dp[i][A][A]; dp[i-1][A][B] -> dp[i][A][B]
+ * a[i] >= b[i-1]: dp[i-1][B][A]+1 -> dp[i][A][A]; dp[i-1][B][B] -> dp[i][A][B]
+ * b[i] >= a[i-1]: dp[i-1][A][B]+1 -> dp[i][B][B]; dp[i-1][A][A] -> dp[i][B][A]
+ * b[i] >= b[i-1]: dp[i-1][B][B]+1 -> dp[i][B][B]; dp[i-1][B][A] -> dp[i][B][A]
+*/
+enum Element {A, B};
+const int N = 1e6;
+int n, a[N + 100], b[N + 100], f[N + 100][2][2];
+char ans[N + 100];
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    rd(n), rds(a, 2 * n) , rds(b, 2 * n);
+    rep (i, 1, 2 * n) {
+        if (a[i] >= a[i - 1]) {
+            chkmax(f[i][A][A], f[i - 1][A][A] + 1);
+            chkmax(f[i][A][B], f[i - 1][A][B]);
+        }
+        if (a[i] >= b[i - 1]) {
+            chkmax(f[i][A][A], f[i - 1][B][A] + 1);
+            chkmax(f[i][A][B], f[i - 1][B][B]);
+        }
+        if (b[i] >= a[i - 1]) {
+            chkmax(f[i][B][B], f[i - 1][A][B] + 1);
+            chkmax(f[i][B][A], f[i - 1][A][A]);
+        }
+        if (b[i] >= b[i - 1]) {
+            chkmax(f[i][B][B], f[i - 1][B][B] + 1);
+            chkmax(f[i][B][A], f[i - 1][B][A]);
+        }
+    }
+    int cnt[2] = {}, last = 1e9;
+    drep (i, 2 * n, 1) {
+        if (cnt[A] + f[i][A][A] >= n && cnt[B] + f[i][A][B] >= n && a[i] <= last) last = a[i], ans[i] = 'A', cnt[A]++;
+        else if (cnt[A] + f[i][B][A] >= n && cnt[B] + f[i][B][B] >= n && b[i] <= last) last = b[i], ans[i] = 'B', cnt[B]++;
+        else {
+            cout << "-1\n"; return 0;
+        }
+    }
+    copy_n(ans + 1, 2 * n, ostream_iterator<char>(cout, ""));
+}
+```
+    
