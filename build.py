@@ -102,9 +102,6 @@ def build():
         # Write HTML file
         with open(out_path, "w", encoding="utf-8") as out:
             cnt += 1
-            print(cnt, fm["title"])
-            if cnt == 123 or cnt == 122:
-                print("FUCK ", out_path)
             out.write(final_html)
 
         # Create meta entry
