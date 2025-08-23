@@ -1,5 +1,8 @@
 name: Build Markdown to HTML
 
+permissions:
+  contents: write
+
 on:
   push:
     paths:
