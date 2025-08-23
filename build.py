@@ -74,7 +74,7 @@ def md_to_html(md_path: Path):
     with open(TEMPLATE_FILE, "r", encoding="utf-8") as tf:
         template = tf.read()
 
-    final_html = template.replace("{{{content}}}", html_body)
+    final_html = template.replace("{{{content}}}", html_body).replace("{{{title}}}", fm["title"])
     return final_html, fm, slug
 
 
