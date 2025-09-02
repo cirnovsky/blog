@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revision for Elementary Number Theory</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    <p><em>I once knew a thing or two about number theory.</em></p>
+<h1 id="bézouts-identity">Bézout's identity</h1>
+<p>It states that for any two integers $a$ and $b$, there exist integers
+$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
+two integers can <strong>always</strong> be expressed in terms of a
+linear combination of the two integers themselves.</p>
+<blockquote>
+<p><strong>Proof:</strong></p>
+<blockquote>
+<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
+</blockquote>
+<blockquote>
+<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
+and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
+$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
+</blockquote>
+<blockquote>
+<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
+by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
+$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
+contradicts with the assumption. $\blacksquare$</p>
+</blockquote>
+<p>By <strong>Lemma 1</strong> it can be deduced that
+$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
+</blockquote>
+<p>In addition, it can be also deduced that the Diophantine equation</p>
+<p>$$ ax+by=c $$</p>
+<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
+solution can be obtained by simply multiplying $x$ and $y$ by $\frac
+c{\gcd(a,b)}$.</p>
+<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
+<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
+$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
+$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
+We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
+<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
+ab\rfloor y_1) $$</p>
+<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
+<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
+	if (b == 0)
+		return PI(1, 0);
+	auto [x, y] = exgcd(b, a % b);
+	return PI(y, x - (a / b) * y);
+}
+
+</code></pre></p>
+<p><em>To be continued.</em></p>
+
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
