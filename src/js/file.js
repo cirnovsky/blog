@@ -4,8 +4,8 @@ function formatDate(s) {
     'use strict'
 
     const YY = s.slice(0, 4)
-    const mm = s.slice(4, 6)
-    const dd = s.slice(6, 8)
+    const mm = s.slice(5, 7)
+    const dd = s.slice(8, 10)
 
     const date = new Date(YY, parseInt(mm) - 1, dd)
 
