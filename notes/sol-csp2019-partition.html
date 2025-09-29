@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「CSP 2019」Partition</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    <h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P5665">Link</a>.</p>
+<p>给出一个数列，要求将其分成几段，使每段的和非严格递增，求最小的每段的和的平方和。</p>
+<h2 id="solution">Solution</h2>
+<p>注意到 $a_{i}$ 为正，对于正数有这样的结论： $$
+a^{2}+b^{2}&lt;(a+b)^{2} $$ 正确性显然。这告诉我们，分的段越多越好。</p>
+<p>现在我们来考虑如何使每段的和非严格递增。</p>
+<p>考虑暴力 DP，设 $f_{i,j}$ 为前 $i$ 个数然后上一个 breakpoint 是 $j$​
+的最小平方和，转移： $$ f_{i,j}=\min_{1\le k&lt;j,pre_{i}-pre_{j}\ge
+pre_{j}-pre_{k}}{f_{j,k}+(pre_{i}-pre_{j})^{2}} $$ $pre$
+为前缀和。当然这个 DP 什么结论都没用，没有任何技术含量。</p>
+<p>所以我们考虑优化。</p>
+<p>你会发现这个 $k$ 不是每次都要重头枚举，他是单调的，于是你维护
+$f_{j,k}$ 最小值即可，复杂度变成了 $\mathcal{O}(n^{2})$。</p>
+<p>考虑上面的结论，你会发现我们只需要找打第一个可行的转移点 $k$
+即可。</p>
+<p>意味着我们可以维护一个 $g_{i}$ 来表示：前 $i$
+个数，我们最大的一个合法 $k$。这个东西肯定是单调不降的。</p>
+<p>转移即： $$ g_{i}=\max_{pre_{i}-pre{j}\ge pre_{j}-pre_{g_{j}}}{j} $$
+变形得： $$ g_{i}=\max_{pre_{i}\ge pre_{j}\times2-pre_{g_{j}}}{j} $$
+显然判定条件的右边有单调性（$pre_{j}+(pre_{j}-pre_{g_{j}})$），左边也有单调性。</p>
+<p>然后单调队列优化即可。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+typedef __int128 _LL;
+int n,a[40000010],taskID,f[40000010],que[40000010],head,tail;
+LL pre[40000010];
+_LL ans;
+template&lt;typename T&gt;
+void read(T &amp;hhh)
+{
+	T x=0,f=1;
+	char c=getchar();
+	while(c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;)
+	{
+		if(c==&#x27;-&#x27;)	f=-1;
+		c=getchar();
+	}
+	while(c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;)	x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;),c=getchar();
+	if(~f)	hhh=x;
+	else	hhh=-x;
+}
+template&lt;typename T&gt;
+void write(T x,char las=&#x27;\n&#x27;)
+{
+	static int stk[100],top=0,f=0;
+	if(x&lt;0)	x=-x,f=1;
+	do stk[++top]=x%10,x/=10; while(x);
+	if(f)	putchar(&#x27;-&#x27;);
+	while(top)	putchar(stk[top--]^&#x27;0&#x27;);
+	putchar(las);
+}
+void generateData(int taskID)
+{
+	if(taskID)	for(int i=1;i&lt;=n;++i)	read(a[i]);
+	else
+	{
+		static int p[100010],l[100010],r[100010],b[40000010];
+		LL x,y,z;
+		int m;
+		read(x),read(y),read(z),read(b[1]),read(b[2]),read(m);
+		const int MOD=(1&lt;&lt;30);
+		for(int i=1;i&lt;=m;++i)	read(p[i]),read(l[i]),read(r[i]);
+		for(int i=3;i&lt;=n;++i)	b[i]=(LL(x)*b[i-1]%MOD+LL(y)*b[i-2]%MOD+z)%MOD;
+		for(int j=1;j&lt;=m;++j)
+		{
+			for(int i=p[j-1]+1;i&lt;=p[j];++i)	a[i]=(b[i]%(r[j]-l[j]+1))+l[j];
+		}
+	}
+	for(int i=1;i&lt;=n;++i)	pre[i]=pre[i-1]+a[i];
+}
+int main()
+{
+	read(n),read(taskID);
+	generateData(taskID^1);
+	for(int i=1;i&lt;=n;++i)
+	{
+		while(head&lt;tail&amp;&amp;pre[i]&gt;=(pre[que[head+1]]&lt;&lt;1)-pre[f[que[head+1]]])	++head;
+		f[i]=que[head];
+		while(head&lt;tail&amp;&amp;(pre[i]&lt;&lt;1)-pre[f[i]]&lt;=(pre[que[tail]]&lt;&lt;1)-pre[f[que[tail]]])	--tail;
+		que[++tail]=i;
+	}
+	for(int i=n;i;i=f[i])	ans+=_LL(pre[i]-pre[f[i]])*(pre[i]-pre[f[i]]);
+	write(ans);
+	return 0;
+}
+</code></pre></p>
+
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
