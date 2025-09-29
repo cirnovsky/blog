@@ -73,8 +73,6 @@ https://www.cirnovsky.net/articles/tracks-of-2024
 
 - 退竞赛（二度目）
 - 上大学
-- 被表白
-- 表白
 - 认识到人情冷暖与冷峻思考并不冲突
 
 # 最后
