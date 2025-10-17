@@ -59,6 +59,7 @@ def md_to_html(md_path: Path):
     html_body = subprocess.check_output(
         [
             "pandoc",
+            "--toc",
             "--from", "gfm-tex_math_dollars",
             "--to", "html",
         ],
