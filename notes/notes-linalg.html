@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes on Linear Algebra</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#miscellaneous" id="toc-miscellaneous">Miscellaneous</a>
+<ul>
+<li><a href="#a-mysterious-property-of-2times-2-matrices"
+id="toc-a-mysterious-property-of-2times-2-matrices">A mysterious
+property of $2\times 2$ matrices</a></li>
+<li><a href="#newtons-identites-contd"
+id="toc-newtons-identites-contd">Newton's Identites (Cont'd)</a></li>
+</ul></li>
+</ul>
+</nav>
+
+<p>线性代数非常有魅力.</p>
+<p>持续更新中嘟嘟嘟嘟.....</p>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<h2 id="a-mysterious-property-of-2times-2-matrices">A mysterious
+property of $2\times 2$ matrices</h2>
+<p>$$ A^2-\operatorname{tr}(A)A+\det(A)I_2=\mathbf 0 $$</p>
+<p>or</p>
+<p>$$ \lambda^2-\operatorname{tr}(A)\lambda+\det (A)=0 $$</p>
+<p>That comes from the <strong>Cayley-Hamilton theorem</strong> that
+states every square matrix over a commutative ring satisfies its own
+characteristic equation. The characteristic polynomial of an $n\times n$
+matrix $A$ is defined as $p_A(\lambda) = \det(\lambda I_n -A)$, where
+$\lambda$ is a <strong>scalar</strong> of the base ring.</p>
+<p>Each entry in $\lambda I_n-A$ is <strong>either zero or linear to
+$\lambda$</strong>. Therefore, $p_A(\lambda$) is a monic polynomial of
+$\lambda$:</p>
+<p>$$ p_A(\lambda) = \lambda^n+\sum c_i \lambda^i $$</p>
+<p>The Cayley-Hamilton theorem states that</p>
+<p>$$ p_A(A)=0 $$</p>
+<p>One use for the theorem is that it allows $A^n$ to be expressed as a
+linear combination of the lower matrix powers of $A$:</p>
+<p>$$ A^n = -\sum c_iA^i $$ Also, it is noteatble that the roots of
+$p_A(\lambda)$ are the <em>eigenvalues</em> of $A$.</p>
+<h2 id="newtons-identites-contd">Newton's Identites (Cont'd)</h2>
+<p>Define elementary symmetric polynomial $e_k(x_1,\dots,x_n)$ as: $$
+e_k(x_1,\dots,x_n)=\sum_{1\leqslant i_1&lt;\dots&lt;i_k\leqslant
+n}x_{i_1}\cdots x_{i_k} $$ and $\displaystyle p_k(x_1,\dots,x_n)=\sum
+x_i^k$.</p>
+<p><strong>Newton's identities</strong>, also known as
+<strong>Girard-Newton formulae</strong>, states that $$ ke_k(\mathbf x)
+= \sum_{i=1}^k (-1)^{i-1}e_{k-i}(\mathbf x)p_i(\mathbf x) $$
+<strong>Vieta's formulas</strong> are an example of application of
+Newton's identities in degree of two. The general version would be: $$
+\prod (x-x_i)=\sum (-1)^ie_i(\mathbf x)x^{n-i} $$</p>
+
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

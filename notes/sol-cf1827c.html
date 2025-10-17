@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「CF 1827C」Palindrome Partition</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#desc" id="toc-desc">Desc.</a></li>
+<li><a href="#sol" id="toc-sol">Sol.</a></li>
+</ul>
+</nav>
+
+<h2 id="desc">Desc.</h2>
+<p><a
+href="https://codeforces.com/problemset/problem/1827/C">Link.</a></p>
+<p>定义<strong>好串</strong>为一个或多个偶回文串拼接的结果.
+给出一个字符串, 求其为<strong>好串</strong>的子串数.</p>
+<h2 id="sol">Sol.</h2>
+<p>考试的时候犯病了, 求 $f_i$ 居然没有想到任何字符串算法,
+而去连边写成了图论题... 有点离谱. 🤔</p>
+<p>容易想到一个 DP, 设 $f_i$ 表示在 $i$ 结尾的极短偶回文串的长度, $g_i$
+表示在 $i$ 结尾的好串数量, 有 $g$ 的转移: $$ g_i = g_{i-f_i}+1 $$ 若
+$f_i$ 不存在则为 $0$. 接下来考虑怎么求 $f_i$.</p>
+<p>我们先求出 $rad_i$ 表示以<strong>间隔</strong> $i$
+为中心的回文串长度, 这个可以用各种姿势求, 比如二分 &amp; 哈希, PAM,
+Manacher etc. 然后发现 $f_i$ 可以用一个 $rad_j$ 来更新, 其中 $j &lt; i,
+j+rad_j \geqslant i$. 我们肯定希望 $i$ 和 $j$ 靠得越近越好.
+于是倒着扫描, 用并查集维护连续段, 以 $rad_i$ 更新连续段.
+这个有点没说清楚, 具体可以看代码, 代码应该会更好理解.</p>
+<p><pre><code class="language-cpp toolbar">void solve() {
+    int n; string tmp, s; cin &gt;&gt; n &gt;&gt; tmp;
+    for (int i=0;i&lt;n;++i) s.pb(tmp[i]), s.pb(&#x27;|&#x27;);
+    s.pop_back();
+    const int m = 2*n-1;
+    const ull BASE = 1331;
+    vector&lt;ull&gt; pw(m);
+    vector hs(2, vector&lt;ull&gt;(m+1));
+    pw[0] = 1;
+    for (int i=1;i&lt;m;++i) pw[i] = pw[i-1]*BASE;
+    for (int i=0;i&lt;m;++i) hs[0][i+1] = hs[0][i]*BASE+s[i]-&#x27;a&#x27;+1;
+    for (int i=m-1;i&gt;=0;--i) hs[1][i] = hs[1][i+1]*BASE+s[i]-&#x27;a&#x27;+1;
+    const auto getHash = [&amp;](int l, int r, int idx) {
+        if (idx == 0) return hs[0][r]-hs[0][l]*pw[r-l];
+        return hs[1][l]-hs[1][r]*pw[r-l];
+    };
+    vi rad(m);
+    for (int i=0;i&lt;m;++i) {
+        int l = 0, r = min(i, m-i-1), res = 0;
+        while (l &lt;= r) {
+            int mid = (l+r)/2;
+            if (getHash(i-mid, i, 0) == getHash(i+1, i+mid+1, 1)) l = mid+1, res = mid;
+            else r = mid-1;
+        }
+        rad[i] = res;
+    }
+    vi fa(m);
+    iota(allu(fa), 0);
+    const auto find = [&amp;](int u) {
+        while (u != fa[u]) u = fa[u] = fa[fa[u]];
+        return u;
+    };
+    vi f(n);
+    for (int i=m-2;i&gt;=0;i-=2) {
+        for (int j;(j=find(i+rad[i]))&gt;=i;) {
+            if (j%2 == 0) f[j/2] = (j-i+1)/2;
+            fa[j] = j-1;
+        }
+    }
+    vll g(n);
+    for (int i=0;i&lt;n;++i)
+        if (f[i]) {
+            if (i/2 &gt;= f[i]) g[i] = g[i-2*f[i]]+1;
+            else g[i] = 1;
+        }
+    cout &lt;&lt; accumulate(allu(g), 0ll) &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+<hr />
+<blockquote>
+<p>/ 光与影　是否不该在这一刻相逢 /</p>
+<p>/ 而你和我从来谁也不是谁的附庸 /</p>
+<p>/ 我放逐自己残缺的魂魄 /</p>
+<p>/ 在镜子背面那一国 /</p>
+<p>/ 一路上从没有挽留过 /</p>
+<p>/ 那些徒劳奔波　却不曾完整的我 /</p>
+<p>—— <a href="https://vocadb.net/S/291185/">Kide - <em>零和
+Zero-Sum</em> ft. Minus</a></p>
+</blockquote>
+
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
