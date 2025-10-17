@@ -60,6 +60,7 @@ def md_to_html(md_path: Path):
         [
             "pandoc",
             "--toc",
+            "--template=toc.html",
             "--from", "gfm-tex_math_dollars",
             "--to", "html",
         ],
