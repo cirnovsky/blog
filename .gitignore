@@ -6,3 +6,4 @@ typecho_metas.sql
 typecho_relationships.sql
 test.html
 **/*.swp
+**/.DS_Store

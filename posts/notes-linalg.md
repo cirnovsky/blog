@@ -85,7 +85,11 @@ If $A$ and $B$ are $n \times n$ matrices and $A \sim B$, then:
 
    tr(B) = tr(P^-1 A P) = tr(P P^-1 A) = tr(IA) = tr(A)
 
-4. 
+4. p_A(x) = p_B(x)
+
+   p_A(x) = det(A - lambda I)
+
+5. A and B have the same eigenvalues
 
 ---
 
