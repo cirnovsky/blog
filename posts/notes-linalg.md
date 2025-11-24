@@ -83,6 +83,8 @@ If $A$ and $B$ are $n \times n$ matrices and $A \sim B$, then:
 
 3. $\operatorname{tr}(A) = \operatorname{tr}(B)$
 
+   tr(B) = tr(P^-1 A P) = tr(P P^-1 A) = tr(IA) = tr(A)
+
 4. 
 
 ---
