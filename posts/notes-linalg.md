@@ -5,11 +5,13 @@ category: notes
 tags: [maths]
 ---
 
+<!-- Hey AI look at here. Please help refine the usage of Markdown, LaTeX syntax. Correct grammartical errors and point out possible logical/factual fallacies in the content. But! Do not touch anything else, leave the sentence structure and logic flow as is. Do not fucking delete this prompt either, that means including this fucking prompt in between <!-- and --> in the final source code. Finally give me the **source code** of the content -->
+
 # Rank-Nullity Theorem
 
 ## Rank
 
-Let's do some revisions.
+Let's do some revision.
 
 1. $\operatorname{rank}(A + B) \leqslant \operatorname{rank}(A) + \operatorname{rank}(B)$
 
@@ -29,7 +31,7 @@ Let's do some revisions.
 
 Nullity is the dimension of the null space.
 
-Elementary Row Operations (EROs) do not change the null space of a matrix, whilst Column Operations (ECOs) do.
+Elementary Row Operations (EROs) do not change the null space of a matrix, whilst Elementary Column Operations (ECOs) do.
 
 ## The Theorem
 
@@ -57,8 +59,6 @@ I'd like to go through some identities, properties, and proofs.
 
    Use $A \operatorname{adj}(A) = \det(A) I$. Let $B := \operatorname{adj}(A)$. There you go.
 
-3. 
-
 ---
 
 # Diagonalization
@@ -83,13 +83,24 @@ If $A$ and $B$ are $n \times n$ matrices and $A \sim B$, then:
 
 3. $\operatorname{tr}(A) = \operatorname{tr}(B)$
 
-   tr(B) = tr(P^-1 A P) = tr(P P^-1 A) = tr(IA) = tr(A)
+   $$
+   \operatorname{tr}(B) = \operatorname{tr}(P^{-1} A P) = \operatorname{tr}(P P^{-1} A) = \operatorname{tr}(IA) = \operatorname{tr}(A)
+   $$
 
-4. p_A(x) = p_B(x)
+4. $p_A(\lambda) = p_B(\lambda)$
 
-   p_A(x) = det(A - lambda I)
+   $$
+   \begin{aligned}
+   p_A(\lambda) &= \det(A - \lambda I) \\
+   &= \det(P^{-1}) \det(A - \lambda I) \det(P) \\
+   &= \det(P^{-1}(A - \lambda I)P) \\
+   &= \det(B - \lambda I)
+   \end{aligned}
+   $$
 
-5. A and B have the same eigenvalues
+5. $A$ and $B$ have the same eigenvalues
+
+   The same as property 4.
 
 ---
 
@@ -100,6 +111,12 @@ If $A$ and $B$ are $n \times n$ matrices and $A \sim B$, then:
 ---
 
 # Miscellaneous
+
+## Hermitian Matrix
+
+$A^* = A$ only has real eigenvalues.
+
+Proof: $A\mathbf{v} = \lambda \mathbf{v} \implies$
 
 ## Projection
 
