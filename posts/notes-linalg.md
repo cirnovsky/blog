@@ -5,7 +5,7 @@ category: notes
 tags: [maths]
 ---
 
-<!-- Hey AI look at here. Please help refine the usage of Markdown, LaTeX syntax. Correct grammartical errors and point out possible logical/factual fallacies in the content. But! Do not touch anything else, leave the sentence structure and logic flow as is. Do not fucking delete this prompt either, that means including this fucking prompt in between <!-- and --> in the final source code. Finally give me the **source code** of the content -->
+<!-- Hey AI look at here. Please help refine the usage of Markdown, LaTeX syntax. Correct grammartical errors and point out possible logical/factual fallacies in the content. But! Do not touch anything else, leave the sentence structure and logic flow as is. Do not fucking delete this prompt either, that means including this fucking prompt in between. in the final source code. Finally give me the **source code** of the content -->
 
 # Rank-Nullity Theorem
 
