@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>小札 Maximum Weight Closure of a Graph</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,48 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
+<li><a href="#1-introduction" id="toc-1-introduction">1.
+Introduction</a></li>
+<li><a href="#2-construction-of-algorithm"
+id="toc-2-construction-of-algorithm">2. Construction of
 Algorithm</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
+<h2 id="1-introduction">1. Introduction</h2>
+<p>   Define a <em><strong>closure</strong></em> of a directed graph
+$G=(V,E)$ as an induced set of vertexes of $G$, where the out-tended
+edges in $E$ start at some vertex in the <em>closure</em> of $G$ and end
+at some vertex in the <em>closure</em>, too. More formally,
+<em>closure</em> is defined as a set of vertexes $V'\subseteq V$, such
+that $\forall u\in V',s.t.\forall\left&lt;u,v\right&gt;\in E,v\in
+V'$.</p>
+<p>   For the <em>Maximum Weight Closure of a Graph</em>, we define it
+as, with starting out endowing vertexes in $V'$ costs called $w_u$, the
+maximum value of $\sum\limits_{u\in V'}w_u$.</p>
+<h2 id="2-construction-of-algorithm">2. Construction of Algorithm</h2>
+<p>   Add a source $s$ and a sink $t$ to the original graph, endow the
+origin edges in $E$ with capacities that $+\infty$, and connect $s$ with
+points with positive costs with the points' costs as capacities on them
+while $t$ connects to those with negative costs with the minus points'
+costs as capacities on them, where $+\infty$ is defined as any number
+greater or equal to $\sum |w_i|$.</p>
+<p>   More formally, as explained &amp; illustrated:</p>
+<p>$$ V_N=V\cup{s,t} \ E_N=E\cup\left{\left&lt;s,v\right&gt;\mid v\in
+V,w_v\geqslant0\right}\cup\left{\left&lt;v,t\right&gt;\mid v\in
+V,w_v&lt;0\right} \ \begin{cases}
+c(u,v)=+\infty,\left&lt;u,v\right&gt;\in E \ \displaystyle
+c(s,v)=w_v,w_v\geqslant0 \ \displaystyle c(v,t)=-w_v,w_v&lt;0
+\end{cases} $$</p>
+<div align = "center"> <img src = "https://img2020.cnblogs.com/blog/1924407/202112/1924407-20211211141835040-1855086965.png"> </div>
 
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<p>   Which make it easy to understand the answer would be
+$\text{min-cut}(G_N={V_N,E_N})$.</p>
+<hr />
+<h5
+id="1-referenced-to-最小割模型在信息学竞赛中的应用-by-胡伯涛-amber">[1]
+Referenced to <em>最小割模型在信息学竞赛中的应用 by 胡伯涛
+Amber</em>.</h5>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

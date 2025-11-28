@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Record -「Tricks」记录</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<ul>
+<li><p>曼哈顿距离 $\text{dist}(A,B)=|x_{A}-x_{B}|+|y_{A}-y_{B}|$
+可以拆成
+$\max{x_{A}-x_{B}+y_{A}-y_{B},x_{A}-x_{B}-y_{A}+y_{B},-x_{A}+x_{B}+y_{A}-y_{B},-x_{A}+x_{B}-y_{A}+y_{B}
+}$。<strong>agc 034d</strong></p></li>
+<li><p>走步数什么的构造题步数限制大约在 $\log$
+级别可考虑二进制拆分（倍增构造）。<strong>arc 103b</strong></p></li>
+<li><p>$x\bmod m$ 除了拆成 $x-\lfloor\frac{x}{m}\rfloor\times m$
+还可以拆成 $x-km,(k\in \mathbb{Z})$。<strong>arc 111b</strong></p></li>
+<li><p>像什么 第 $i$ 个人对应第 $p_{i}$ 个物品，$p$ 是 $1,\cdots,n$
+的一个排列这种，直接连边。<strong>arc 111c / some abc
+d</strong></p></li>
+<li><p>对应上一条，这种情况连边一定是一个这样 $i\rightarrow
+p_{i}\rightarrow p_{p_{i}}\rightarrow\cdots\rightarrow i$
+的环。<strong>arc 111c</strong></p></li>
+<li><p>一个平面上有一堆点
+$(x_{1},m),(x_{2},m),\cdots,(x_{n},m)$（$x_{i}$ 单调递增），找一点
+$(n,m)$ 使得 $\sum\text{dist}((x_{i},m),(n,m))$ 最小，则 $n$
+的取值范围是
+$[a_{\lfloor\frac{n+1}{2}\rfloor},a_{\lfloor\frac{n+2}{2}\rfloor}]$。<strong>cf
+1486b</strong></p></li>
+<li><p>字符串本质不同子串数：$\sum_{i=1}^{n}n-sa_{i}-ht_{i}+1=\sum_{i=1}^ni-ht_i$
+/ $\sum_{i=0}^{n-1}n-sa_i-ht_i=i+1-ht_i$。<strong>bzoj
+4310</strong></p></li>
+<li><p>把字符串反转后插入 SAM 后，两个原串的后缀在 parent tree 上的 LCA
+是这两个后缀的 LCP。<strong>bzoj 3879</strong></p></li>
+<li><p>对于树上/图上/序列上数某些个点中满足一些条件的点的个数（像
+LCA、重心
+之类的），考虑一个点能作为满足条件的点几次。<strong>plural</strong></p></li>
+<li><p>我们记一个结点 $u$ 的重儿子为 $hb_{u}$，对于
+$\text{subtree}(u)$，如果 $u$ 不是 $\text{subtree}(u)$ 的 centroid，那么
+$\text{subtree}(u)$ 的 centroid 一定在 $\text{subtree}(hb(u))$
+里。<strong>csp 2019 centroid</strong></p></li>
+<li><p>根据上一条，我们可以直接倍增找重心（注意只能从根开始找）。<strong>csp
+2019 centroid</strong></p></li>
+<li><p>值域比较小的关于值域的一些不等或等量关系的题可以考虑把值域放到指数构造生成函数。<strong>hk
+2016 a+b problem</strong></p></li>
+<li><p>$i\times j=\binom{i+j}{2}-\binom{i}{2}-\binom{j}{2}$。<strong>loc
+28870</strong></p></li>
+<li><p>答案和阶乘相关的，并且模数长得很怪，比如
+$998857459=461\times773\times2803$ 这种，当 $i\ge2803$
+时，$i!\bmod998857459=0$。<strong>loc 28853</strong></p></li>
+<li><p>BST 相关，序列有序，$[l,r]$ 对应 BST 上一棵子树，且其父结点一定是
+$l-1$ 或 $r+1$，具体是哪个要看大小讨论。<strong>cf
+1025d</strong></p></li>
+<li><p>序列分段可以先考虑平方 DP 再优化。<strong>csp 2019
+partition</strong> / <strong>ctsc 2012</strong></p></li>
+<li><p>有多个关键字的 DS 题可以考虑离线按一个关键字排序。<strong>lg
+p3247</strong></p></li>
+<li><p>找递推关系可以考虑差分。<strong>lg p6156</strong></p></li>
+<li><p>$low_{y}\leqslant dfn_{x}$ 意味着 $x,y$
+在一个环。<strong>plural</strong></p></li>
+<li><p>$a&amp;b+a\oplus b=a|b$； $a&amp;b+a|b=a+b$；$a+b=a\oplus
+b+2(a&amp;b)$。<strong>cf 1451e1</strong></p></li>
+<li><p>$fib(n+m)=fib(n+1)fib(m)+fib(n)fib(m-1)$。<strong>cf
+446c</strong></p></li>
+<li><p>棋盘向 下 / 右 走，很有些性质和 $n+m$ 有关，且移动一次 $i+j$
+加一，不会存在移动一次 $i+j$ 还是
+$i+j$。同时在一条从右上往左下的对角线上的点 $i+j$ 相同。<strong>arc
+120b</strong></p></li>
+<li><p>操作类似于令 $a(i)\leftarrow a(i)-1,a(i+1)\leftarrow a(i+1)+1$
+然后交换 $a(i),a(i+1)$ 的，本质是保证下标，令 $A(i)=a(i)+i$
+可以使问题简化。<strong>arc 120c</strong></p></li>
+<li><p>在 $n$
+个元素中连边如果行不通不妨考虑每个元素内部连边。<strong>sgu 101</strong>
+/ <strong>abc 209e</strong></p></li>
+<li><p>有多个元素分别对答案贡献时，如果单个元素的贡献很好算，不妨考虑每个元素的贡献次数。<strong>many</strong>
+e.g.　<strong>abc 209f</strong></p></li>
+<li><p>出现 $a\mod p=b\mod p$ 时，等价于 $a-b\equiv0\pmod p$，对应到
+$a_i\equiv a_{i+1}\equiv\dots\equiv a_j\pmod p$，就考虑差分。<strong>cf
+1548b (cf 1549d)</strong></p></li>
+<li><p>出现形似 $a\times b$
+为完全平方数的限制时，考虑消除平方因子，弱化成 $a=b$。<strong>cf
+840c</strong></p></li>
+<li><p>$\gcd(a,b)=\gcd(a+kb,b)$。<strong>unknown</strong></p></li>
+<li><p>$\sum_i\sum_j[(i,j)=x]=\varphi(\lfloor\frac{N}{x}\rfloor)\times2-1$。</p></li>
+<li><p>当 $(a,b)=1$，$(a^i-b^i,a^j-b^j)=a^{(i,j)}-b^{(i,j)}$。</p></li>
+<li><p>如果一个函数 $f(x)$ 的 $k$ 阶差分是一个非零常数那么 $f(x)$
+一定是一个 $k$ 次多项式。</p></li>
+<li><p>若题目为序列的变化，考虑构造终止情况。</p></li>
+<li><p>dp 刷表看看转移范围是否连续，可以看是否能整体 dp 维护。</p></li>
+<li><p>同一个图的 MST 每种权值的边的数量是一定的。<strong>cf
+891c</strong></p></li>
+<li><p>区间操作考虑差分（指题目中对各种序列的操作，不是那种数据结构题）。<strong>cf
+1120d</strong></p></li>
+<li><p>数列全为零等价于差分序列全为零。<strong>cf
+1634f</strong></p></li>
+<li><p>判定一个点是否在多边形内可由这个点以任意斜率拉出一条射线，看交点奇偶性。<strong>cf
+375c</strong></p></li>
+<li><p>数的出现次数的 mex 可以暴力求。<strong>cf 940f</strong></p></li>
+<li><p>排列题可以放在逆排列里考虑，重新描述问题。<strong>wc 2022
+rrads</strong></p></li>
+<li><p>上上一条，不同出现次数的级别是根号，很多时候都可以考虑暴力。<strong>cf
+1476g</strong></p></li>
+<li><p>出现概率的和式考虑事件是否独立构造组合意义。<strong>cf
+1523e</strong></p></li>
+<li><p>和式 = 某个数，考虑看成某个数个 1
+然后分配（精度思维）。<strong>hdu 7060</strong></p></li>
+</ul>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

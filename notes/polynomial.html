@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Note -「Polynomial」</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,55 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#part-1-fft" id="toc-part-1-fft">Part. 1 FFT</a>
+<ul>
+<li><a href="#part-1-1-main" id="toc-part-1-1-main">Part. 1-1
+Main</a></li>
+</ul></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<h2 id="part-1-fft">Part. 1 FFT</h2>
+<h3 id="part-1-1-main">Part. 1-1 Main</h3>
+<p>对于一个 $n$ 次多项式
+$F(x)=\sum_{i=0}^{n}a_{i}x^{i}$，在平面直角坐标系中可以由 $n+1$
+个点唯一确定。</p>
+<p>考虑带什么样的 $x$ 进去，能够快速计算 $x^{n}$ 并且有一定的性质，DFT
+采用的是复单位根。</p>
+<p>那么 DFT 就是把 $F(x)$ 转为点值表示。我们来推式子：</p>
+<p>先令
+$L(x)=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}a_{2i}x^{2i},R(x)=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}a_{2i+1}x^{2i}$。
+$$ \begin{aligned}
+F(\omega_{n}^{k})&amp;=L((\omega_{n}^{k})^{2})+\omega_{n}^{k}R((\omega_{n}^{k})^{2})
+\ &amp;=L(\omega_{n}^{2k})+\omega_{n}^{k}R(\omega_{n}^{2k}) \
+&amp;=L(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})+\omega_{n}^{k}R(\omega_{\lfloor\frac{n}{2}\rfloor}^{2k})
+\ \end{aligned} $$ 同时： $$ \begin{aligned}
+F(\omega_{n}^{k+\lfloor\frac{n}{2}\rfloor})&amp;=L(\omega_{n}^{2k})+\omega_{n}^{k+\lfloor\frac{n}{2}\rfloor}R(\omega_{n}^{2k})
+\
+&amp;=L(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})-\omega_{n}^{k}R(\omega_{\lfloor\frac{n}{2}\rfloor}^{k})
+\end{aligned} $$ 于是你直接分治，这是 DFT，注意要把多项式长度调整为 $2$
+的幂。</p>
+<p>递归常数大，考虑迭代。你会发现分治后的序列与原序列的关系是下标的二进制反转，然后就完了。</p>
+<p><pre><code class="language-cpp toolbar">void fft(Poly &amp;f,int op)
+{
+	for(int i=0;i&lt;lim;++i)	if(i&lt;rev[i])	swap(f[i],f[rev[i]]);
+	for(int len=2;len&lt;=lim;len&lt;&lt;=1)
+	{
+		comp bas(cos(2*bh_pi/len),op*sin(2*bh_pi/len));
+		for(int fr=0;fr&lt;lim;fr+=len)
+		{
+			comp now(1,0);
+			for(int ba=fr;ba&lt;fr+(len&gt;&gt;1);++ba,now*=bas)
+			{
+				comp tmp=now*f[ba+(len&gt;&gt;1)];
+				f[ba+(len&gt;&gt;1)]=f[ba]-tmp;
+				f[ba]+=tmp;
+			}
+		}
+	}
+	if(op==-1)	for(int i=0;i&lt;lim;++i)	f[i]/=lim;
 }
-
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

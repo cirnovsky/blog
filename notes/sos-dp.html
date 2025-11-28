@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Note -「SOS DP」高维前缀和</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,63 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#part-1-introduction" id="toc-part-1-introduction">Part. 1
+Introduction</a></li>
+<li><a href="#part-2-ying-wen" id="toc-part-2-ying-wen">Part. 2 Ying
+Wen</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<p>本文差不多算是翻译了一遍 <a
+href="https://codeforces.com/blog/entry/45223">CF blog?id=45223</a>
+<del>就是抄了一遍</del>，看不懂可以去原文。</p>
+<p>当然我的翻译并不是完全遵从原文的。</p>
+<h1 id="part-1-introduction">Part. 1 Introduction</h1>
+<p>平时我们怎么求高维前缀和？容斥对吧，复杂度多少？$\mathcal{O}(n^{d}\times2^{d})$（$n$
+每维元素个数，默认同阶，$d$ 维度）。</p>
+<p>这好吗？这不好。</p>
+<h1 id="part-2-ying-wen">Part. 2 Ying Wen</h1>
+<p>For 个 example，二维，容斥这么写对吧？</p>
+<p><pre><code class="language-cpp toolbar">for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;j++)  f[i][j]=f[i-1][j]+f[i][j-1]-f[i-1][j-1]+a[i][j];
 }
-
 </code></pre></p>
-<p><em>To be continued.</em></p>
+<p>事实上我们还可以分维来前缀和：</p>
+<p><pre><code class="language-cpp toolbar">for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;j++)  f[i][j]=f[i-1][j]+a[i][j];
+}
+for(int i=1;i&lt;=n;i++)
+{
+  for(int j=1;j&lt;=n;++j)  f[i][j]=f[i][j-1]+a[i][j];;
+}
+</code></pre></p>
+<p>复杂度多少？$\mathcal{O}(n^{d}\times d)$，厉害吧。</p>
+<p>对应到 SOS DP（sum over
+subsets），我们把每一维整到集合上去来求子集和。</p>
+<p>形式化地定义子集和，即给定一个有 $2^{n}$ 个元素的数组
+$A$，定义函数：</p>
+<p>$$ \text{sub-sum}(mask)=\sum_{i\subseteq mask}A_{i} $$</p>
+<p>写成位运算的形式：</p>
+<p>$$ \text{sub-sum}(mask)=\sum_{mask\text{ &amp; }i=i}A_{i} $$</p>
+<p>学过 FWT 的巨佬可能发现了什么，可是这和我没关系。</p>
+<p>看不懂？没关系，我们有严谨的代码定义：</p>
+<p><pre><code class="language-cpp toolbar">for(int mask = 0;mask &lt; (1&lt;&lt;N); ++mask){
+	for(int i = 0;i &lt; (1&lt;&lt;N); ++i){
+		if((mask&amp;i) == i){
+			F[mask] += A[i];
+		}
+	}
+}
+</code></pre></p>
+<p>这是什么垃圾复杂度，用高维前缀和可得以下代码：</p>
+<p><pre><code class="language-cpp toolbar">for (int j = 0; j &lt; n; ++j) {
+  for (int i = 0; i &lt; (1 &lt;&lt; n); ++i) {
+    if((i &gt;&gt; j) &amp; 1)  f[i] += f[i ^ (1 &lt;&lt; j)];
+  }
+}
+</code></pre></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

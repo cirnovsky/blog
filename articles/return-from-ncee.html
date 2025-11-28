@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>久违的更新</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>愈发感到我的人生太草率了，全心准备高考的时候，突然收到 SM2 的
+offer，一月份就远渡南洋去南洋理工读书了。C'est la
+vie，仔细回想，几乎所有会影响到老子生命进程的决定，都没有经过深思熟虑。不过这的确是一次不错的机会，倘若削尖脑袋钻高考，我的水平差不离就是华五的样子，且没有稳定上线的信心，清北大抵就需要爆种了。SM2
+让我可以在不参加高考的情况下上一个几乎同等水平的大学（应该吧），不能不说的确很诱人。</p>
+<p>命运总是在暗中标价的道理我自然知道，事实上 SM2
+为我带来的是更多的不确定性。在中国学生的硕博情结与竞赛学生的科研情结的双重加持下，SM2
+仅到本科的支持对我来讲就显得并不完全让人放心。不过正是充满未知才让未来显得如此迷人，若生为巨鲸，便去左右洋流，我坚信船到桥门自会直，只要能持续专注付出，纵有沟壑我飞跃。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

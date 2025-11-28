@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Summary -「20231017」</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -42,63 +42,38 @@
   <div class="content">
     <div id="header"></div>
     
-<nav id="TOC">
-<ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
-</ul>
-</nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
+<p>今天和重庆市其他学校一起来到一中打了一场友谊赛兼 CSP 模拟赛,
+考得并不怎么样, 就当作联赛来写写总结.</p>
+<p>进入教学楼后扎在人堆里的窒息感还真是联赛的感觉. 密码下发后顺序开题,
+感觉也是联赛的风格. 我真不太会写 T1 这种题, <del>搭 Next.js 博客用 AST
+module 给惯的</del>. 写了一个小时还在挂, 就先放了.</p>
+<p>T2 的贡献看起来没有什么性质. 看到 $\mathcal O(3^n)$ 给了 80pts,
+直接放弃思考写了二十多分钟就去看 T3 了.</p>
+<p>T3 T4 都没留太多时间, 毕竟我 T1 还放在那里的. 先把朴素分都打了,
+然后想了下 T3 的乱搞. 直接改直径上的最大值应该过不了,
+那就把所有可能成为直径的路径扣出来然后挨个检查. 大样例过了就没管了.</p>
+<p>然后回到 T1, 表达树依然在挂. 最后只剩 30min 的时候决定摆烂打暴力了.
+打完后检查了下, 在桌子上趴了会儿, 缓了缓酸胀的眼睛.</p>
+<p>发成绩后一看, T3 居然过了, 其他题倒是没挂. <del>全是暴力怎么挂</del>.
+$60+80+100+40=280$.</p>
+<p>本次考试最贻笑大方的部分就是 T1了, 成为了排名正着数第一位没过 T1 的
+🤡. 希望联赛不会出现这种问题, 这种比较贴近实际的题,
+写代码前先把框架组好, 就像写这个博客的源码一样.
+同时希望最后一个月里心态能够更稳健吧,
+最近老是被机房里面一些莫名其妙的事情惹得心烦, 这样不好. 无论学 OI
+还是作为一个人而活着, 心态都是最重要的. 凭我浅薄的认知,
+<del>同我一样喜欢星尘的</del>老前辈毛彦升心态就比较稳,
+应当多向先辈学习!</p>
+<hr />
 <blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
+<p>/ 你盛开于那盛夏的污浊 /</p>
+<p>/ 我流连于那温柔的疼痛 /</p>
+<p>/ 燃烧坠落的那星火 /</p>
+<p>/ 如梦一闪而过 /</p>
+<p>—— <a href="https://vocadb.net/S/170954">Zeno - <em>涟漪</em> ft.
+星尘</a></p>
 </blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

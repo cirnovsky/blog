@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「ABC 205」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#abc-205akcal" id="toc-abc-205akcal">「ABC
+205A」kcal</a></li>
+<li><a href="#abc-205bpermutation-check"
+id="toc-abc-205bpermutation-check">「ABC 205B」Permutation
+Check</a></li>
+<li><a href="#abc-205cpow" id="toc-abc-205cpow">「ABC 205C」POW</a></li>
+<li><a href="#abc-205dkth-excluded" id="toc-abc-205dkth-excluded">「ABC
+205D」Kth Excluded</a></li>
+<li><a href="#abc-205ewhite-and-black-balls"
+id="toc-abc-205ewhite-and-black-balls">「ABC 205E」White and Black
+Balls</a></li>
+<li><a href="#abc-205fgrid-and-tokens"
+id="toc-abc-205fgrid-and-tokens">「ABC 205F」Grid and Tokens</a></li>
+</ul>
+</nav>
+
+<blockquote>
+<p>应该是最近最水的 ABC 了吧。</p>
+</blockquote>
+<h1 id="abc-205akcal">「ABC 205A」kcal</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_a">Link</a>.</p>
+<p>略</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	ll a, b;
+	std::cin &gt;&gt; a &gt;&gt; b;
+	std::cout &lt;&lt; b * a / 100.0 &lt;&lt; &quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-205bpermutation-check">「ABC 205B」Permutation Check</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_b">Link</a>.</p>
+<p>排序 / <code>std::set</code> 均可。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	int n, cur = 0;
+	std::cin &gt;&gt; n;
+	std::vector&lt;int&gt; a(n);
+	for (int &amp;x : a) {
+		std::cin &gt;&gt; x;
+		--x;
+	}
+	std::sort(all(a));
+	for (int x : a) {
+		if (cur != x) {
+			std::cout &lt;&lt; &quot;No\n&quot;;
+			return 0;
+		}
+		++cur;
+	}
+	std::cout &lt;&lt; &quot;Yes\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-205cpow">「ABC 205C」POW</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_c">Link</a>.</p>
+<p>若 $c$ 为偶数则 $a:=|a|,b:=|b|$，然后比较 $a,b$ 大小即可。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	int a, b, c;
+	std::cin &gt;&gt; a &gt;&gt; b &gt;&gt; c;
+	if (c % 2 == 0) {
+		a = std::abs(a);
+		b = std::abs(b);
+	}
+	if (a &gt; b) std::cout &lt;&lt; &quot;&gt;\n&quot;;
+	else if (a &lt; b) std::cout &lt;&lt; &quot;&lt;\n&quot;;
+	else std::cout &lt;&lt; &quot;=\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-205dkth-excluded">「ABC 205D」Kth Excluded</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_d">Link</a>.</p>
+<p>预处理每一个数空出来的位置，然后询问时二分分类讨论。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	int n, q;
+	std::cin &gt;&gt; n &gt;&gt; q;
+	std::vector&lt;ll&gt; a(n), b(n);
+	for (ll &amp;x : a) std::cin &gt;&gt; x;
+	for (size_t i = 0; i &lt; a.size(); ++i) b[i] = a[i] - i - 1;
+	for (ll k; q; --q) {
+		std::cin &gt;&gt; k;
+		ll pos = std::lower_bound(all(b), k) - b.begin();
+		if (pos == n) std::cout &lt;&lt; a.back() + k - b.back() &lt;&lt; &quot;\n&quot;;
+		else std::cout &lt;&lt; a[pos] - b[pos] + k - 1 &lt;&lt; &quot;\n&quot;;
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-205ewhite-and-black-balls">「ABC 205E」White and Black
+Balls</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_e">Link</a>.</p>
+<p>答案显然是 $\binom{n+m}{n}-\binom{n+m}{n-k-1}$。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	constexpr int MOD = 1e9 + 7;
+	int n, m, k;
+	std::cin &gt;&gt; n &gt;&gt; m &gt;&gt; k;
+	std::vector&lt;ll&gt; fac(n + m + 1), ifac(n + m + 1);
+	auto pow = [&amp;] (ll x, int y) {
+		ll res = 1;
+		for (; y; y &gt;&gt;= 1, x = x * x % MOD)
+			if (y &amp; 1) res = res * x % MOD;
+		return (res + MOD) % MOD;
+	};
+	fac[0] = ifac[0] = 1;
+	for (int i = 1; i &lt; n + m + 1; ++i) {
+		fac[i] = fac[i - 1] * i % MOD;
+		ifac[i] = pow(fac[i], MOD - 2);
+	}
+	auto C = [&amp;] (int n, int k) {return n &lt; k ? 0 : fac[n] * ifac[n - k] % MOD * ifac[k] % MOD;};
+	if (n - m &gt; k) std::cout &lt;&lt; &quot;0\n&quot;;
+	else std::cout &lt;&lt; (C(n + m, n) - C(n + m, n - k - 1) + MOD) % MOD &lt;&lt; &quot;\n&quot;; 
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-205fgrid-and-tokens">「ABC 205F」Grid and Tokens</h1>
+<p><a
+href="https://atcoder.jp/contests/abc205/tasks/abc205_f">Link</a>.</p>
+<p>网络流板题。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+#include &lt;atcoder/maxflow&gt;
+using ll = long long;
+#define all(x) (x).begin(), (x).end()
+int main() {
+	std::ios_base::sync_with_stdio(false);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	int h, w, n;
+	std::cin &gt;&gt; h &gt;&gt; w &gt;&gt; n;
+	std::vector&lt;std::vector&lt;int&gt;&gt; obj(n, std::vector&lt;int&gt;(2));
+	std::vector&lt;int&gt; row(h), col(w);
+	auto id = [&amp;] () {
+		static int cnt = 0;
+		return cnt++;
+	};
+	const int S = id(), T = id();
+	for (int &amp;x : row) x = id();
+	for (int &amp;x : col) x = id();
+	for (std::vector&lt;int&gt; &amp;x : obj) x = std::vector&lt;int&gt;({id(), id()});
+	atcoder::mf_graph&lt;int&gt; G(id());
+	for (int x : row) G.add_edge(S, x, 1);
+	for (int x : col) G.add_edge(x, T, 1);
+	for (int i = 0; i &lt; n; ++i) {
+		int a, b, c, d;
+		std::cin &gt;&gt; a &gt;&gt; b &gt;&gt; c &gt;&gt; d;
+		--a, --b;
+		G.add_edge(obj[i][0], obj[i][1], 1);
+		for (int j = a; j &lt; c; ++j) G.add_edge(row[j], obj[i][0], 1);
+		for (int j = b; j &lt; d; ++j) G.add_edge(obj[i][1], col[j], 1);
+	}
+	std::cout &lt;&lt; G.flow(S, T) &lt;&lt; &quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

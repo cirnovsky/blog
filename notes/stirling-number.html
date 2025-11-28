@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Record - Stirling Number / FK. &amp; SK.</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,38 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#part-1-stirling-number--fk"
+id="toc-part-1-stirling-number--fk">Part. 1 Stirling Number /
+FK.</a></li>
+<li><a href="#part-2-stirling-number--sk"
+id="toc-part-2-stirling-number--sk">Part. 2 Stirling Number /
+SK.</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<h2 id="part-1-stirling-number--fk">Part. 1 Stirling Number / FK.</h2>
+<p><strong>Def.</strong> 定义 $\begin{bmatrix}n \ m\end{bmatrix}$ 表示将
+$n$ 个元素分成 $m$ 个环的方案数。</p>
+<p>递推式为 $$ \begin{bmatrix}n \ m\end{bmatrix}=\begin{bmatrix}n-1 \
+m-1\end{bmatrix}+(n-1)\begin{bmatrix}n-1 \ m\end{bmatrix} $$
+即考虑已经放好的 $n-1$ 个数，第一种情况是自成环即 $\begin{bmatrix}n-1 \
+m-1\end{bmatrix}$，第二种情况是放在某一个环内，可以放在任意一个已经放好的数前，即
+$(n-1)\begin{bmatrix}n-1 \ m\end{bmatrix}$。</p>
+<p>边界为： $$ \begin{bmatrix}n \ 0\end{bmatrix}=[n=0] $$ 一个性质： $$
+n!=\sum_{i=0}^{n}\begin{bmatrix}n \ i\end{bmatrix} $$</p>
+<p>多项式形式：$\begin{bmatrix}n \ m\end{bmatrix}$ 为
+$f_{n}(x)=\prod_{i=0}^{n-1}(x+i)$ 的 $k$ 次项系数。</p>
+<h2 id="part-2-stirling-number--sk">Part. 2 Stirling Number / SK.</h2>
+<p><strong>Def.</strong> 定义 $\begin{Bmatrix}n \ m\end{Bmatrix}$ 表示将
+$n$ 个不同的球放进 $m$ 个相同的盒子的方案数。</p>
+<p>递推式为 $$ \begin{Bmatrix}n \ m\end{Bmatrix}=\begin{Bmatrix}n-1 \
+m-1\end{Bmatrix}+m\begin{Bmatrix}n-1 \ m\end{Bmatrix} $$ 意义即前 $n-1$
+个球放进了 $m-1$ 的盒子里，$n$ 就只有一种方法，如果前 $n-1$ 个球放进了
+$m$ 个盒子，那么这个球就有 $m$ 种放法。</p>
+<p>容斥一下可以得到通项公式（背吧） $$ \begin{Bmatrix}n \
+m\end{Bmatrix}=\frac{1}{m!}\sum_{i=0}^{m}\left((-1)^{i}{m\choose
+i}(m-i)^{n}\right) $$ 拆完组合数可以卷积 $\texttt{NTT}$
+做，不过咱多项式学得废，就不整了。</p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"
