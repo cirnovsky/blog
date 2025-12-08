@@ -97,10 +97,10 @@ td::-webkit-scrollbar {
 
 blockquote {
   background: #f0f0f0;
-  color: #494949;
+  color: #808080;
   padding-left: 10px;
   padding-right: 10px;
-  margin: 0;
+  border-radius: 10px;
 }
 
 img {
