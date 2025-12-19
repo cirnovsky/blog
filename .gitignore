@@ -7,3 +7,4 @@ typecho_relationships.sql
 test.html
 **/*.swp
 **/.DS_Store
+tags/tags.temp
