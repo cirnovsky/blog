@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution -「JOISC 2022」京都観光</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,56 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#desc" id="toc-desc">Desc.</a></li>
+<li><a href="#sol" id="toc-sol">Sol.</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<h2 id="desc">Desc.</h2>
+<p><a href="https://loj.ac/p/3686">Link.</a></p>
+<p>有 $h$ 条水平道路和 $w$ 条竖直道路, 在其上行走一个单位分别花费 $a_i$
+和 $b_j$, 问从 $(1, 1)$ 到 $(h, w)$ 的最小花费.</p>
+<h2 id="sol">Sol.</h2>
+<p>把步数拆到恰好拐一个弯的形状, 设从 $(i, j)$ 走到 $(i', j')$.
+有两种方式, 其中一种是 $(i, j) \rightarrow (i', j) \rightarrow (i',
+j')$. 整理得到一个斜率形式. 合并两者凸包. (赶着回家,
+写得比较草率...)</p>
+<p><pre><code class="language-cpp toolbar">int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    int n, m; cin &gt;&gt; n &gt;&gt; m;
+    vll a(n), b(m); rds(a), rds(b);
+#define fi first
+#define se second
+    using pii = pair&lt;ll, ll&gt;;
+    const auto cross = [&amp;](const pii&amp; a, const pii&amp; b) {
+        return a.fi*b.se-a.se*b.fi;
+    };
+    static int s1[100100], s2[100100], top1, top2;
+    for (int i=0;i&lt;n;++i) {
+        while (top1 &gt; 1 &amp;&amp; cross({s1[top1]-s1[top1-1], a[s1[top1]]-a[s1[top1-1]]}, {i-s1[top1], a[i]-a[s1[top1]]}) &lt; 0)
+            top1--;
+        s1[++top1] = i;
+    }
+    for (int i=0;i&lt;m;++i) {
+        while (top2 &gt; 1 &amp;&amp; cross({s2[top2]-s2[top2-1], b[s2[top2]]-b[s2[top2-1]]}, {i-s2[top2], b[i]-b[s2[top2]]}) &lt; 0)
+            top2--;
+        s2[++top2] = i;
+    }
+    int i = 1, j = 1;
+    ll ans = 0;
+    while (i &lt; top1 || j &lt; top2) {
+        if (i &lt; top1 &amp;&amp; (j == top2 || cross({s2[j+1]-s2[j], b[s2[j+1]]-b[s2[j]]}, {s1[i+1]-s1[i], a[s1[i+1]]-a[s1[i]]}) &lt; 0)) {
+            ans += (s1[i+1]-s1[i])*b[s2[j]];
+            i++;
+        } else {
+            ans += (s2[j+1]-s2[j])*a[s1[i]];
+            j++;
+        }
+    }
+    cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
 }
-
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

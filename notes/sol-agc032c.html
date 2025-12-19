@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「atcoder - agc032c」Three Circuits</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a
+href="https://atcoder.jp/contests/agc032/tasks/agc032_c">link。</a></p>
+<p>首先这个图是一个欧拉图，所以所有度数都是偶数。然后证明一个重要的结论：当有一个结点的度数
+&gt;= 6
+时一定可行。你考虑所有度数都是偶数，所以菊花图卡不掉，因此是对的。</p>
+<p>那么现在度数只有 2、4 两中情况，如果 4-degree 的结点个数 &lt;= 1
+的话一定不行，若 &gt; 2 则一定可行，讨论 = 2 的情况。我们需要满足两个
+4-degree 的结点所拉出来的 circuits 之间不能有「横叉边」，跑 dfs
+判一下即可。</p>
+<p><pre><code class="language-cpp toolbar">int n, m, deg[1 &lt;&lt; 17], x, y, typ[1 &lt;&lt; 17];
+bsi&lt;int&gt; adj[1 &lt;&lt; 17];
+void dfs(int u) {
+  typ[u] = 1;
+  for (auto v : adj[u]) {
+    if (typ[v] == 2)
+      (!x ? x : y) = v;
+    else if (typ[v] == 0)
+      dfs(v);
+  }
+}
+signed main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin &gt;&gt; n &gt;&gt; m;
+  rep(m) cin &gt;&gt; x &gt;&gt; y, x--, y--, adj[x] += y, adj[y] += x, deg[x]++, deg[y]++;
+  rep(i, n) cout &lt;&lt; &quot; &quot; &lt;&lt; deg[i] &lt;&lt; &quot;\n&quot;;
+  if (count_if(deg, deg + n, [&amp;](int x) { return x % 2 == 1; }) &gt; 0)
+    cout &lt;&lt; &quot;No\n&quot;;
+  else if (*max_element(deg, deg + n) &gt;= 6)
+    cout &lt;&lt; &quot;Yes\n&quot;;
+  else if (count(deg, deg + n, 4) &gt; 2)
+    cout &lt;&lt; &quot;Yes\n&quot;;
+  else if (count(deg, deg + n, 4) &lt;= 1)
+    cout &lt;&lt; &quot;No\n&quot;;
+  else {
+    rep(i, n) if (deg[i] == 4) typ[i] = 2;
+    rep(i, n) if (!typ[i]) {
+      x = y = 0, dfs(i);
+      if (x == y) {
+        cout &lt;&lt; &quot;Yes\n&quot;;
+        return 0;
+      }
+    }
+    cout &lt;&lt; &quot;No\n&quot;;
+  }
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

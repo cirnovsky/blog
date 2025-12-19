@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「营业」「CF 527C」Glass Carving</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a
+href="https://codeforces.com/problemset/problem/527/C">Link</a>.</p>
+<p>有一个块 $n\times m$ 的矩形，有 $q$ 次操作，每次把矩形横 /
+竖着切一刀，问切完后的最大矩形面积。</p>
+<h2 id="solution">Solution</h2>
+<p>一个不同于大多数人、总时间复杂度 $\mathcal{O}(n\log_{2}n)$，每次回答
+$\mathcal{O}(\alpha(n))$ 的做法，瓶颈在排序。</p>
+<p>显然答案是最大行列相乘。首先我们把询问离线，然后逆序处理。你发现这相当于把切开变成了合并，最大值不降，于是可以直接维护。</p>
+<p>具体来说就是维护两个并查集，分别是行和列，然后再维护集合内元素个数，然后就直接合并。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+inline ll read() {
+	ll x=0,f=0;
+	char ch=getchar();
+	while(ch&lt;&#x27;0&#x27;||ch&gt;&#x27;9&#x27;) f|=(ch==&#x27;-&#x27;),ch=getchar();
+	while(ch&gt;=&#x27;0&#x27;&amp;&amp;ch&lt;=&#x27;9&#x27;) x=x*10+(ch&amp;15),ch=getchar();
+	return f?-x:x;
+}
+const int N=200100;
+signed main() {
+	int m=read(),n=read(),q=read();
+	static int far[N],fac[N],szr[N],szc[N];
+	iota(far+1,far+m+1,1);
+	iota(fac+1,fac+n+1,1);
+	for(int i=1;i&lt;=m;++i) szr[i]=1;
+	for(int i=1;i&lt;=n;++i) szc[i]=1;
+	auto findr=[&amp;](int x) {while(x!=far[x]) x=far[x]=far[far[x]]; return x;};
+	auto findc=[&amp;](int x) {while(x!=fac[x]) x=fac[x]=fac[fac[x]]; return x;};
+	auto merger=[&amp;](int x,int y) {x=findr(x),y=findr(y); (x!=y)&amp;&amp;(szr[y]+=szr[x],szr[x]=0,far[x]=y);};
+	auto mergec=[&amp;](int x,int y) {x=findc(x),y=findc(y); (x!=y)&amp;&amp;(szc[y]+=szc[x],szc[x]=0,fac[x]=y);};
+	static int op[N],X[N];
+	vector&lt;int&gt; hx,vx;
+	for(int i=1; i&lt;=q; ++i) {
+		char Op[4];
+		scanf(&quot;%s&quot;,Op);
+		op[i]=Op[0]==&#x27;H&#x27;;
+		X[i]=read();
+		(op[i])&amp;&amp;(X[i]=n-X[i]);
+		(op[i])&amp;&amp;(hx.push_back(X[i]),1);
+		(!op[i])&amp;&amp;(vx.push_back(X[i]),1);
+	}
+	sort(hx.begin(),hx.end());
+	sort(vx.begin(),vx.end());
+	hx.insert(hx.begin(),0);
+	vx.insert(vx.begin(),0);
+	hx.push_back(n);
+	vx.push_back(m);
+	for(unsigned int i=1; i&lt;hx.size(); ++i)
+		for(int j=hx[i-1]+2; j&lt;=hx[i]; ++j) mergec(j-1,j);
+	for(unsigned int i=1; i&lt;vx.size(); ++i)
+		for(int j=vx[i-1]+2; j&lt;=vx[i]; ++j) merger(j-1,j);
+	ll mxr=0,mxc=0;
+	for(int i=1; i&lt;=m; ++i) mxr=max(mxr,(ll)szr[findr(i)]);
+	for(int i=1; i&lt;=n; ++i) mxc=max(mxc,(ll)szc[findc(i)]);
+	vector&lt;ll&gt; ans;
+	ans.push_back(mxr*mxc);
+	for(int i=q; i&gt;1; --i) {
+		if(op[i]) mergec(X[i]+1,X[i]),mxc=max(mxc,(ll)szc[findc(X[i])]);
+		else merger(X[i],X[i]+1),mxr=max(mxr,(ll)szr[findr(X[i])]);
+		ans.push_back(mxr*mxc);
+	}
+	reverse(ans.begin(),ans.end());
+	for(ll x:ans) printf(&quot;%lld\n&quot;,x);
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

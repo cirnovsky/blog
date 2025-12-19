@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「CF 1514」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#cf-1514aperfectly-imperfect-array"
+id="toc-cf-1514aperfectly-imperfect-array">「CF 1514A」Perfectly
+Imperfect Array</a></li>
+<li><a href="#cf-1514band-0-sum-big" id="toc-cf-1514band-0-sum-big">「CF
+1514B」AND 0, Sum Big</a></li>
+<li><a href="#cf-1514cproduct-1-modulo-n"
+id="toc-cf-1514cproduct-1-modulo-n">「CF 1514C」Product 1 Modulo
+N</a></li>
+<li><a href="#cf-1514dcut-and-stick" id="toc-cf-1514dcut-and-stick">「CF
+1514D」Cut and Stick</a></li>
+<li><a href="#cf-1514ebaby-ehabs-hyper-apartment"
+id="toc-cf-1514ebaby-ehabs-hyper-apartment">「CF 1514E」Baby Ehab's
+Hyper Apartment</a></li>
+</ul>
+</nav>
+
+<h1 id="cf-1514aperfectly-imperfect-array">「CF 1514A」Perfectly
+Imperfect Array</h1>
+<p><a href="https://codeforces.com/contest/1514/problem/A">Link</a>.</p>
+<p>就看序列中是否存在不为平方数的元素即可。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+ll T,n,x;
+bool check(ll x)
+{
+	for(ll i=1;i*i&lt;=x;++i)	if(i*i==x)	return true;
+	return false;
+}
+int main()
+{
+	for(sf(T);T;--T)
+	{
+		sf(n);
+		bool fl=0;
+		for(int i=1;i&lt;=n;++i)
+		{
+			sf(x);
+			if(!check(x))	fl=1;
+		}
+		if(fl)	puts(&quot;YES&quot;);
+		else	puts(&quot;NO&quot;);
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1514band-0-sum-big">「CF 1514B」AND 0, Sum Big</h1>
+<p><a href="https://codeforces.com/contest/1514/problem/B">Link</a>.</p>
+<p>和最大的情况就是每个数都只有一个 $0$（二进制下），于是答案就是
+$n^{k}$。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+const int MOD=1e9+7;
+int main()
+{
+	int T,n,k;
+	for(sf(T);T;--T)
+	{
+		sf(n),sf(k);
+		ll ans=1;
+		for(int i=1;i&lt;=k;++i)	ans*=n,ans%=MOD;
+		pf(ans);
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1514cproduct-1-modulo-n">「CF 1514C」Product 1 Modulo N</h1>
+<p><a href="https://codeforces.com/contest/1514/problem/C">Link</a>.</p>
+<p>把所有与 $n$ 互质的数拉出来，如果 product
+不满足要求，就把最后一个剔除。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+int n;
+ll op(ll x,ll y){return x*y%n;}
+int main()
+{
+	sf(n);
+	std::vector&lt;ll&gt; ans;
+	for(int i=1;i&lt;=n;++i)	if(__gcd(i,n)==1)	ans.emplace_back(i);
+	if(accumulate(ans.begin(),ans.end(),1,op)!=1)	ans.pop_back();
+	pf(ans.size());
+	for(int i:ans)	pf(i,&#x27; &#x27;);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1514dcut-and-stick">「CF 1514D」Cut and Stick</h1>
+<p><a href="https://codeforces.com/contest/1514/problem/D">Link</a>.</p>
+<p>答案是 $\max{1,2x-l}$，$l$ 为区间长度，$x$ 为众数出现次数。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int MAXN = 5e5 + 5, MAXM = 720 + 5;
+
+char buf[1 &lt;&lt; 21], *p1 = buf, *p2 = buf;
+#define getchar( ) ( p1 == p2 &amp;&amp; ( p2 = ( p1 = buf ) + fread( buf, 1, 1 &lt;&lt; 21, stdin ), p1 == p2 ) ? EOF : *p1 ++ )
+
+template&lt;typename _T&gt;
+void read( _T &amp;x ){
+	x = 0; char c = getchar( ); _T f = 1;
+	while( c &lt; &#x27;0&#x27; || c &gt; &#x27;9&#x27; ){ if( c == &#x27;-&#x27; )	f = -1; c = getchar( ); }
+	while( c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27; ){ x = ( x &lt;&lt; 3 ) + ( x &lt;&lt; 1 ) + ( c &amp; 15 ); c = getchar( ); }
+	x *= f;
+}
+
+template&lt;typename _T&gt;
+void write( _T x ){
+	if( x &lt; 0 ){ putchar( &#x27;-&#x27; ); x = -x; }
+	if( x &gt; 9 ){ write( x / 10 ); }
+	putchar( x % 10 + &#x27;0&#x27; );
+}
+
+template&lt;typename _T&gt;
+void swapp( _T &amp;one, _T &amp;another ){ int temp = one; one = another; another = temp; }
+
+template&lt;typename _T&gt;
+_T MIN( _T one, _T another ){ return one &gt; another ? another : one; }
+
+template&lt;typename _T&gt;
+_T MAX( _T one, _T another ){ return one &gt; another ? one : another; }
+
+int N, M;
+int cube, each, kase, isa[MAXN], cnt[MAXN], pos[MAXN], vis[MAXN], bel[MAXN];
+int lps[MAXM], rps[MAXM], App[MAXM][MAXM];
+vector&lt;int&gt; disc, fur[MAXN];
+
+int getID( int x ){ return lower_bound( disc.begin( ), disc.end( ), x ) - disc.begin( ) + 1; }
+
+void build( ){
+	memset( cnt, 0, sizeof( cnt ) );
+	for( int i = 1; i &lt;= cube; ++ i ){
+		kase ++;
+		for( int j = i; j &lt;= cube; ++ j ){
+			App[i][j] = App[i][j - 1];
+			for( int k = lps[j]; k &lt;= rps[j]; ++ k ){
+				if( vis[isa[k]] != kase )	cnt[isa[k]] = 0;
+				cnt[isa[k]] ++; App[i][j] = MAX( App[i][j], cnt[isa[k]] );
+				vis[isa[k]] = kase;
+			}
+		}
+	}
+	memset( cnt, 0, sizeof( cnt ) );
+}
+
+int query( int opl, int opr ){
+	if( bel[opl] == bel[opr] ){
+		int res = 0; kase ++;
+		for( int i = opl; i &lt;= opr; ++ i ){
+			if( vis[isa[i]] != kase )	cnt[isa[i]] = 0;
+			cnt[isa[i]] ++; res = MAX( res, cnt[isa[i]] );
+			vis[isa[i]] = kase;
+		}
+		return res;
+	}
+	int res = 0;
+	res = App[bel[opl] + 1][bel[opr] - 1];
+	for( int i = opl; i &lt;= rps[bel[opl]]; ++ i ){
+		int lim = fur[isa[i]].size( ) - 1;
+		while( pos[i] + res &lt;= lim &amp;&amp; fur[isa[i]][pos[i] + res] &lt;= opr )	res ++;
+	}
+	for( int i = lps[bel[opr]]; i &lt;= opr; ++ i ){
+		while( pos[i] - res &gt;= 0 &amp;&amp; fur[isa[i]][pos[i] - res] &gt;= opl )	res ++;
+	}
+	return res;
+}
+
+signed main( ){
+	read( N ); read( M ); each = 720; cube = ( N - 1 ) / each + 1;
+	for( int i = 1; i &lt;= N; ++ i ){ read( isa[i] ); disc.push_back( isa[i] ); }
+	sort( disc.begin( ), disc.end( ) );
+	disc.erase( unique( disc.begin( ), disc.end( ) ), disc.end( ) );
+	for( int i = 1; i &lt;= N; ++ i ){
+		isa[i] = getID( isa[i] );
+		fur[isa[i]].push_back( i );
+		pos[i] = fur[isa[i]].size( ) - 1;
+	}
+	for( int i = 1; i &lt;= cube; ++ i ){
+		lps[i] = rps[i - 1] + 1; rps[i] = rps[i - 1] + each;
+		if( i == cube )	rps[i] = N;
+		for( int j = lps[i]; j &lt;= rps[i]; ++ j )	bel[j] = i;
+	}
+	build( );
+	int opl, opr;
+	while( M -- &gt; 0 ){
+		read( opl ); read( opr );
+		write( max( 1, 2 * query( opl, opr ) - ( opr - opl + 1 ) ) );
+		putchar( &#x27;\n&#x27; );
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1514ebaby-ehabs-hyper-apartment">「CF 1514E」Baby Ehab's
+Hyper Apartment</h1>
+<p><a href="https://codeforces.com/contest/1514/problem/E">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Oops, something went wrong.
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

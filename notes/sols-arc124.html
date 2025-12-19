@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「ARC 124」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#arc-124alr-constraints"
+id="toc-arc-124alr-constraints">「ARC 124A」LR Constraints</a></li>
+<li><a href="#arc-124bxor-matching-2"
+id="toc-arc-124bxor-matching-2">「ARC 124B」XOR Matching 2</a></li>
+<li><a href="#arc-124clcm-of-gcds" id="toc-arc-124clcm-of-gcds">「ARC
+124C」LCM of GCDs</a></li>
+<li><a href="#arc-124dyet-another-sorting-problem"
+id="toc-arc-124dyet-another-sorting-problem">「ARC 124D」Yet Another
+Sorting Problem</a></li>
+<li><a href="#arc-124epass-to-next" id="toc-arc-124epass-to-next">「ARC
+124E」Pass to Next</a></li>
+<li><a href="#arc-124fchance-meeting"
+id="toc-arc-124fchance-meeting">「ARC 124F」Chance Meeting</a></li>
+</ul>
+</nav>
+
+<h1 id="arc-124alr-constraints">「ARC 124A」LR Constraints</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_a">Link</a>.</p>
+<p>我们可以把 $1\sim n$
+个盒子里能放的球的编号集合全部求出来。然后就直接来。</p>
+<p>注意题目已经给出了 $k$ 个球的位置，所以「Note that for each integer
+$i$ from $1$ through $K$, there must be at least one card on which we
+write $i$.」这个限制不用管。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+#define int ll
+#define len(x) ((int)(x).size())
+#define all(x) (x).begin(),(x).end()
+const int N=1100,MOD=998244353;
+int n,k,ts[N],tek[N],fin[N],Rs[N];
+set&lt;int&gt; rs[N];
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr),cout.tie(nullptr);
+	cin&gt;&gt;n&gt;&gt;k,memset(fin,-1,sizeof fin);
+	for(int i=1; i&lt;=k; ++i) {
+		char c; cin&gt;&gt;c;
+		ts[i]=(c==&#x27;R&#x27;);
+		cin&gt;&gt;tek[i];
+		Rs[tek[i]]=ts[i];
+	}
+	for(int i=1; i&lt;=k; ++i) {
+		if(~fin[tek[i]]) return puts(&quot;0&quot;),0;
+		fin[tek[i]]=i;
+	}
+	for(int i=1; i&lt;=n; ++i) {
+		if(~fin[i]) rs[i].emplace(fin[tek[i]]);
+		else {
+			auto &amp;s=rs[i];
+			for(int j=1; j&lt;=k; ++j) s.emplace(j);
+			int tmp=0;
+			for(int j=i+1; j&lt;=n; ++j) {
+				if(!Rs[j]) s.erase(fin[j]);
+			}
+			for(int j=1; j&lt;i; ++j) {
+				if(Rs[j]) s.erase(fin[j]);
+			}
+		}
+	}
+	int res=1;
+	for(int i=1; i&lt;=n; ++i) res*=len(rs[i]),res%=MOD;
+	cout&lt;&lt;res&lt;&lt;&quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-124bxor-matching-2">「ARC 124B」XOR Matching 2</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_b">Link</a>.</p>
+<p>预处理出 $s(i,j)=a_{i}\oplus b_{j}$，以及 $pos(i,x)$ 表示第 $i$ 层值
+$x$ 的出现集合，用 <code>std::map</code> 均摊 $\mathcal{O}(n^{2})$
+空间。然后我们在第一层逐列考虑，对于第一层的每一种异或值，找出在每一行出现的位置集合，如果某一行没有出现就不行。最后就看集合大小是否等于
+$n$。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+#define all(x) (x).begin(),(x).end()
+#define int ll
+const int N=2100;
+int a[N],b[N],xr[N][N],n;
+multimap&lt;int,int&gt; mp[N];
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr),cout.tie(nullptr);
+	cin&gt;&gt;n;
+	for(int i=1; i&lt;=n; ++i) cin&gt;&gt;a[i];
+	for(int i=1; i&lt;=n; ++i) cin&gt;&gt;b[i];
+	for(int i=1; i&lt;=n; ++i) for(int j=1; j&lt;=n; ++j) xr[i][j]=(a[i] xor b[j]),mp[i].insert({xr[i][j],j});
+	vector&lt;int&gt; res;
+	for(int j=1; j&lt;=n; ++j) {
+		bool ok=0;
+		set&lt;int&gt; S;
+		for(int i=1; i&lt;=n; ++i) {
+			auto rg=mp[i].equal_range(xr[1][j]);
+			if(mp[i].find(xr[1][j])!=mp[i].end()) {
+				for(auto it=rg.first; it!=rg.second; ++it) {
+					S.emplace(it-&gt;second);
+				}
+			}
+			else {
+				ok=1;
+				break;
+			}
+		}
+		if(ok) continue;
+		if(S.size()==n) {
+			res.push_back(xr[1][j]);
+		}
+	}
+	sort(all(res));
+	res.erase(unique(all(res)),res.end()); 
+	cout&lt;&lt;res.size()&lt;&lt;&quot;\n&quot;;
+	for(int x:res) cout&lt;&lt;x&lt;&lt;&quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-124clcm-of-gcds">「ARC 124C」LCM of GCDs</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_c">Link</a>.</p>
+<p>考场做法复杂度有问题啊，虽然屮过去了。有空来补 official editorial
+做法。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Oops, something went wrong.
+</code></pre></p>
+</details>
+
+<h1 id="arc-124dyet-another-sorting-problem">「ARC 124D」Yet Another
+Sorting Problem</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_d">Link</a>.</p>
+<p><del>你看 ARC 又考置换群了。震撼围观吴老师精确押题。</del></p>
+<p>套路题，连边 $i\rightarrow p_{i}$ 后一堆环摆出来。答案是</p>
+<p>$$ n+m-(\text{the number of cycles in the graph})+\
+2\times\max{\text{the number of cycles of size of 2 or greater
+consisting of vertice numbered through }1\text{ to }n,\ \text{the number
+of cycles of size of 2 or greater consisting of vertice numbered through
+}n+1\text{ to }n+m} $$</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+#define all(x) (x).begin(),(x).end()
+const int N=200100;
+int n,m,p[N],vis[N];
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr),cout.tie(nullptr);
+	cin&gt;&gt;n&gt;&gt;m; int x0=0,x1=0,res=n+m,ls=0;
+	for(int i=1; i&lt;=n+m; ++i) cin&gt;&gt;p[i];
+	for(int i=1; i&lt;=n+m; ++i) {
+		if(vis[i]) continue;
+		int now=i,len=0,qwq=0,qaq=0;
+		while(!vis[now]) {
+			++len;
+			if(now&lt;=n) qwq=1;
+			else qaq=1;
+			vis[now]=1;
+			now=p[now];
+		}
+		if(!qaq&amp;&amp;len&gt;=2) ++x0;
+		if(!qwq&amp;&amp;len&gt;=2) ++x1;
+		--res;
+	}
+	cout&lt;&lt;res+2*max(x0,x1)&lt;&lt;&quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-124epass-to-next">「ARC 124E」Pass to Next</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_e">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">
+</code></pre></p>
+</details>
+
+<h1 id="arc-124fchance-meeting">「ARC 124F」Chance Meeting</h1>
+<p><a
+href="https://atcoder.jp/contests/arc124/tasks/arc124_f">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

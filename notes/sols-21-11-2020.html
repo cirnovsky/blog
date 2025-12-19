@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Record - Nov. 21st, 2020 - Exam. REC &amp; SOL</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#craft" id="toc-craft">Craft</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h3 id="craft">Craft</h3>
+<h4 id="prob-1">Prob. 1</h4>
+<p><a href="http://222.180.160.110:1024/problem/4865">Desc. &amp;
+Link.</a></p>
+<p>有想法。</p>
+<p><code>printf( "nan" );</code></p>
+<h4 id="prob2">Prob.2</h4>
+<p><a href="http://222.180.160.110:1024/problem/4218">Desc. &amp;
+Link.</a></p>
+<p>没读懂</p>
+<h4 id="prob-3">Prob. 3</h4>
+<p><a href="http://222.180.160.110:1024/problem/4864">Desc. &amp;
+Link.</a></p>
+<p>定义 $f_{i,j,0/1}$ 表示个寂寞。 $$ f_{i,i,0/1}=|a_{i}|\times I $$</p>
+<p>$$
+f_{i,j,0}=\min{f_{i+1,j,0}+(a_{i+1}-a_{i})\times(I-j+i),f_{i+1,j,1}+(a_{j}-a_{i})\times(I-j+i)}
+\f_{i,j,1}=\min{f_{i,j-1,1}+(a_{j}-a_{j-1})\times(I-j+i),f_{i,j-1,0}+(a_{j}-a_{i})\times(I-j+i)}
+$$</p>
+<p>$$ \mathrm{ANS}=\max{i\times m-\min{f_{l,r,0/1}}} $$</p>
+<p>Over.</p>
+<h4 id="prob-4">Prob. 4</h4>
+<p><a href="http://222.180.160.110:1024/problem/4222">Desc. &amp;
+Link.</a></p>
+<p>转化一下，把 $\texttt{C,T}$ 换成左括号和右括号。</p>
+<p>把左括号赋值为 $1$，右括号 $-1$。</p>
+<p>把这个 $1/-1$ 序列设为 $A$</p>
+<p>那么所有前缀中 $\texttt{C}$ 的个数大于等于 $\texttt{T}$
+的个数即要求前缀和不能出现负数。</p>
+<p>询问即求：定义
+$P_{i}=\sum_{j=1}^{i}A_{j},S_{i}=\sum_{j=i}^{n}A_{j}$，对于每次询问回答：
+$$
+\begin{cases}0,\min{\min{P_{l,l+1,\cdots,r}},\min{S_{l,l+1,\cdots,r}}}\ge0
+\
+|\min{\min{P_{l,l+1,\cdots,r}},\min{S_{l,l+1,\cdots,r}}}|,\texttt{otherwise}\end{cases}​
+$$</p>
+<p>这个东西 $\texttt{has been hacked by the Big Sample.}$</p>
+<p>一个可能的死亡原因：前缀后缀都要判断可能会引起一些错误。</p>
+<p>处理方法：那么先处理前缀，后缀减一下再处理。</p>
+<p>（这不是问题）</p>
+<p>另一个可能的死亡原因：$\min{\min{P_{l,l+1,\cdots,r}},\min{S_{l,l+1,\cdots,r}}}$
+可能取到多处。</p>
+<p>处理方法：。</p>
+<p>（这也不是问题）</p>
+<h5 id="algo-0">Algo. 0</h5>
+<p>W·violence·gy</p>
+<h5 id="algo-1">Algo. 1</h5>
+<p>莫队，时间复杂度 $\Theta(n\sqrt{n}\log_{2}n)$。</p>
+<h5 id="algo-2">Algo. 2</h5>
+<p>晓求不得。</p>
+<h3 id="solution">Solution</h3>
+<h4 id="prob-4-1">Prob. 4</h4>
+<p>转化一下成最大子段和，化式子过程懒得写了。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

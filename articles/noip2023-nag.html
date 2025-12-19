@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>NOIP 2023 的碎碎念</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -42,63 +42,23 @@
   <div class="content">
     <div id="header"></div>
     
-<nav id="TOC">
-<ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
-</ul>
-</nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
+<p>呀……一晃本人也到了最后一次的 NOIP
+了，时间总是在开头很慢而在收尾时加快啊……</p>
+<p>洒家应该对这次的比赛没有太多念想才对，退役半年后再回来，基本已经丧失了水平。不过是为了走完六年的浮生梦，稍稍让结尾不显得潦草而已。</p>
+<p>我亦的确是最没有天赋的一类选手。在生涯前期凭着兴趣疯狂内卷才获得比同级同学稍高的水平，而后的颓然才让我看清，原来任何人只要稍微努力，就能超过我累积的实力呀。</p>
+<p>我已经揣着 NOIP
+后回归文化课的准备了！而这两个月停的课也绝不是白费。至少我找到些许残存的自己，摒弃了一些可笑的天真……吧。</p>
+<p>而有人后悔学 OI，后悔得像安定剂药效结束的爆发。</p>
 <blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
+<p>最可怕的是没有自知之明，想当然的以为自己有足够的天分和努力，想当然的以为可能有些微的好运。</p>
+<p>……</p>
+<p>我就是被执念锁在原地面目全非的亡魂，承受自己对自己的怨恨。</p>
+<p>⋯⋯</p>
+<p>但是前途已经一片黑暗，我该走到哪去啊</p>
+<p>我已经不会弹琵琶了</p>
 </blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<p>这些文字很有感染力，几乎印出一双颤抖的手与一颗懊丧的心。或许我也该在结束后疯狂悔恨，泣下沾襟，泪掩愁情？才不，管他呢！普天下之广大，任遨游！</p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"
