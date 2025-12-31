@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「joisc2016 - D3T2」回転寿司</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>题意大概是这样，「每次操作选出区间中的一个
+LIS（strictly），满足其开端是极靠近左端点且大于 $A$ 的位置，答案即这个
+LIS 的末尾，做一个轮换后弹出序列末端」。</p>
+<p>首先做几个观察。</p>
+<blockquote>
+<p><strong>Observation 1</strong>：每次被弹出的都是区间最大值。</p>
+</blockquote>
+<p>证明：显然，你考虑有一个最大的值在钦定的 LIS 的前或后，都会被先行选择
+/ 扩展进来。</p>
+<blockquote>
+<p><strong>Observation 2</strong>（key
+observation）：如果对一个区间插入若干个值，插入顺序不影响最终序列的长相。</p>
+</blockquote>
+<p>证明：每次插入进去的值不可能成为序列的最大值，所以弹出的数固定。并且插入进的数是根据严格偏序关系插进去的，所以顺序不影响长相。</p>
+<p>仅凭以上两个观察，此题的奇怪操作怎么看也不像是个 ${\rm
+polylog}$，选择对序列做 Sqrt
+Decomposition，接下来我们探讨整块间的处理方式和散块的做法，因为操作的特殊性我们并不需要做
+8 种情况的伞兵讨论。</p>
+<ul>
+<li>整块间：你考虑每个整块上维护一个大根堆，然后整块的后继继承该整块的最大值，该整块去除其最大值即可；</li>
+<li>散块：把所有需要插入的元素存一个懒标在右边散块放出来，因为
+Observation 2，我们贪心优先把值较小的懒标放出去即可。</li>
+</ul>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+template &lt;class T&gt; inline void chmax(T&amp; a, const T b) { a = a &gt; b ? a : b; }
+template &lt;class T&gt; inline void chmin(T&amp; a, const T b) { a = a &lt; b ? a : b; }
+inline long long rd() {
+  long long x = 0; bool f = 0; char ch = getchar();
+  while (ch &lt; &#x27;0&#x27; || ch &gt; &#x27;9&#x27;) f |= (ch == &#x27;-&#x27;), ch = getchar();
+  while (ch &gt;= &#x27;0&#x27; &amp;&amp; ch &lt;= &#x27;9&#x27;) x = x * 10 + (ch &amp; 15), ch = getchar();
+  return f ? -x : x;
+}
+/** @brief
+ * 选出一个 LIS，满足开始是极靠近 l 的大于 A 的位置，答案即序列的末端，然后用 A 替换序列开头，做一个轮换，弹出序列末端
+ * Observation 1：每次被弹出的都是区间最大值
+ * Trick：序列分块
+ * Section 1：整块
+   * 整块上维护一个堆，整块间下一块继承上一块的最大值
+ * Section 2：散块
+   * 维护一个小根堆，每次散块暴力重构
+ * key observation：插入顺序不影响序列的长相
+*/
+constexpr int BS = 650;
+int n, m, a[400100], pos[400100];
+int L[660], R[660];
+std::priority_queue&lt;int&gt; max[660];
+std::priority_queue&lt;int, std::vector&lt;int&gt;, std::greater&lt;int&gt;&gt; tag[660];
+void push(int i, int x) { max[i].emplace(x); }
+void setBound(int i) { L[i] = (i - 1) * BS + 1, R[i] = i * BS; }
+int Qry(int i, int l, int r, int x) {
+  if (tag[i].size()) {
+    for (int j = L[i]; j &lt;= R[i]; ++j)
+      if (int t = a[j]; tag[i].top() &lt; t)
+        a[j] = tag[i].top(), tag[i].pop(), tag[i].emplace(t);
+  }
+  while (max[i].size()) max[i].pop();
+  while (tag[i].size()) tag[i].pop();
+  for (int j = l; j &lt;= r; ++j)
+    if (a[j] &gt; x) std::swap(a[j], x);
+  for (int f = L[i]; f &lt;= R[i]; ++f) push(pos[L[i]], a[f]);
+  return x;
+}
+int Mdf(int i, int x) {
+  if (x &gt;= max[i].top()) return x;
+  int res = max[i].top(); max[i].pop();
+  max[i].emplace(x), tag[i].emplace(x);
+  return res;
+}
+signed main() {
+  n = rd(), m = rd();
+  for (int i = 1; i &lt;= n; ++i)
+    push(pos[i] = (i - 1) / BS + 1, a[i] = rd());
+  for (int i = 1; i &lt;= pos[n]; ++i) setBound(i);
+  R[pos[n]] = n;
+  for (int l, r, a; m--;) {
+    l = rd(), r = rd(), a = rd();
+    if (pos[l] == pos[r] &amp;&amp; l &lt;= r) printf(&quot;%d\n&quot;, Qry(pos[l], l, r, a));
+    else {
+      a = Qry(pos[l], l, R[pos[l]], a);
+      for (int u = pos[l] + 1 &gt; pos[n] ? 1 : pos[l] + 1; u != pos[r]; u = u + 1 &gt; pos[n] ? 1 : u + 1)
+        a = Mdf(u, a);
+      printf(&quot;%d\n&quot;, Qry(pos[r], L[pos[r]], r, a));
+    }
+  }
+  return 0;
+}
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

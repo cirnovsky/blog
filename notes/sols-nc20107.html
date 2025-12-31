@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>学习唯真</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,41 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#a" id="toc-a">A</a></li>
+<li><a href="#b" id="toc-b">B</a></li>
+<li><a href="#c" id="toc-c">C</a></li>
+<li><a href="#d" id="toc-d">D</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<p>发现终于最讨厌的还是和自己的相同的人的样子。</p>
+<h2 id="a">A</h2>
+<p>傻逼题，不算复杂度差不多得了，显然交换 $S$ / $T$
+的选出区间中的任意位置不影响答案，于是前缀和即可。</p>
+<h2 id="b">B</h2>
+<p>清新题，只不过我的确不会...部分分设置不太合理。</p>
+<p>你考虑用 $O(h ^ 2 w ^ 2)$ 的时间钦定两个点 $(x_1, y_1), (x_2, y_2)$
+研究线段，同时令 $a = |x_1 - x_2|, b = |y_1 - y_2|$。如果你做过
+<em>仪仗队</em> 那么很容易想到中间一共有 $\gcd(a, b)$
+个点，把这些点当作盒子，把它们拍到序列上，则我们有 $\gcd(a, b) - 1$
+个盒子，$n - 2$ 个点（钦定端点必选）。如果我们令 $k=\lfloor\frac{d}{{\rm
+dis}((0, 0), (\frac{a}{\gcd(a, b)}, \frac{b}{\gcd(a,
+b)}))}\rfloor$，则每个球放进的盒子编号需差 $\geqslant k$。</p>
+<p>赋予组合意义，则每个球存在「体积」的概念，且该「体积」为 $k -
+1$，考虑将其压缩， 那么答案式子就出来了 $\binom{\gcd(a, b) - 1 - (k - 1)
+- (n - 2)(k - 1)}{n - 2}$，那个 $k - 1$ 是右端点已经必选了，所以少了 $k
+- 1$ 个盒子。</p>
+<p>考虑优化，注意答案取决于 $a$ 和 $b$，可以乘个系数来优化。</p>
+<h2 id="c">C</h2>
+<p>清新题，部分分非常暗示。</p>
+<p>有个显然的 observation
+是一个结点一定从<strong>子树</strong>中至多选两个未被选择的结点转移，那么就可以直接可并堆启发式合并什么的来转移。</p>
+<p>主要问题是为什么不是儿子中选呢？你考虑一个结点 $x$，其父亲 $pre(x)$
+只有 $x$ 一个儿子，而 $x$ 有三个儿子，并且 $x$
+把其中两个儿子选完了，那么 $pre(x)$ 一定是从 $x$
+的另一个儿子转移上来，所以必须把子树考虑完。</p>
+<h2 id="d">D</h2>
+<p>你出你🐎的 BM 呢😅😅。</p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

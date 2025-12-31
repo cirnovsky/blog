@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「note」原根照抄</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#阶multiplicative-order"
+id="toc-阶multiplicative-order">阶（multiplicative order）</a></li>
+<li><a href="#原根primitive-root"
+id="toc-原根primitive-root">原根（primitive root）</a></li>
+</ul>
+</nav>
+
+<h2 id="阶multiplicative-order">阶（multiplicative order）</h2>
+<blockquote>
+<p>$\textbf{Def.}$：$\delta_m(a)$ 为最小的 $n$ 使得 $a^n\equiv 1\pmod
+m$，其中 $(a,m)=1$。</p>
+</blockquote>
+<blockquote>
+<p>Observation 1：$\boxed{a^0\not\equiv a^1\not\equiv\dots\not\equiv
+a^{\delta_m(a)-1}\pmod m}$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：若 $\exists i,j,s.t.0\leqslant
+i&lt;j&lt;\delta_m(a),a^i\equiv a^j\pmod m$，则 $a^{i-j}\equiv 1\pmod
+m$，又 $i-j&lt;\delta_m(a)$，矛盾。</p>
+<p>$\blacksquare$</p>
+<blockquote>
+<p>Observation 2：$\boxed{\delta_m(a)\mid\varphi(m)}$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：由欧拉定理： $a^{\varphi(m)}\equiv 1\pmod m$，因为
+$1^x=1$，所以如果存在 $x_0$ 使得 $a^{x_0}\equiv 1\pmod m$，那么 $x_0$
+倍数也一定可以，也就是说存在周期性，所以
+$\delta_m(a)\mid\varphi(m)$。BTW，同时也有若 $a^n\equiv 1\pmod m$，则
+$\delta_m(a)\mid n$。</p>
+<p>$\blacksquare$</p>
+<p>顺便可以知道若 $a^p\equiv a^q\pmod m$，则 $p\equiv
+q\pmod{\delta_m(a)}$。</p>
+<blockquote>
+<p>Lemma 1：设
+$m\in\mathbb{N}^*$，$a,b\in\mathbb{Z}$，$(a,m)=(b,m)=1$，则
+$\boxed{\delta_m(ab)=\delta_m(a)\delta_m(b)}$ 的重要条件是
+$(\delta_m(a),\delta_m(b))=1$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：<a
+href="https://oi-wiki.net/math/number-theory/primitive-root/#_3">略，具体见此处。</a></p>
+<blockquote>
+<p>Lemma 2：设
+$k\in\mathbb{N}$，$m\in\mathbb{N}^*$，$a\in\mathbb{Z}$，$(a,m)=1$，则
+$\boxed{\delta_m(a^k)=\frac{\delta_m(a)}{(\delta_m(a),k)}}$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：<a
+href="https://oi-wiki.net/math/number-theory/primitive-root/#_3">略，具体见此处。</a></p>
+<h2 id="原根primitive-root">原根（primitive root）</h2>
+<blockquote>
+<p>$\textbf{Def.}$：对于 $(a,m)=1$，若 $\delta_m(a)=\varphi(m)$，则称
+$a$ 是模 $m$ 的原根。</p>
+</blockquote>
+<blockquote>
+<p>Lemma 1（判定定理）：设 $m\geqslant3$，$(a,m)=1$，则 $a$ 为模 $m$
+的原根当且仅当 $\boxed{\forall
+p\in\mathbb{P},p\mid\varphi(m),a^{\frac{\varphi(m)}{p}}\not\equiv1\pmod
+m}$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：<a
+href="https://oi-wiki.net/math/number-theory/primitive-root/#_5">必要性显然，充分性证明见此处。</a></p>
+<blockquote>
+<p>Lemma 2（数量定理）：若 $m$ 存在原根，则其原根数量为
+$\boxed{\varphi(\varphi(m))}$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：<a
+href="https://oi-wiki.net/math/number-theory/primitive-root/#_6">略，具体见此处。</a></p>
+<blockquote>
+<p>Lemma 3（存在定理）：$m$ 存在原根当且仅当
+$\boxed{m=2,4,p^\alpha,2p^\alpha}$，其中 $p$
+为奇素数，$a\in\mathbb{N}^*$。</p>
+</blockquote>
+<p>$\textbf{Proof}$：<a
+href="https://oi-wiki.net/math/number-theory/primitive-root/#_7">略，具体见此处。</a></p>
+<p>若 $m$ 存在原根，则最小原根 $\leqslant m^\frac{1}{4}$。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

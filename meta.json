@@ -1,5 +1,52 @@
 [
   {
+    "date": "2025-12-31",
+    "title": "Goodbye 2025",
+    "slug": "goodbye-2025",
+    "tags": [
+      "prose"
+    ],
+    "category": "articles"
+  },
+  {
+    "date": "2025-10-15",
+    "title": "Notes on Linear Algebra",
+    "slug": "notes-linalg",
+    "tags": [
+      "maths"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2025-10-09",
+    "title": "恋爱不是单关键字排序",
+    "slug": "o-n-love-story",
+    "tags": [
+      "prose"
+    ],
+    "category": "articles"
+  },
+  {
+    "date": "2025-09-08",
+    "title": "Solution -「Gym 103329G」Power Station of Art",
+    "slug": "sol-gym103329g",
+    "tags": [
+      "constructive-algorithms",
+      "graph-theory"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2025-09-01",
+    "title": "Revision for Elementary Number Theory",
+    "slug": "revision-for-elementary-nt",
+    "tags": [
+      "maths",
+      "number-theory"
+    ],
+    "category": "notes"
+  },
+  {
     "date": "2025-08-14",
     "title": "Solution -「CF 2125E」Sets of Complementary Sums",
     "slug": "sol-cf2125e",
@@ -62,15 +109,6 @@
       "physics"
     ],
     "category": "notes"
-  },
-  {
-    "date": "2025-03-01",
-    "title": "莫拘泥于过往",
-    "slug": "mourn-not-for-the-past",
-    "tags": [
-      "prose"
-    ],
-    "category": "articles"
   },
   {
     "date": "2025-02-14",
@@ -228,11 +266,11 @@
   },
   {
     "date": "2023-11-01",
-    "title": "Solution -「JOISC 2023」旅行",
-    "slug": "sol-joisc2023-tourism",
+    "title": "Solution -「JOISC 2023」ふたつの通貨",
+    "slug": "sol-joisc2023-two-currencies",
     "tags": [
       "data-structures",
-      "trees"
+      "binary-search"
     ],
     "category": "notes"
   },
@@ -247,11 +285,11 @@
   },
   {
     "date": "2023-11-01",
-    "title": "Solution -「JOISC 2023」ふたつの通貨",
-    "slug": "sol-joisc2023-two-currencies",
+    "title": "Solution -「JOISC 2023」旅行",
+    "slug": "sol-joisc2023-tourism",
     "tags": [
       "data-structures",
-      "binary-search"
+      "trees"
     ],
     "category": "notes"
   },
@@ -456,8 +494,8 @@
   },
   {
     "date": "2023-10-09",
-    "title": "Solution -「CF 710F」String Set Queries",
-    "slug": "sol-cf710f",
+    "title": "Solution -「BZOJ 4231」回忆树",
+    "slug": "sol-bzoj4231",
     "tags": [
       "strings",
       "suffix-structures"
@@ -466,8 +504,8 @@
   },
   {
     "date": "2023-10-09",
-    "title": "Solution -「BZOJ 4231」回忆树",
-    "slug": "sol-bzoj4231",
+    "title": "Solution -「CF 710F」String Set Queries",
+    "slug": "sol-cf710f",
     "tags": [
       "strings",
       "suffix-structures"
@@ -495,19 +533,19 @@
   },
   {
     "date": "2023-09-28",
-    "title": "Solution -「JOISC 2020」建筑装饰 4",
-    "slug": "sol-joisc2020-building4",
+    "title": "Solution -「模拟赛」草莓蛋糕",
+    "slug": "sol-loc-caomeidangao",
     "tags": [
-      "dp"
+      "data-structures"
     ],
     "category": "notes"
   },
   {
     "date": "2023-09-28",
-    "title": "Solution -「模拟赛」草莓蛋糕",
-    "slug": "sol-loc-caomeidangao",
+    "title": "Solution -「JOISC 2020」建筑装饰 4",
+    "slug": "sol-joisc2020-building4",
     "tags": [
-      "data-structures"
+      "dp"
     ],
     "category": "notes"
   },
@@ -666,6 +704,15 @@
   },
   {
     "date": "2022-11-16",
+    "title": "笔谈其二",
+    "slug": "pittam-2",
+    "tags": [
+      "prose"
+    ],
+    "category": "articles"
+  },
+  {
+    "date": "2022-11-16",
     "title": "「bzoj - 4311」向量",
     "slug": "sol-bzoj4311",
     "tags": [
@@ -673,15 +720,6 @@
       "geometry"
     ],
     "category": "notes"
-  },
-  {
-    "date": "2022-11-16",
-    "title": "笔谈其二",
-    "slug": "pittam-2",
-    "tags": [
-      "prose"
-    ],
-    "category": "articles"
   },
   {
     "date": "2022-11-14",
@@ -1004,15 +1042,6 @@
   },
   {
     "date": "2022-07-26",
-    "title": "联训 2",
-    "slug": "sols-acc4077",
-    "tags": [
-      "trees"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2022-07-26",
     "title": "「codeforces - 1608F」MEX counting",
     "slug": "sol-cf1608f",
     "tags": [
@@ -1022,12 +1051,11 @@
     "category": "notes"
   },
   {
-    "date": "2022-07-25",
-    "title": "联训 1",
-    "slug": "sols-acc4076",
+    "date": "2022-07-26",
+    "title": "联训 2",
+    "slug": "sols-acc4077",
     "tags": [
-      "data-structures",
-      "hash"
+      "trees"
     ],
     "category": "notes"
   },
@@ -1042,12 +1070,12 @@
     "category": "notes"
   },
   {
-    "date": "2022-07-22",
-    "title": "雑用 1",
-    "slug": "misc-1",
+    "date": "2022-07-25",
+    "title": "联训 1",
+    "slug": "sols-acc4076",
     "tags": [
-      "maths",
-      "nag"
+      "data-structures",
+      "hash"
     ],
     "category": "notes"
   },
@@ -1057,6 +1085,16 @@
     "slug": "nt-1",
     "tags": [
       "number-theory"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2022-07-22",
+    "title": "雑用 1",
+    "slug": "misc-1",
+    "tags": [
+      "maths",
+      "nag"
     ],
     "category": "notes"
   },
@@ -1335,20 +1373,30 @@
   },
   {
     "date": "2022-01-02",
-    "title": "「tjoi 2018」智力竞赛",
-    "slug": "sol-tjoi2018-contest",
+    "title": "「openjudge / poj - 1057」Chessboard",
+    "slug": "sol-poj1057",
     "tags": [
-      "binary-search",
+      "data-structures",
       "graph-theory"
     ],
     "category": "notes"
   },
   {
     "date": "2022-01-02",
-    "title": "「openjudge / poj - 1057」Chessboard",
-    "slug": "sol-poj1057",
+    "title": "「coci 2021-2022",
+    "slug": "sol-coci2122-logicari",
     "tags": [
-      "data-structures",
+      "dp",
+      "bitwise"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2022-01-02",
+    "title": "「tjoi 2018」智力竞赛",
+    "slug": "sol-tjoi2018-contest",
+    "tags": [
+      "binary-search",
       "graph-theory"
     ],
     "category": "notes"
@@ -1365,16 +1413,6 @@
       "number-theory",
       "bitwise",
       "constructive-algorithms"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2022-01-02",
-    "title": "「coci 2021-2022",
-    "slug": "sol-coci2122-logicari",
-    "tags": [
-      "dp",
-      "bitwise"
     ],
     "category": "notes"
   },
@@ -1418,21 +1456,21 @@
   },
   {
     "date": "2021-12-10",
-    "title": "Dinic Algorithm Implementation with Huge Constant, and What is Behind It",
-    "slug": "slower-dinic-explained",
-    "tags": [
-      "flows"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-12-10",
     "title": "「loj - 3022」「cqoi 2017」老 C 的方块",
     "slug": "sol-cqoi2017-cube",
     "tags": [
       "graph-theory",
       "flows",
       "constructive-algorithms"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-12-10",
+    "title": "Dinic Algorithm Implementation with Huge Constant, and What is Behind It",
+    "slug": "slower-dinic-explained",
+    "tags": [
+      "flows"
     ],
     "category": "notes"
   },
@@ -1705,19 +1743,19 @@
   {
     "date": "2021-07-11",
     "title": "Solution -「营业」「ABC 209F」Deforestation",
-    "slug": "sol-abc209f-1",
+    "slug": "sol-abc209f",
     "tags": [
-      "dp",
-      "greedy"
+      "dp"
     ],
     "category": "notes"
   },
   {
     "date": "2021-07-11",
     "title": "Solution -「营业」「ABC 209F」Deforestation",
-    "slug": "sol-abc209f",
+    "slug": "sol-abc209f-1",
     "tags": [
-      "dp"
+      "dp",
+      "greedy"
     ],
     "category": "notes"
   },
@@ -1910,31 +1948,21 @@
   },
   {
     "date": "2021-04-09",
-    "title": "Solution -「九省联考 2018」劈配",
-    "slug": "sol-lojc2477",
-    "tags": [
-      "flows"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-04-09",
-    "title": "Solution -「HNOI 2016」最小公倍数（lacks of code）",
-    "slug": "sol-hnoi2016-lcm",
-    "tags": [
-      "maths",
-      "data-structures"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-04-09",
     "title": "Note -「SOS DP」高维前缀和",
     "slug": "sos-dp",
     "tags": [
       "maths",
       "dp",
       "bitwise"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-04-09",
+    "title": "Solution -「九省联考 2018」劈配",
+    "slug": "sol-lojc2477",
+    "tags": [
+      "flows"
     ],
     "category": "notes"
   },
@@ -1949,12 +1977,12 @@
     "category": "articles"
   },
   {
-    "date": "2021-04-08",
-    "title": "Solution -「九省联考 2018」IIIDX",
-    "slug": "sol-p4364",
+    "date": "2021-04-09",
+    "title": "Solution -「HNOI 2016」最小公倍数（lacks of code）",
+    "slug": "sol-hnoi2016-lcm",
     "tags": [
-      "data-structures",
-      "trees"
+      "maths",
+      "data-structures"
     ],
     "category": "notes"
   },
@@ -1964,6 +1992,16 @@
     "slug": "sol-cf1025d",
     "tags": [
       "dp"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-04-08",
+    "title": "Solution -「九省联考 2018」IIIDX",
+    "slug": "sol-p4364",
+    "tags": [
+      "data-structures",
+      "trees"
     ],
     "category": "notes"
   },
@@ -1989,6 +2027,15 @@
   },
   {
     "date": "2021-04-06",
+    "title": "Solution -「CF 1096E」The Top Scorer",
+    "slug": "sol-cf1096e",
+    "tags": [
+      "combinatorics"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-04-06",
     "title": "Solution Set -「ARC 116」（in progress）",
     "slug": "sols-arc116",
     "tags": [
@@ -1999,11 +2046,12 @@
     "category": "notes"
   },
   {
-    "date": "2021-04-06",
-    "title": "Solution -「CF 1096E」The Top Scorer",
-    "slug": "sol-cf1096e",
+    "date": "2021-04-03",
+    "title": "Solution -「YunoOI 2007」rfplca",
+    "slug": "sol-ynoi2007-rfplca",
     "tags": [
-      "combinatorics"
+      "data-structures",
+      "trees"
     ],
     "category": "notes"
   },
@@ -2023,16 +2071,6 @@
     "slug": "sol-cf392c",
     "tags": [
       "maths"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-04-03",
-    "title": "Solution -「YunoOI 2007」rfplca",
-    "slug": "sol-ynoi2007-rfplca",
-    "tags": [
-      "data-structures",
-      "trees"
     ],
     "category": "notes"
   },
@@ -2101,21 +2139,21 @@
   },
   {
     "date": "2021-03-12",
-    "title": "Solution -「香港网络赛 2016」A+B Problem",
-    "slug": "sol-loc28863",
-    "tags": [
-      "maths",
-      "polynomials"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-03-12",
     "title": "Solution -「GXOI / GZOI 2019」AND OR Sum",
     "slug": "sol-gxoi_gzoi_2019-and_or_sum",
     "tags": [
       "data-structures",
       "bitwise"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-03-12",
+    "title": "Solution -「香港网络赛 2016」A+B Problem",
+    "slug": "sol-loc28863",
+    "tags": [
+      "maths",
+      "polynomials"
     ],
     "category": "notes"
   },
@@ -2141,16 +2179,6 @@
   },
   {
     "date": "2021-03-09",
-    "title": "Solution -「GXOI / GZOI 2019」宝牌一大堆",
-    "slug": "sol-gxoi_gzoi_2019-cards",
-    "tags": [
-      "dp",
-      "implementation"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2021-03-09",
     "title": "Solution -「CSP 2019」Centroid",
     "slug": "sol-csp2019-centroid",
     "tags": [
@@ -2159,12 +2187,12 @@
     "category": "notes"
   },
   {
-    "date": "2021-03-08",
-    "title": "Note -「Suffix Automaton」SAM",
-    "slug": "suffix-automaton",
+    "date": "2021-03-09",
+    "title": "Solution -「GXOI / GZOI 2019」宝牌一大堆",
+    "slug": "sol-gxoi_gzoi_2019-cards",
     "tags": [
-      "strings",
-      "suffix-structures"
+      "dp",
+      "implementation"
     ],
     "category": "notes"
   },
@@ -2175,6 +2203,16 @@
     "tags": [
       "data-structures",
       "dp"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2021-03-08",
+    "title": "Note -「Suffix Automaton」SAM",
+    "slug": "suffix-automaton",
+    "tags": [
+      "strings",
+      "suffix-structures"
     ],
     "category": "notes"
   },
@@ -2497,8 +2535,8 @@
   },
   {
     "date": "2020-11-25",
-    "title": "Solution -「洛谷 P3773」「CTSC 2017」吉夫特",
-    "slug": "sol-ctsc2017-gift",
+    "title": "Solution -「SP 106」BINSTIRL",
+    "slug": "sol-sp-binstirl",
     "tags": [
       "dp",
       "bitwise",
@@ -2508,8 +2546,8 @@
   },
   {
     "date": "2020-11-25",
-    "title": "Solution -「SP 106」BINSTIRL",
-    "slug": "sol-sp-binstirl",
+    "title": "Solution -「洛谷 P3773」「CTSC 2017」吉夫特",
+    "slug": "sol-ctsc2017-gift",
     "tags": [
       "dp",
       "bitwise",
@@ -2606,6 +2644,35 @@
   },
   {
     "date": "2020-10-12",
+    "title": "Solution -「洛谷 P4688」「YunoOI 2016」掉进兔子洞",
+    "slug": "sol-ynoi2016-p4688",
+    "tags": [
+      "bitwise",
+      "brute-force"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-10-12",
+    "title": "Solution -「洛谷 P5610」「YunoOI 2013」大学",
+    "slug": "sol-p5610-ynoi2013",
+    "tags": [
+      "data-structures"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-10-12",
+    "title": "Solution -「洛谷 P5048」「YunoOI 2019 模拟赛」Yuno loves sqrt technology III",
+    "slug": "sol-p5048",
+    "tags": [
+      "data-structures",
+      "brute-force"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-10-12",
     "title": "Solution -「洛谷 P5355」「YunoOI 2017」由乃的玉米田",
     "slug": "sol-ynoi2017-p5355",
     "tags": [
@@ -2627,39 +2694,10 @@
   },
   {
     "date": "2020-10-12",
-    "title": "Solution -「洛谷 P5610」「YunoOI 2013」大学",
-    "slug": "sol-p5610-ynoi2013",
-    "tags": [
-      "data-structures"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-10-12",
     "title": "Solution -「洛谷 P5046」「YunoOI 2019 模拟赛」Yuno loves sqrt technology I",
     "slug": "sol-p5046",
     "tags": [
       "data-structures",
-      "brute-force"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-10-12",
-    "title": "Solution -「洛谷 P5048」「YunoOI 2019 模拟赛」Yuno loves sqrt technology III",
-    "slug": "sol-p5048",
-    "tags": [
-      "data-structures",
-      "brute-force"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-10-12",
-    "title": "Solution -「洛谷 P4688」「YunoOI 2016」掉进兔子洞",
-    "slug": "sol-ynoi2016-p4688",
-    "tags": [
-      "bitwise",
       "brute-force"
     ],
     "category": "notes"
@@ -2709,8 +2747,15 @@
   },
   {
     "date": "2020-09-19",
-    "title": "Ds100p -「数据结构百题」21~30",
-    "slug": "sols-ds21_30",
+    "title": "Ds100p -「数据结构百题」71~80",
+    "slug": "sols-ds71_80",
+    "tags": [],
+    "category": "notes"
+  },
+  {
+    "date": "2020-09-19",
+    "title": "Ds100p -「数据结构百题」11~20",
+    "slug": "sols-ds11_20",
     "tags": [
       "data-structures"
     ],
@@ -2718,9 +2763,11 @@
   },
   {
     "date": "2020-09-19",
-    "title": "Ds100p -「数据结构百题」71~80",
-    "slug": "sols-ds71_80",
-    "tags": [],
+    "title": "Ds100p -「数据结构百题」51~60",
+    "slug": "sols-ds51_60",
+    "tags": [
+      "data-structures"
+    ],
     "category": "notes"
   },
   {
@@ -2748,24 +2795,6 @@
   },
   {
     "date": "2020-09-19",
-    "title": "Ds100p -「数据结构百题」41~50",
-    "slug": "sols-ds41_50",
-    "tags": [
-      "data-structures"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-09-19",
-    "title": "Ds100p -「数据结构百题」11~20",
-    "slug": "sols-ds11_20",
-    "tags": [
-      "data-structures"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-09-19",
     "title": "Ds100p -「数据结构百题」61~70",
     "slug": "sols-ds61_70",
     "tags": [
@@ -2775,8 +2804,17 @@
   },
   {
     "date": "2020-09-19",
-    "title": "Ds100p -「数据结构百题」51~60",
-    "slug": "sols-ds51_60",
+    "title": "Ds100p -「数据结构百题」41~50",
+    "slug": "sols-ds41_50",
+    "tags": [
+      "data-structures"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-09-19",
+    "title": "Ds100p -「数据结构百题」21~30",
+    "slug": "sols-ds21_30",
     "tags": [
       "data-structures"
     ],
@@ -2800,29 +2838,20 @@
   },
   {
     "date": "2020-04-19",
-    "title": "Solution -「洛谷 P5659」「CSP-S 2019」树上的数",
-    "slug": "sol-csp2019-tree",
-    "tags": [
-      "greedy",
-      "trees"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-04-19",
-    "title": "Solution -「洛谷 P1852」跳跳棋",
-    "slug": "sol-p1852",
-    "tags": [
-      "trees"
-    ],
-    "category": "notes"
-  },
-  {
-    "date": "2020-04-19",
     "title": "Solution -「洛谷 P3267」「JLOI 2016」「SHOI 2016」侦察守卫",
     "slug": "sol-jloi2016-shoi2016-p3267",
     "tags": [
       "dp",
+      "trees"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-04-19",
+    "title": "Solution -「洛谷 P5659」「CSP-S 2019」树上的数",
+    "slug": "sol-csp2019-tree",
+    "tags": [
+      "greedy",
       "trees"
     ],
     "category": "notes"
@@ -2834,6 +2863,15 @@
     "tags": [
       "maths",
       "divide-and-conquer"
+    ],
+    "category": "notes"
+  },
+  {
+    "date": "2020-04-19",
+    "title": "Solution -「洛谷 P1852」跳跳棋",
+    "slug": "sol-p1852",
+    "tags": [
+      "trees"
     ],
     "category": "notes"
   },

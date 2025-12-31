@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>艺术的争端——艺术节活动企划书</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,33 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#符号约定" id="toc-符号约定">符号约定</a></li>
+<li><a href="#核心" id="toc-核心">核心</a></li>
+<li><a href="#剧本概览" id="toc-剧本概览">剧本概览</a></li>
+<li><a href="#劣势分析" id="toc-劣势分析">劣势分析</a></li>
+<li><a href="#优势分析" id="toc-优势分析">优势分析</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<h2 id="符号约定">符号约定</h2>
+<p>以下以 A 代指某艺术作品或娱乐产品，以 B 代表 26 班剩余同学。</p>
+<h2 id="核心">核心</h2>
+<p>以艺术节前夕班内关于节目确定方向问题引起的争端为主线，采取舞台剧的形式，展现人物之间的矛盾冲突。</p>
+<h2 id="剧本概览">剧本概览</h2>
+<p>艺术节行将开幕，二十六班的同学们组成了程序导演组。组内的 A
+受众占比较大，于是导演组决定将 A
+中的某一桥段改做艺术节的节目。但是这在其他同学之间引起了争论，认为少数人的夹带私货会让其他同学的参与感大大降低，承担的义务与获得的回报与参与感并不相称。</p>
+<p>导演组内部有人对其他同学的反对感到不满，认为在召集议会时没有主动选择参与的人并没有发言权，在一节晚自习将整件事情对全班同学摊开讲来后，全班同学展开了激烈的讨论……</p>
+<h2 id="劣势分析">劣势分析</h2>
+<p>并不知道这样投机取巧的选材究竟效果如何，如果要改成偏喜剧的形式比较困难。</p>
+<h2 id="优势分析">优势分析</h2>
+<p>相比于歌舞类节目，更多同学能获得参与感。</p>
+<p>相比于原本的剧本，该主题与 26
+班联系更大，加之是最近刚发生的事情，演员可以很容易找到感觉，凑群演也相对容易，因为所有人都是现实事件的参与者，更好理解事件的中心与情感变化。</p>
+<p>如果找一个不相干的话题来演，各路人都想来塞点私货。该主题可以有效解决众口难调的塞私货的问题。</p>
+<p>原剧本的优势（据编剧本人所言）的一个优势是改现成的会比较容易。本主题基于现实事件，写剧本同样非常容易！</p>
+<p>方便升华，可以讨论一些问题，比如唐铄果提到的 MBTI
+人格问题，比如班级小型社会的矛盾问题，等等。</p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「ARC 116」（in progress）</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#arc-116aodd-vs-even" id="toc-arc-116aodd-vs-even">「ARC
+116A」Odd vs Even</a></li>
+<li><a href="#arc-116bproducts-of-min-max"
+id="toc-arc-116bproducts-of-min-max">「ARC 116B」Products of
+Min-Max</a></li>
+<li><a href="#arc-116cmultiple-sequences"
+id="toc-arc-116cmultiple-sequences">「ARC 116C」Multiple
+Sequences</a></li>
+<li><a href="#arc-116di-wanna-win-the-game"
+id="toc-arc-116di-wanna-win-the-game">「ARC 116D」I Wanna Win The
+Game</a></li>
+<li><a href="#arc-116espread-of-information"
+id="toc-arc-116espread-of-information">「ARC 116E」Spread of
+Information</a></li>
+<li><a href="#arc-116fdeque-game" id="toc-arc-116fdeque-game">「ARC
+116F」Deque Game</a></li>
+</ul>
+</nav>
+
+<h1 id="arc-116aodd-vs-even">「ARC 116A」Odd vs Even</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_a">Link</a>.</p>
+<p>看 $n$ 有多少 $2$ 因子。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Problem: A - Odd vs Even
+// Contest: AtCoder - AtCoder Regular Contest 116
+// URL: https://atcoder.jp/contests/arc116/tasks/arc116_a
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+int make_two(LL n){int res=0; while((n&amp;1ll)^1ll)	++res,n&gt;&gt;=1; return res;}
+int main()
+{
+	int T; scanf(&quot;%d&quot;,&amp;T);
+	while(T--)
+	{
+		LL n;
+		scanf(&quot;%lld&quot;,&amp;n);
+		int one=make_two(n);
+		if(one==1)	puts(&quot;Same&quot;);
+		else if(one&gt;1)	puts(&quot;Even&quot;);
+		else	puts(&quot;Odd&quot;);
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-116bproducts-of-min-max">「ARC 116B」Products of
+Min-Max</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_b">Link</a>.</p>
+<p>感觉这题很平庸很 B 题啊，不知道为什么那么多人说难……</p>
+<p>首先排序，于是即算 $$ \left(\sum_{i=1}^{n}\sum_{j=i+1}^{n}a_{i}\times
+a_{j}\times2^{j-i-1}\right)+\left(\sum_{i=1}^{n}a_{i}^{2}\right) $$</p>
+<p>也就是</p>
+<p>$$ \sum_{i=1}^{n}a_{i}\sum_{j=i+1}^{n}a_{j}\times2^{j-i-1} \ $$</p>
+<p>又 $$
+\sum_{j=i}^{n}a_{j}\times2^{j-i}=2\left(\sum_{j=i+1}^{n}a_{j}\times2^{j-i-1}\right)+a_{i}
+$$</p>
+<p>于是直接 $\mathcal{O}(n)$ 算即可。智慧官方 editorial 指着这个式子说
+$\mathcal{O}(n\log_{2}n)$ 不知道在干嘛。所以爆了个没什么用的标。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Problem: B - Products of Min-Max
+// Contest: AtCoder - AtCoder Regular Contest 116
+// URL: https://atcoder.jp/contests/arc116/tasks/arc116_b
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const int MOD=998244353;
+int n,a[200010],ans,sum;
+int main()
+{
+	scanf(&quot;%d&quot;,&amp;n);
+	for(int i=1;i&lt;=n;++i)	scanf(&quot;%d&quot;,&amp;a[i]);
+	sort(a+1,a+n+1);
+	for(int i=1;i&lt;=n;++i)
+	{
+		ans=(ans+LL(sum)*a[i]%MOD+LL(a[i])*a[i]%MOD)%MOD;
+		sum=((LL(sum)&lt;&lt;1)%MOD+a[i])%MOD;
+	}
+	printf(&quot;%d\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-116cmultiple-sequences">「ARC 116C」Multiple Sequences</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_c">Link</a>.</p>
+<p>我们只考虑每个序列的末尾，即 $A_{n}=1,\cdots,m$
+的情况。我们先来想暴力。</p>
+<p>对于每一个 $A_{n}$ 的取值，记为 $d$，对 $d$
+分解质因数，$d=\prod_{i=1}^{k}p_{i}^{c_{i}}$。</p>
+<p>然后对于这个 $d$，其可以构成的序列数即
+$\prod_{i=1}^{k}\binom{n+c_{i}-1}{c_{i}}$。</p>
+<p>考虑非暴力，就把素数筛出来就行了。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Problem: C - Multiple Sequences
+// Contest: AtCoder - AtCoder Regular Contest 116
+// URL: https://atcoder.jp/contests/arc116/tasks/arc116_c
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const int MOD=998244353;
+vector&lt;int&gt; makePrime(int n)
+{
+	vector&lt;int&gt; prime,tag(n+1);
+	tag[1]=1;
+	for(int i=2;i&lt;=n;++i)
+	{
+		if(!tag[i])	prime.push_back(i);
+		for(int j=0;j&lt;int(prime.size()) &amp;&amp; i*prime[j]&lt;=n;++j)
+		{
+			tag[i*prime[j]]=1;
+			if(i%prime[j]==0)	break;
+		}
+	}
+	return prime;
+}
+int n,m,ans;
+vector&lt;int&gt; fac,ifac;
+void exGCD(int one,int ano,int &amp;x,int &amp;y)
+{
+	if(ano==0)	x=1,y=0;
+	else	exGCD(ano,one%ano,y,x),y-=(one/ano)*x;
+}
+int getInv(int val){int res,w; exGCD(val,MOD,res,w); return (res+MOD)%MOD;}
+int C(int n,int k){return n&lt;k?0:LL(fac[n])*ifac[k]%MOD*ifac[n-k]%MOD;}
+int main()
+{
+	scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+	vector&lt;int&gt; prime=makePrime(200100);
+	fac.push_back(1);
+	for(int i=1;i&lt;=200100;++i)	fac.push_back(LL(fac.back())*i%MOD);
+	for(int i=0;i&lt;=200100;++i)	ifac.push_back(getInv(fac[i]));
+	for(int i=1;i&lt;=m;++i)
+	{
+		int curm=i,tmp=1;
+		for(int j=0;j&lt;int(prime.size()) &amp;&amp; prime[j]&lt;=curm;++j)
+		{
+			if(curm%prime[j]==0)
+			{
+				int ups=0;
+				while(curm%prime[j]==0)	curm/=prime[j],++ups;
+				tmp=LL(tmp)*C(n+ups-1,ups)%MOD;
+			}
+		}
+		ans=(ans+tmp)%MOD;
+	}
+	printf(&quot;%d\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-116di-wanna-win-the-game">「ARC 116D」I Wanna Win The
+Game</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_d">Link</a>.</p>
+<p>这题的 DP 感觉略有点难往这方面想。</p>
+<p>考虑这题的限制最强的是 $\texttt{XOR}$ 和为 $0$ 以及和恰为
+$m$。可以大概猜测此题与 $n$ 关系不大。</p>
+<p>那么我们可以考虑从最低位开始做这个题。</p>
+<p>设 $f_{i}$ 为构造出来序列的和为 $i$ 且 $\texttt{XOR}$ 和为 $0$
+的数量。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">Oops, something went wrong.
+</code></pre></p>
+</details>
+
+<h1 id="arc-116espread-of-information">「ARC 116E」Spread of
+Information</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_e">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">Oops, something went wrong.
+</code></pre></p>
+</details>
+
+<h1 id="arc-116fdeque-game">「ARC 116F」Deque Game</h1>
+<p><a
+href="https://atcoder.jp/contests/arc116/tasks/arc116_f">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">Oops, something went wrong.
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

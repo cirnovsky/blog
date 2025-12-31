@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Note -「普通生成函数 OGF」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#mathbfogf-的定义" id="toc-mathbfogf-的定义">$\mathbf{OGF}$
+的定义</a></li>
+<li><a href="#一个例子" id="toc-一个例子">一个例子</a>
+<ul>
+<li><a href="#textttfibonacci-序列的生成函数求法"
+id="toc-textttfibonacci-序列的生成函数求法">$\texttt{Fibonacci}$
+序列的生成函数求法</a></li>
+</ul></li>
+<li><a href="#利用生成函数求数列通项"
+id="toc-利用生成函数求数列通项">利用生成函数求数列通项</a></li>
+</ul>
+</nav>
+
+<h2 id="mathbfogf-的定义">$\mathbf{OGF}$ 的定义</h2>
+<p>对于一个序列 $a_{1},a_{2},\cdots$，我们称：</p>
+<p>$$ G(x)=\sum_{i=0}^{\infty}a_{i}x^{i} $$</p>
+<p>为序列 $a$ 的 $\mathbf{OGF}$ 即普通生成函数 ($\texttt{Ordinary
+Generating Function}$)。</p>
+<blockquote>
+<p>同时因为我们不关心 $x$ 的取值，因此 $\sum_{i=1}^{+\infty}a_{i}x^{i}$
+又称作以 $x$ 为自由元的形式幂级数。 -- 摘自 自为风月马前卒</p>
+</blockquote>
+<h2 id="一个例子">一个例子</h2>
+<p>举个例子，序列：</p>
+<p>$$
+\left(^{n}<em>{0}\right),\left(^{n}</em>{1}\right),\cdots,\left(^{n}_{n}\right)
+$$</p>
+<p>的 $\mathbf{OGF}$ 为（二项式定理）：</p>
+<p>$$ G(x)=(1+x)^{n} $$</p>
+<p>由等比数列求和公式，有一个常用的等式：</p>
+<p>$$ \sum_{i=0}^{\infty}x^{i}=\frac{1-x^{\infty}}{1-x} $$</p>
+<p>因为指数为 $\infty$，所以 $x^{\infty}$ 趋近于
+$0$，箭头方向随便打，因为我们并不关心 $x$ 的取值。</p>
+<p>即</p>
+<p>$$ \sum_{i=0}^{\infty}x^{i}=\frac{1}{1-x} $$</p>
+<p>这个等式还有一个重要的运用，我们把 $x$ 替换成 $kx$ 即可得：</p>
+<p>$$ \sum_{i=0}^{\infty}(kx)^{i}=\frac{1}{1-kx} $$</p>
+<p>后文的用 $\mathbf{OGF}$ 求序列的通项公式里面这个东西很有用的。</p>
+<h3 id="textttfibonacci-序列的生成函数求法">$\texttt{Fibonacci}$
+序列的生成函数求法</h3>
+<p>定义一个序列</p>
+<p>$$ F_{i}=\begin{cases} 1,i\in[0,1] \ \displaystyle
+F_{i-1}+F_{i-2},i\in[2,\infty) \end{cases} $$</p>
+<p>则我们称 $F$ 为 $\texttt{Fibonacci}$ 序列。</p>
+<p>接下来我们来推导其生成函数：</p>
+<p>$$ \begin{aligned} G(x)&amp;=\sum_{i=0}^{\infty}F_{i}x^{i} \
+G(x)&amp;=1+x+2x^{2}+3x^{3}+\cdots \
+xG(x)&amp;=x+x^{2}+2x^{3}+3x^{4}+\cdots \
+x^{2}G(x)&amp;=x^{2}+x^{3}+2x^{4}+3x^{5}+\cdots \end{aligned} $$</p>
+<p>这里运用初中数学中经常用的到<strong>错位相减</strong>这一小技巧，可得</p>
+<p>$$ G(x)-xG(x)-x^{2}G(x)=1 $$</p>
+<p>即可得</p>
+<p>$$ G(x)=\frac{1}{1-x-x^{2}} $$</p>
+<p>至此，我们已经求出了 $\texttt{Fibonacci}$ 序列的 $\mathbf{OGF}$
+了。</p>
+<h2 id="利用生成函数求数列通项">利用生成函数求数列通项</h2>
+<p>以前文提到的 $\texttt{Fibonacci}$ 为例。</p>
+<p>首先我们知道其 $\mathbf{OGF}$ 为：</p>
+<p>$$ G(x)=\frac{1}{1-x-x^{2}} $$</p>
+<p>待定系数一下分母我们就可以得到：</p>
+<p>$$ G(x)=\frac{1}{(1-\frac{1+\sqrt{5}}{2}x)(1-\frac{1-\sqrt{5}}{2}x)}
+$$</p>
+<p>~后面的还没推出来，咕了~</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

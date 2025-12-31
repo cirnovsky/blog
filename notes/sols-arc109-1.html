@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「ARC 109」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#arc-109ahands" id="toc-arc-109ahands">「ARC
+109A」Hands</a></li>
+<li><a href="#arc-109blog" id="toc-arc-109blog">「ARC 109B」log</a></li>
+<li><a href="#arc-109clarge-rps-tournament"
+id="toc-arc-109clarge-rps-tournament">「ARC 109C」Large RPS
+Tournament</a></li>
+<li><a href="#arc-109dl" id="toc-arc-109dl">「ARC 109D」L</a></li>
+<li><a href="#arc-109e1d-reversi-builder"
+id="toc-arc-109e1d-reversi-builder">「ARC 109E」1D Reversi
+Builder</a></li>
+<li><a href="#arc-109f1d-kingdom-builder"
+id="toc-arc-109f1d-kingdom-builder">「ARC 109F」1D Kingdom
+Builder</a></li>
+</ul>
+</nav>
+
+<h1 id="arc-109ahands">「ARC 109A」Hands</h1>
+<p><a
+href="https://atcoder.jp/contests/arc109/tasks/arc109_a">Link</a>.</p>
+<p>讨论即可，除了煞笔出题人写了个死马的题面。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+int a,b,x,y,ans;
+int main()
+{
+	scanf(&quot;%d%d%d%d&quot;,&amp;a,&amp;b,&amp;x,&amp;y);
+	if(a&gt;b)	printf(&quot;%d\n&quot;,min(x&lt;&lt;1,y)*max(0,abs(a-b)-1)+x);
+	else	printf(&quot;%d\n&quot;,min(x&lt;&lt;1,y)*max(0,abs(a-b))+x);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-109blog">「ARC 109B」log</h1>
+<p><a
+href="https://atcoder.jp/contests/arc109/tasks/arc109_b">Link</a>.</p>
+<p>要贪心的取的话，肯定是先把 $n+1$ 取了，然后我们来二分。</p>
+<p>$1-n$ 分别有 $n+1$ 到 $2$ 种方法可以组成他。</p>
+<p>然后来考虑怎么 check。</p>
+<p>可以知晓，如果没有这一块多的木块，就一定需要 $n$ 块木头。</p>
+<p>然后就按开头那个贪心，把 $n+1$ 从 $1$ 分完，剩下的再依次分。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+unsigned long long n;
+bool check(unsigned long long x)
+{
+	return (x*(x+1)&gt;&gt;1)&lt;=n+1;
+}
+unsigned long long search(unsigned long long l,unsigned long long r)
+{
+	unsigned long long res=0;
+	while(l&lt;=r)
+	{
+		unsigned long long mid=(l+r)&gt;&gt;1;
+		if(check(mid))
+		{
+			l=mid+1;
+			res=n-mid+1;
+		}
+		else	r=mid-1;
+	}
+	return res;
+}
+int main()
+{
+	scanf(&quot;%llu&quot;,&amp;n);
+	printf(&quot;%llu\n&quot;,search(1,2e9));
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-109clarge-rps-tournament">「ARC 109C」Large RPS
+Tournament</h1>
+<p><a
+href="https://atcoder.jp/contests/arc109/tasks/arc109_c?lang=en">Link</a>.</p>
+<p>$2^{k}$！好耶！！！</p>
+<p>考虑倍增 DP。设 $f_{i,j}$ 为区间 $[i,i+2^{j}-1]$ 的 winner's
+hand。</p>
+<p>设计一个函数 $\text{tournament}(P,Q)$ 为 $P$、$Q$ 比武后的赢家。</p>
+<p>转移即 $$ f_{i,j}=\text{tournament}(f_{i,j-1},f_{i+2^{j-1},j-1}) $$
+当然你不能直接用 $2^{k}$ 当成序列来做，反正他是循环节我们直接做 $k$
+轮最后合并即可。</p>
+<p>实际实现时不需要这么写（主要是写不来）（好像可以记忆化？）。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;string&gt;
+#include&lt;cstdio&gt;
+#include&lt;cstring&gt;
+#include&lt;iostream&gt;
+using namespace std;
+string s;
+int n,k;
+char tour(char one,char ano)
+{
+	if(one==&#x27;R&#x27;)
+	{
+		if(ano==&#x27;R&#x27;)	return &#x27;R&#x27;;
+		else if(ano==&#x27;P&#x27;)	return &#x27;P&#x27;;
+		else	return &#x27;R&#x27;;
+	}
+	else if(one==&#x27;P&#x27;)
+	{
+		if(ano==&#x27;R&#x27;)	return &#x27;P&#x27;;
+		else if(ano==&#x27;P&#x27;)	return &#x27;P&#x27;;
+		else	return &#x27;S&#x27;;
+	}
+	else
+	{
+		if(ano==&#x27;R&#x27;)	return &#x27;R&#x27;;
+		else if(ano==&#x27;P&#x27;)	return &#x27;S&#x27;;
+		else	return &#x27;S&#x27;;
+	}
+}
+int main()
+{
+	scanf(&quot;%d%d&quot;,&amp;n,&amp;k);
+	cin&gt;&gt;s;
+	while(k--)
+	{
+		string tmp=s+s;
+		for(int i=0;i&lt;n;++i)	s[i]=tour(tmp[i&lt;&lt;1],tmp[i&lt;&lt;1|1]);
+	}
+	printf(&quot;%c\n&quot;,s[0]);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-109dl">「ARC 109D」L</h1>
+<p>图画出来差不多，向目标进发，步数下界就出来了 $\max{|x|,|y|}$。</p>
+<p>这张图是在<a
+href="https://www.cnblogs.com/gmh77/archive/2004/01/13/14083072.html">这里</a>嫖的：</p>
+<p><img src="uploads/13.png" /></p>
+<p>注意特判一些奇怪的情况，具体自己看代码吧吧吧吧。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+int t,onex,oney,anox,anoy,exx,exy,finalx,finaly;
+int main()
+{
+	scanf(&quot;%d&quot;,&amp;t);
+	while(t--)
+	{
+		scanf(&quot;%d%d%d%d%d%d&quot;,&amp;onex,&amp;oney,&amp;anox,&amp;anoy,&amp;exx,&amp;exy);
+		finalx=min(onex,min(anox,exx));
+		finaly=min(oney,min(anoy,exy));
+		finalx=(finalx&lt;&lt;1)+(finalx!=onex)+(finalx!=anox)+(finalx!=exx)-1;
+		finaly=(finaly&lt;&lt;1)+(finaly!=oney)+(finaly!=anoy)+(finaly!=exy)-1;
+		printf(&quot;%d\n&quot;,max(abs(finalx),abs(finaly))+((finalx==finaly)&amp;&amp;(finalx&gt;1||finalx&lt;0)));
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="arc-109e1d-reversi-builder">「ARC 109E」1D Reversi Builder</h1>
+<p><a
+href="https://atcoder.jp/contests/arc109/tasks/arc109_e?lang=en">Link</a>.</p>
+<h1 id="arc-109f1d-kingdom-builder">「ARC 109F」1D Kingdom Builder</h1>
+<p><a
+href="https://atcoder.jp/contests/arc109/tasks/arc109_f?lang=en">Link</a>.</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

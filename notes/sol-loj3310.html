@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「LOJ 3310」丁香之路</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>首先有两个前置技巧：<strong>1)</strong>
+两点间的最短距离就是直接连接两点的边的长度；<strong>2)</strong>
+遍历一个子图的最小花费是最小生成树的边权之和乘二。原问题让我们找出一条最短且必经过钦定边的
+$( s, i )$ 路径，那么我们先将 $\lang s , i \rang$
+连上，问题就变成了找出一条最短且必经过钦定边 $( s, i)$
+的回路。虽然每条边不一定恰好经过一次，但是对于正确性的判断，每个点的度数为偶数依然是一个必要条件，再加上连通性的限制，一条回路的正确性就可以由这两条必要条件充要表示。</p>
+<p>其次来考虑如何修复每个点度数的奇偶性，一个贪心策略是把一条 $(s, i)$
+拆成 $(s, s+1), (s+1, s+2) \dots (i-1,
+i)$，由于边权的性质，可以发现这样拆分一定不劣；又考虑连通性修复，类似以上。</p>
+<p><pre><code class="language-cpp toolbar">const int MN = 2.5e3;
+int n, m, s, fa[MN + 100], deg[MN + 100];
+int find(int u) {
+    while (u != fa[u]) u = fa[u] = fa[fa[u]];
+    return u;
+}
+bool unite(int u, int v) {
+    if (find(u) != find(v)) {fa[find(u)] = find(v);return 1;}
+    return 0;
+}
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    cin &gt;&gt; n &gt;&gt; m &gt;&gt; s; s --;
+    iota(fa, fa+n, 0);
+    ll res = 0;
+    rep(m) {
+        int u, v;cin &gt;&gt; u &gt;&gt; v;u--;v--;
+        deg[u] ++ , deg[v] ++;
+        res += abs(u - v);
+        unite(u, v);
+    }
+    vi tmp(fa, fa+n);
+    rep(n) {
+        deg[s] ++ , deg[i] ++;
+        unite(s, i);
+        vi id;
+        rep(j,n) if (deg[j]%2) id.pb(j);
+        ll sum = 0;
+        rep(j,intsz(id)-1) {
+            rep(k,id[j],id[j+1]) unite(k, k+1);
+            sum += id[j+1]-id[j];
+            j++;
+        }
+        vi from, to; vi().swap(id);
+        rep(j,n) if (deg[j] &gt; 0) id.pb(j);
+        rep(j,intsz(id)-1) from.pb(id[j]), to.pb(id[j+1]);
+        vi(intsz(to)).swap(id);
+        iota(id.begin(), id.end(), 0);
+        sort(id.begin(), id.end(), [&amp;](int x, int y) {
+            return to[x]-from[x]&lt;to[y]-from[y];
+        });
+        for (int j : id) {
+            if (unite(from[j], to[j])) sum += 2*(to[j]-from[j]);
+        }
+        cout&lt;&lt; res + sum &lt;&lt; &quot; \n&quot;[i==n-1];
+        deg[s] -- , deg[i] --;
+        rep(j,n) fa[j] = tmp[j];
+    }
+}
+/*
+急
+|
+|
+速
+|
+|
+地
+|
+|
+下
+|
+|
+坠
+|
+|
+*/
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Note -「网络流 flows」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#part-1-概念" id="toc-part-1-概念">Part. 1 概念</a></li>
+<li><a href="#part-2-算法" id="toc-part-2-算法">Part. 2 算法</a></li>
+<li><a href="#part-3-无源汇上下界可行流"
+id="toc-part-3-无源汇上下界可行流">Part. 3 无源汇上下界可行流</a></li>
+<li><a href="#part-4-有源汇上下界最大流"
+id="toc-part-4-有源汇上下界最大流">Part. 4 有源汇上下界最大流</a></li>
+<li><a href="#part-5-有源汇上下界最小流"
+id="toc-part-5-有源汇上下界最小流">Part. 5 有源汇上下界最小流</a></li>
+<li><a href="#part-6-多源汇最大流" id="toc-part-6-多源汇最大流">Part. 6
+多源汇最大流</a></li>
+</ul>
+</nav>
+
+<p>基本没有严谨证明。</p>
+<h3 id="part-1-概念">Part. 1 概念</h3>
+<h4 id="part-1-1-流网络">Part. 1-1 流网络</h4>
+<p>流网络是一个有向图（不考虑反向边），我们把这个图记为 $G=(V,E)$。</p>
+<p>其中有两个特殊的点 $s,t$，分别成为源点和汇点。</p>
+<p>对于每一个 $(u,v)\in E$，我们给它两个属性，一个
+$c(u,v)$，表示这条边的容量；一个 $f(u,v)$，表示这条边的流量。</p>
+<p>每一条边都需要满足两个性质：</p>
+<ul>
+<li>容量限制，$0\le f(u,v)\le c(u,v)$。</li>
+<li>流量守恒，$\sum_{(x,u)\in E}f(x,u)=\sum_{u,y\in
+E}f(u,y)$，即流进来多少流出去多少。</li>
+</ul>
+<p>（这里的定义是 yxc / 算导 的定义，和网络上大部分的资料不同）</p>
+<p>我们称一个网络的可行流的流量为 $\left(\sum_{(s,x)\in
+E}f(s,x)\right)-\left(\sum_{(y,s)\in
+E}f(y,s)\right)$，即流出源点的流量减去流入源点的流量。</p>
+<p>一个可行流的方案我们记为 $f$，其流量记为 $|f|$。</p>
+<h4 id="part-1-2-残量网络">Part. 1-2 残量网络</h4>
+<p>残量网络即把原网络的反向边算进去，把反向边的边集记为
+$E'$，把残量网络表示为 $G_{f}=(V,E\cup
+E')$，把残量网络的一个可行流方案记为 $f'$，同理
+$|f'|$，$c_{f}(u,v)$，$f'(u,v)$。</p>
+<p>这里定义 $f$ 之间的加法：</p>
+<p>首先我们知道对于 $G$ 的每一个不同的 $f$ 而言，其 $G'$ 是不同的。</p>
+<p>我们定义 $c'(u,v)=\begin{cases}c(u,v)-f(u,v),(u,v)\in E \
+\displaystyle f(v,u),(u,v)\in E'\end{cases}$。</p>
+<p>那么 $f$
+之间的加法是这样定义的：$f'(u,v)=f'(u,v)+f(u,v),f'(v,u)=f'(v,u)-f(u,v)$。（定义不太清楚，自行意会吧）</p>
+<p>然后可以证明 $|f+f'|=|f|+|f'|$，注意 $|f'|$ 可能为负。</p>
+<h4 id="part-1-3-增广路">Part. 1-3 增广路</h4>
+<p>增广路就是一条从 $s$ 到 $t$ 的简单路径，满足路上每条边的容量都
+$&gt;0$。</p>
+<h4 id="part-1-4-割">Part. 1-4 割</h4>
+<p>割是对 $V$ 进行的划分。</p>
+<p>首先我们划分出两个集合 $S,T$，需满足 $s\in S,t\in T$ 且 $S\cup
+T=V,S\cap T=\empty$。</p>
+<p>我们再定义割的容量：$c(S,T)=\sum_{u\in S}\sum_{v\in
+T}c(u,v)$（不考虑反向边）。</p>
+<p>割的流量：$f(S,T)=\left(\sum_{u\in S}\sum_{v\in
+T}f(u,v)\right)-\left(\sum_{u\in S}\sum_{v\in T}f(v,u)\right)$。</p>
+<p>这里流量和容量的定义不对称，不过 不 影 响。</p>
+<p>可以证明对于任意可行流的任意割，有 $f(S,T)\le c(S,T)$，也有
+$|f|=f(S,T)\le c(S,T)$。</p>
+<p>最小割指容量最小的割。</p>
+<h4 id="part-1-5-最大流最小割定理">Part. 1-5 最大流最小割定理</h4>
+<ul>
+<li>可行流 $f$ 为最大流</li>
+<li>对于可行流 $f$，其 $G_{f}$ 不存在增广路。</li>
+<li>存在割 $[S,T]$，$|f|=c(S,T)$。</li>
+</ul>
+<p>以上三条可以互相推出。</p>
+<p>最大流等于最小割。</p>
+<h3 id="part-2-算法">Part. 2 算法</h3>
+<h4 id="part-1-1-edmond-karp">Part. 1-1 Edmond-Karp</h4>
+<p>不会</p>
+<h4 id="part-1-2-dinic">Part. 1-2 Dinic</h4>
+<p>先讲讲暴力 FF。</p>
+<p>算了懒得讲了自己看洛谷题解的暴力代码吧。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const int N = 10010, E = 200010;
+
+int n, m, s, t;
+LL first[N];
+LL to[E], nxt[E], val[E]/*残余容量*/;
+int cnt = 1;
+//cnt初值1，第一条边的标号为2（二进制10），第二条是3（二进制11） 
+//有啥好处呢？
+//我们加入一条边时，紧接着加入它的反向边（初始容量0） 
+//这两条边的标号就是二进制最后一位不相同，一个0、一个1
+//所以要召唤 p 这条边的反向边，只需用 p ^ 1
+//如果cnt初值为0，就做不到。当然初值-1也可以，略需改动
+
+//关于图中真正的反向边，可能引起顾虑，应该让它们标号相邻？ 
+//其实不用。该找到的增广路都会找到的 
+
+bool vis[N];//限制增广路不要重复走点，否则很容易爆栈 
+//兜一大圈走到汇点，还不如直接走到汇点
+
+void addE(int u, int v, LL w) {
+	++cnt;
+	to[cnt] = v;
+	val[cnt] = w;
+	nxt[cnt] = first[u];
+	first[u] = cnt;
+}
+LL dfs(int u, LL flow) {
+	//注意，在走到汇点之前，无法得知这次的流量到底有多少 
+	if (u == t)
+		return flow;//走到汇点才return一个实实在在的流量 
+	
+	vis[u] = true;
+	for (int p = first[u]; p; p = nxt[p]) {
+		int v = to[p];
+		if (val[p] == 0 or vis[v])//无残量，走了也没用 
+			continue;
+		int res = 0;
+		if ((res = dfs(v, min(flow, val[p]))) &gt; 0) {
+			//↑顺着流过去，要受一路上最小容量的限制
+			val[p] -= res;//此边残余容量减小
+			val[p ^ 1] += res;//以后可以顺着反向边收回这些容量，前提是对方有人了 
+			return res;
+		}
+	}
+	return 0;//我与终点根本不连通（依照残量网络），上一个点不要信任我
+}
+int main() {
+	scanf(&quot;%d %d %d %d&quot;, &amp;n, &amp;m, &amp;s, &amp;t);
+	for (int i = 1; i &lt;= m; ++i) {
+		int u, v; LL w;
+		scanf(&quot;%d %d %lld&quot;, &amp;u, &amp;v, &amp;w);
+		addE(u, v, w);
+		addE(v, u, 0);//和正向边标号相邻
+		//反向边开始容量为0，表示不允许平白无故走反向边
+		//只有正向边流量过来以后，才提供返还流量的机会
+	}
+	LL res = 0, tot = 0;
+	while (memset(vis, 0, sizeof(vis)) and (res = dfs(s, 1e18/*水库无限*/)) &gt; 0)
+		tot += res;//进行若干回合的增广
+
+	printf(&quot;%lld\n&quot;, tot);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<p>接下来讲讲如何 Dinic。</p>
+<p>其实我不理解 Dinic 比暴力优在哪里</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">/* okay | there&#x27;s been */
+
+#include &lt;cstdio&gt;
+
+namespace mySpace {
+typedef long long LL;
+
+const int MAXN = 200 + 5, MAXM = 5000 + 5;
+
+int rint () {
+	int x = 0, f = 1; char c = getchar ();
+	for ( ; c &lt; &#x27;0&#x27; || c &gt; &#x27;9&#x27;; c = getchar () )	f = c == &#x27;-&#x27; ? -1 : f;
+	for ( ; c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;; c = getchar () )	x = ( x &lt;&lt; 3 ) + ( x &lt;&lt; 1 ) + ( c &amp; 15 );
+	return x * f;
+}
+
+template&lt;typename _T&gt; _T MIN ( const _T x, const _T y ) { return x &lt; y ? x : y; }
+
+struct GraphSet {
+	int to, nx;
+	LL wt;
+	GraphSet () : to ( 0 ), nx ( 0 ), wt ( 0 ) {}
+	GraphSet ( const int a, const int b, const LL c ) : to ( a ), nx ( b ), wt ( c ) {}
+} as[MAXM * 2];
+
+int n, m, s, t, bgn[MAXN], cnt = 1, lav[MAXN], ali[MAXN];
+
+void makeEdge ( const int u, const int v, const LL w ) { as[++ cnt] = GraphSet ( v, bgn[u], w ), bgn[u] = cnt; }
+
+bool bfs () {
+	for ( int i = 1; i &lt;= n; ++ i )	lav[i] = 0;
+	int nowl = 1, nowr = 1;
+	ali[1] = s, lav[s] = 1;
+	for ( ; nowl &lt;= nowr; ) {
+		int u = ali[nowl ++];
+		for ( int i = bgn[u]; i; i = as[i].nx ) {
+			int v = as[i].to; LL w = as[i].wt;
+			if ( ! w || lav[v] )	continue;
+			lav[v] = lav[u] + 1, ali[++ nowr] = v;
+		}
+	}
+	return lav[t];
+}
+
+LL dfs ( const int u, LL in ) {
+	if ( u == t )	return in;
+	LL out = 0;
+	for ( int i = bgn[u]; i; i = as[i].nx ) {
+		if ( ! in )	break;
+		int v = as[i].to; LL w = as[i].wt;
+		if ( ! w || lav[v] != lav[u] + 1 )	continue;
+		LL ret = dfs ( v, MIN ( in, w ) );
+		as[i].wt -= ret, as[i ^ 1].wt += ret;
+		in -= ret, out += ret;
+	}
+	if ( ! out )	lav[u] = 0;
+	return out;
+}
+
+LL calcMXflow () {
+	LL res = 0;
+	for ( ; bfs (); res += dfs ( s, 1e18 ) ) ;
+	return res;
+}
+
+void main () {
+	n = rint (), m = rint (), s = rint (), t = rint ();
+	for ( int i = 1; i &lt;= m; ++ i ) {
+		int u = rint (), v = rint (); LL w = rint ();
+		makeEdge ( u, v, w ), makeEdge ( v, u, 0 );
+	}
+	printf ( &quot;%lld\n&quot;, calcMXflow () );
+}
+}
+
+int main () {
+	mySpace :: main ();
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h3 id="part-3-无源汇上下界可行流">Part. 3 无源汇上下界可行流</h3>
+<h4 id="part-3-1-概念">Part. 3-1 概念</h4>
+<p>就是每条边的容量从变成了 $[cl(u,v),cr(u,v)]$。</p>
+<h4 id="part-3-2-xxxx">Part. 3-2 xxxx</h4>
+<p>可以想见通过把容量转化为
+$[0,cr(u,v)-cl(uv)]$，但这样容量不一定能守恒。</p>
+<p>记每个点的入流量为 $in_{u}$，出流为 $out_{u}$。</p>
+<ul>
+<li>$in_{u}\ge out_{u}$</li>
+</ul>
+<p>从 $S$ 向 $u$ 连一条容量 $in_{u}-out_{u}$ 的边。</p>
+<ul>
+<li>$in_{u}&lt;out_{u}$</li>
+</ul>
+<p>从 $u$ 向 $T$ 连一条容量 $out_{u}-in_{u}$ 的边。</p>
+<h3 id="part-4-有源汇上下界最大流">Part. 4 有源汇上下界最大流</h3>
+<h4 id="part-4-1-概念">Part. 4-1 概念</h4>
+<p>有规定的源点汇点了。</p>
+<h4 id="part-4-2-xxxx">Part. 4-2 xxxx</h4>
+<p>图都是从 <a
+href="https://blog.csdn.net/weixin_43501684/article/details/100051204">这里</a>
+偷的。<del>这个博客几百年没过图了</del></p>
+<p><img src="uploads/1.png" alt="20190824120232582.png" /></p>
+<p>有源汇后，$s$ 和 $t$ 不满足流量守恒了，于是从 $s$ 到 $t$ 连一条容量
+$[0,\infty]$ 的边即可。</p>
+<p><img src="uploads/2.png" alt="20190824120304124.png" /></p>
+<p>然后就可以把 $s$ 和 $t$
+当成普通点处理，重现建立超源超汇，用无源汇上下界可行流的方法跑一遍，看是不是一个可行流，如果是就从
+$s$ 到 $t$ 跑一遍最大流。</p>
+<h3 id="part-5-有源汇上下界最小流">Part. 5 有源汇上下界最小流</h3>
+<h4 id="part-5-1-概念">Part. 5-1 概念</h4>
+<p>你猜。</p>
+<h4 id="part-5-2-xxxx">Part. 5-2 xxxx</h4>
+<p>首先加上 $(t,s)$ 的边跑最大流。</p>
+<p>设 $d$ 是加上的边的流量，删掉加上的边。</p>
+<p>答案是 $d-\text{maxflow}(t,s)$。</p>
+<p>从 <a
+href="https://www.cnblogs.com/dreagonm/p/10803040.html">这里</a> copy
+的。</p>
+<h3 id="part-6-多源汇最大流">Part. 6 多源汇最大流</h3>
+<h4 id="part-6-1-概念">Part. 6-1 概念</h4>
+<p>你猜。</p>
+<h4 id="part-6-2-xxxx">Part. 6-2 xxxx</h4>
+<p>没啥区别，建超源超汇即可。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

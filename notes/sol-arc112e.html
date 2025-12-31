@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「ARC 112E」Cigar Box</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#desc" id="toc-desc">Desc.</a></li>
+<li><a href="#sol" id="toc-sol">Sol.</a></li>
+</ul>
+</nav>
+
+<hr />
+<p>date: '2023-10-14' title: 'Solution -「ARC 112E」Cigar Box'</p>
+<hr />
+<h2 id="desc">Desc.</h2>
+<p><a
+href="https://atcoder.jp/contests/arc112/tasks/arc112_e">Link.</a></p>
+<p>给定目标排列 $Q = (p_1, \dots, p_n)$ 和初始排列 $P = (1, \dots, n)$.
+你可以对初始排列进行如下操作:</p>
+<ul>
+<li>选择一个下标 $i \in [1, n]$, 将其置于排列的开头或结尾.</li>
+</ul>
+<p>问通过 $m$ 次操作将初始排列变化为目标排列的方案数, 对
+$\textbf{998244353}$ 取模.</p>
+<p>$n, m \leqslant 3000$.</p>
+<h2 id="sol">Sol.</h2>
+<p>发现对于每一个数, 我们只关心对它的最后一次操作. 枚举 $L$ 和 $R$
+分别表示将某个数移动到开头的<strong>重要操作</strong>数和将某个数移动到结尾的<strong>重要操作</strong>数,
+那么考虑从 $P$ 到 $Q$ 的操作过程, 最终留在 $[L+1, N-R]$
+的数的相对顺序并没有改变, 因此 $Q$ 中的 $[L+1, N-R]$
+部分一定单调递增.</p>
+<p>设 $f_{i, L, R}$ 表示已经填了操作序列的 $[i, m]$ 部分 <a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 的,
+前 $L$ 个数和后 $R$ 个数已经还原的方案数. 有如下转移:</p>
+<p>$$ f_{i + 1, L, R} += f_{i, L, R} \times 2 \times (L + R) \ f_{i + 1,
+L + 1, R} += f_{i, L, R} \ f_{i + 1, L, R + 1} += f_{i, L, R} $$</p>
+<p>[TODO /阐释转移方程/]</p>
+<p>后面还似懂非懂, 就不放出来误人子弟了...</p>
+<p><pre><code class="language-cpp toolbar">int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    const int MOD = 998244353;
+    using mint = modint&lt;MOD&gt;;
+    int n, m; cin &gt;&gt; n &gt;&gt; m;
+    vi a(n); rds(a);
+    vector comb(n+1, vector&lt;mint&gt;(n+1));
+    for (int i=0;i&lt;=n;++i) {
+        comb[i][0] = 1;
+        for (int j=1;j&lt;=i;++j) comb[i][j] = comb[i-1][j]+comb[i-1][j-1];
+    }
+    vector f(m+1, vector&lt;mint&gt;(n+1));
+    f[0][0] = 1;
+    for (int i=0;i&lt;m;++i) {
+        for (int j=0;j&lt;=n;++j) {
+            f[i+1][j] += f[i][j]*2*j;
+            if (j &lt; n) f[i+1][j+1] += f[i][j];
+        }
+    }
+    mint ans = 0;
+    for (int l=0;l&lt;=n;++l) {
+        for (int r=n-l;r&gt;=0;--r) {
+            if (n-l-r &gt;= 2 &amp;&amp; a[n-r-2] &gt; a[n-r-1]) break;
+            ans += f[m][l+r]*comb[l+r][l];
+        }
+    }
+    cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+<hr />
+<blockquote>
+<p>从未发觉 白昼已到尽头</p>
+<p>何时 我未留意的腐朽</p>
+<p>在暮雨之中尝试绽放</p>
+<p>—— <a href="https://vocadb.net/S/109308">COP - <em>hello&amp;bye,
+days</em> ft. 洛&amp;乐</a></p>
+</blockquote>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>为什么倒序进行 DP?
+因为这样我们才能获得「当前操作是否<strong>重要</strong>」的信息.<a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
