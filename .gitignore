@@ -8,3 +8,5 @@ test.html
 **/*.swp
 **/.DS_Store
 tags/tags.temp
+.env
+.last_sync
