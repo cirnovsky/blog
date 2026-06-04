@@ -34,3 +34,18 @@ __*新业务？？*__
 涛哥说 OJ 要接入鸿蒙浏览器，需要做一个新的 browser agent。
 
 新知识！！CDP AND PLAYWRITIGHT！！！
+
+但是听起来像纯粹应用层，虽然很重要吧，但 less novelty，less exciting。
+
+和涛哥跟进了一下视频工具，发现原来的设计有些 dead code，不仅是 `video_ocr`，包括其他视觉工具。
+
+好吧，依旧老业务。和涛哥商量后决定重构 `read_file`，对于视频和图像媒体支持两种模式：
+
+1. 媒体文件作为上下文（已经实现）；
+2. 媒体文件提取信息作为上下文（也就是 OCR 文本信息）作为上下文。对于视频进行逐帧处理。
+
+`video_understanding` 工具转型成 YouTube URL 专用，`image_ocr` 和 `video_ocr` 并入 `read_file` 实现第二种模式，不再暴露给 agent。
+
+虽然只是一次结构重构，但我也可以顺便拓宽视频工具的场景。
+
+合理。老资历牛批。
