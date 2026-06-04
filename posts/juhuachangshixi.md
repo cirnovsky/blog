@@ -27,4 +27,10 @@ __*Week 4……*__
 
 晕……下午看 agent team 轨迹发现全是 reward hacking，这么看来我的视频工具还是有合并必要的。跟光阳涛哥商量后[合并](https://gitcode.com/kwangyyinc/jiuwen-terminal-bench/commit/cfbf8421233a724ad67e78cd3c3f36473a25e632?ref=develop)了。
 
-阳光明媚风和日丽的下午，代码已经合并。下个任务分析 OJ 在 TB2.1 有改动的任务上的表现（之前是 TB2），所以现在在跑
+阳光明媚风和日丽的下午，代码已经合并。下个任务分析 OJ 在 TB2.1 有改动的任务上的表现（之前是 TB2），所以现在在跑。许多任务反而分数变低了，只有[这个任务](https://github.com/ekellbuch/terminal-bench-2/tree/56fc6147c7426e7588cc8e089c6f791da0aad0e9/filter-js-from-html)变高。
+
+__*新业务？？*__
+
+涛哥说 OJ 要接入鸿蒙浏览器，需要做一个新的 browser agent。
+
+新知识！！CDP AND PLAYWRITIGHT！！！
