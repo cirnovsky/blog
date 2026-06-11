@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P5659」「CSP-S 2019」树上的数</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+<li><a href="#part-0" id="toc-part-0">Part 0</a></li>
+<li><a href="#part-1" id="toc-part-1">Part 1</a></li>
+<li><a href="#part-2" id="toc-part-2">Part 2</a></li>
+<li><a href="#part-3" id="toc-part-3">Part 3</a></li>
+<li><a href="#part-4" id="toc-part-4">Part 4</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P5659">Link</a>.</p>
+<p>联赛原题应该都读过吧……</p>
+<h2 id="solution">Solution</h2>
+<h2 id="part-0">Part 0</h2>
+<blockquote>
+<p>大致思路</p>
+</blockquote>
+<p>主要的思路就是逐个打破，研究特殊的数据得到普通的结论。</p>
+<h2 id="part-1">Part 1</h2>
+<blockquote>
+<p>暴力的部分分</p>
+</blockquote>
+<p>暴力的部分分很好拿，我们可以直接把全排列，然后 $\Theta(n)$
+判断更新答案。</p>
+<p><del>恭喜您拿到赛场满分</del></p>
+<p><pre><code class="language-cpp toolbar">namespace SubtaskForce {
+	int cmp[MAXN], ans[MAXN];
+	bool vis[MAXN];
+	void dfs(int now) { // 全排列
+		if (now == n) { // 更新答案
+			for (R int i = 1; i &lt;= n; ++i) cmp[id[i]] = i;
+			for (R int i = 1; i &lt;= n; ++i) {
+				if (cmp[i] &lt; ans[i]) {
+					for (R int j = 1; j &lt;= n; ++j) ans[j] = cmp[j];
+					break;
+				}
+				if (cmp[i] &gt; ans[i]) break;
+			}
+			return ;
+		}
+		for (R int i = 1; i &lt; n; ++i) {
+			if (!vis[i]) {
+				vis[i] = 1;
+				swap(id[nodes[i].x], id[nodes[i].y]);
+				dfs(now + 1);
+				swap(id[nodes[i].x], id[nodes[i].y]);
+				vis[i] = 0;
+			}
+		}
+	}
+
+	void main() { // 初始化
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) ans[i] = n - i + 1;
+		dfs(1);
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+</code></pre></p>
+<h2 id="part-2">Part 2</h2>
+<blockquote>
+<p>菊花图的部分分</p>
+</blockquote>
+<p>就这道题而言，菊花图其实是比链的数据好想一些的。</p>
+<p>我们称菊花图中度数为 $n-1$ 的结点为 $rt$ 罢。</p>
+<p>我们可以发现在菊花图上删除边一定是某个结点和 $rt$ 之间。</p>
+<p>也就是说无论我们按怎样的顺序删边，最后都会变成一个环。</p>
+<p>我做了一个动图演示，如果洛谷博客不支持gif的话就直接到这个网址 <a
+href="https://i.loli.net/2020/03/15/fuU4CgWReOT8X2d.gif">Click
+Here</a></p>
+<p><img src="uploads/9.gif" alt="point.gif" /></p>
+<p>有了环这个结论，就有一个很显然的贪心构造环的方法：</p>
+<p>按照 $1,2,\cdots,n$ 的顺序每个数字选择环上自己的下一个点。</p>
+<p>在编写代码的时候还需要注意还没有连到 $Y_{n}$
+就提前<del>自毙~~~~自闭</del>封闭的情况。</p>
+<p><pre><code class="language-cpp toolbar">namespace SubtaskAss { // 菊花的单词太长了，就取了个差不多的/xyx
+	bool vis[MAXN];
+	int ans[MAXN];
+	struct UninoFindSet {
+		int fa[MAXN];
+
+		void init(int limit) {
+			for (R int i = 1; i &lt;= limit; ++i)
+				fa[i] = i;
+		}
+
+		int find(int x) {
+			if (x ^ fa[x]) fa[x] = find(fa[x]);
+			return fa[x];
+		}
+
+		void merge(int x, int y) {
+			x = find(x);
+			y = find(y);
+			if (x ^ y) fa[x] = y;
+		}
+	} ufs;
+
+	void main() {
+		ufs.init(n);
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) {
+			for (R int j = 1; j &lt;= n; ++j) {
+				if (!vis[j] &amp;&amp; (i == n || ufs.find(j) != ufs.find(id[i]))) {
+					vis[j] = 1;
+					ans[i] = j;
+					ufs.merge(j, id[i]);
+					break;
+				}
+			}
+		}
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+</code></pre></p>
+<h2 id="part-3">Part 3</h2>
+<blockquote>
+<p>链的部分分</p>
+</blockquote>
+<p>说实话链的部分分其实也挺好拿的，但是还是比菊花图难想一些。</p>
+<p>首先，用dfs序把链拍成树是固定操作了。</p>
+<p>链有一个性质，就是每个结点(两端点除外)的度数都有且只有二。</p>
+<p>也就是说除端点外，每个结点都有两条边。而且这两条边的被删除时间一定不一样（废话</p>
+<p>也就是说每个结点的两条边被删除的情况一共有三种。</p>
+<p>我们定义 $order_{i}$ 为结点 $i$ 的左右两边的删除情况：</p>
+<ul>
+<li>0：0表示这个结点的左右边都还没被删除</li>
+<li>1：1表示这个结点的左边先被删除</li>
+<li>2：2表示这个结点的右边先被删除</li>
+</ul>
+<p>现在我们假设左边的结点 $u$ 要跑到右边的结点 $v$ 那里去，那么在 $u$ 和
+$v$ 之间的结点一定是左边先被删除，所以 $order_i=1,i\in (u,v)$</p>
+<p>对于 $u$ 和 $v$
+两个结点，一定是右边先被删除，否则就不知道跑哪里去了</p>
+<p>所以 $order_{u}=order_{v}=2$</p>
+<p>至于从右跑到左就完全同理了。</p>
+<p>答案则同样是从小枚举到大(我是从小枚举到大的/xyx)</p>
+<p>比如说我们当前枚举到了结点 $x$，我们希望它能去尽量小的一个点</p>
+<p>假设当前 $x$ 在 $P_{x}$，我们直接暴力枚举一个 $P_{y}$。</p>
+<p>判断一个方案是否可行只需要判断它与前面的删边顺序冲突即可。</p>
+<p>这样做是 $\Theta(N^3)$ 的。我们可以在dfs的时候标记，这样就是
+$\Theta(n^2)$ 了。</p>
+<p><pre><code class="language-cpp toolbar">namespace SubtaskChain {
+	int rnk[MAXN], ans[MAXN], dfn[MAXN];
+	int sbc_tot, order[MAXN], vis[MAXN];
+
+	void dfs(int x, int fa) {
+		rnk[dfn[x] = ++sbc_tot] = x;
+		for (R int i = head[x]; i; i = nxt[i])
+			if (to[i] ^ fa) dfs(to[i], x);
+	}
+
+	void mark_node(int p1, int p2, int tg) {
+		if (p1 != 1 &amp;&amp; p1 != n) order[p1] = tg + 1;
+		if (p2 != 1 &amp;&amp; p2 != n) order[p2] = tg + 1;
+		for (R int i = (tg ? p1 + 1 : p2 + 1); i &lt; (tg ? p2 : p1); ++i) order[i] = ((tg ^ 1) + 1);
+	}
+
+	int iterate(int x, int tg) {
+		int res = n + 1;
+		if (order[dfn[x]] == tg + 1) return res;
+		for (R int i = dfn[x] + (tg ? -1 : 1); tg ? (i &gt;= 1) : (i &lt;= n); i += (tg ? -1 : 1)) {
+			if (order[i] == (tg ^ 1) + 1) {
+				if (!vis[i]) res = min(res, rnk[i]);
+				break;
+			}
+			if (!order[i] &amp;&amp; !vis[i]) res = min(res, rnk[i]);
+		}
+		return res;
+	}
+    int inver_id[MAXN];
+	void main() {
+		for (R int i = 1; i &lt;= n; ++i) rnk[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) dfn[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) order[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) inver_id[id[i]] = i;
+		sbc_tot = 0;
+		for (R int i = 1; i &lt;= n; ++i) {
+			if (in[i] == 1) {
+				dfs(i, 0);
+				break;
+			}
+		}
+		for (R int i = 1; i &lt;= n; ++i) {
+			int left = iterate(inver_id[i], 1);
+			int right = iterate(inver_id[i], 0);
+			if (left &lt; right) mark_node(dfn[inver_id[i]], dfn[left], 0);
+			else left = right, mark_node(dfn[inver_id[i]], dfn[left], 1);
+			ans[i] = left;
+			vis[dfn[left]] = 1;
+		}
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+</code></pre></p>
+<h2 id="part-4">Part 4</h2>
+<blockquote>
+<p>正解</p>
+</blockquote>
+<p><del>拼凑出的正解</del></p>
+<p>（我能说这剩下的40pts我看题解都看了半天吗）</p>
+<p>剩下的40pts是我看了这篇题解才会的<a
+href="https://www.luogu.com.cn/blog/wucstdio/solution-p5659">Click
+Here</a></p>
+<p>其实会了链的数据基本就离成功不远了。</p>
+<p>仔细想想，我们在处理链的时候，规定了与一个结点的边的删除顺序的数值。</p>
+<p>如果放到一般的情况来看，我们可以确定一个类似于拓扑序的删除顺序，即某一条边需要在某一条边删除过后才能被删除。</p>
+<p>比如下图：</p>
+<p><img src="uploads/10.jpg" alt="889V74.jpg" /></p>
+<p>当我们把这一删除顺序写出来，就可以发现这其实构成了一个链。</p>
+<p>对吧！对吧！</p>
+<p>假设我们现在需要把 $x$ 删到 $y$ 结点上。</p>
+<p>那么判断法则如下：</p>
+<h4 id="不合法的情况">不合法的情况：</h4>
+<ul>
+<li>有一个数已经从 $x$ 出去过了</li>
+<li>有一个数已经到过 $y$ 这里了</li>
+<li>有一个数从相同方向过了 $x$ 的一条出边</li>
+<li>有一个数从相同方向过了 $y$ 的一条出边</li>
+<li>出/入边任意一条被别的数字从相同方向走了一次</li>
+<li>加上当前数构成的链 $x$ 有任意一边出边不在上面</li>
+<li>加上当前数构成的链 $y$ 有任意一边出边不在上面</li>
+<li>加上当前数后，经过 $x$ 的数字自闭了(形成了一个环)</li>
+<li>加上当前数后，形成了一条链，$x$ 有任意一条出边不在上面</li>
+</ul>
+<h4 id="合法的情况">合法的情况</h4>
+<ul>
+<li>排除以上所有情况即合法</li>
+</ul>
+<p>直接贪心会死得很惨烈。</p>
+<p>我们可以通过dfs找出编号最小的作为本轮的答案。</p>
+<p><pre><code class="language-cpp toolbar">namespace SubtaskRandom {
+	int mark[MAXN][MAXN], inver_id[MAXN];
+	int lave_unwalked[MAXN], fa[MAXN];
+	int lave_in[MAXN], lave_out[MAXN];
+	int node_from[MAXN], node_to[MAXN];
+	int header[MAXN][MAXN], footer[MAXN][MAXN];
+	bool vis[MAXN];
+
+	void dfs(int x, int rt) {
+		for (R int i = head[x]; i; i = nxt[i]) {
+			int y = to[i];
+			if (y ^ fa[x]) {
+				fa[y] = x;
+				vis[y] = 1;
+				if (x ^ rt) {
+					if (mark[x][y] == x || mark[fa[x]][x] == fa[x]) vis[y] = 0;
+					if (mark[x][y] == 0 || mark[fa[x]][x] == 0) vis[y] = 0;
+					if (header[x][fa[x]] == node_to[x] &amp;&amp; footer[x][y] == node_from[x]
+						&amp;&amp; lave_out[x] + lave_in[x] + (lave_unwalked[x] &lt;&lt; 1) &gt; 2) vis[y] = 0;
+					if (footer[x][y] == fa[x]) vis[y] = 0;
+				}
+				else {
+					if (mark[x][y] == x) vis[y] = 0;
+					if (mark[x][y] == 0) vis[y] = 0;
+					if (node_from[x]) {
+						if (footer[x][y] == node_from[x] &amp;&amp; lave_unwalked[x] + lave_in[x] + lave_out[x] != 1)
+							vis[y] = 0;
+					}
+				}
+				vis[y] &amp;= vis[x];
+				dfs(y, rt);
+			}
+		}
+		if (rt ^ x) {
+			if (node_from[x]) vis[x] = 0;
+			if (node_to[x]) {
+				if (footer[x][node_to[x]] == fa[x] &amp;&amp; lave_unwalked[x] + lave_in[x] + lave_out[x] != 1)
+					vis[x] = 0;
+			}
+		}
+		else {
+			vis[x] = 0;
+		}
+	}
+
+	void main() {
+		for (R int i = 1; i &lt;= n; ++i) node_from[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) node_to[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_in[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_out[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_unwalked[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) inver_id[id[i]] = i;
+		for (R int i = 1; i &lt; n; ++i) {
+			lave_unwalked[nodes[i].x]++;
+			lave_unwalked[nodes[i].y]++;
+			mark[nodes[i].x][nodes[i].y] = -1;
+			mark[nodes[i].y][nodes[i].x] = -1;
+			header[nodes[i].x][nodes[i].y] = nodes[i].y;
+			header[nodes[i].y][nodes[i].x] = nodes[i].x;
+			footer[nodes[i].x][nodes[i].y] = nodes[i].y;
+			footer[nodes[i].y][nodes[i].x] = nodes[i].x;
+		}
+		for (R int i = 1; i &lt;= n; ++i) {
+			for (R int j = 1; j &lt;= n; ++j) fa[j] = 0;
+			vis[inver_id[i]] = 1;
+			dfs(inver_id[i], inver_id[i]);
+			int res = 0;
+			for (R int j = 1; j &lt;= n; ++j) {
+				if (vis[j]) {
+					res = j;
+					break;
+				}
+			}
+			printf(&quot;%d &quot;, res);
+			node_from[res] = fa[res];
+			while (fa[res] ^ inver_id[i]) {
+				if (~mark[fa[res]][res]) {
+					mark[fa[res]][res] = mark[res][fa[res]] = 0;
+					lave_in[res]--;
+					lave_out[fa[res]]--;
+				}
+				else {
+					mark[fa[res]][res] = mark[res][fa[res]] = fa[res];
+					lave_unwalked[res]--;
+					lave_out[res]++;
+					lave_unwalked[fa[res]]--;
+					lave_in[fa[res]]++;
+				}
+				int t = res;
+				res = fa[res];
+				header[res][footer[res][t]] = header[res][fa[res]];
+				footer[res][header[res][fa[res]]] = footer[res][t];
+			}
+			if (~mark[fa[res]][res]) {
+				mark[fa[res]][res] = 0;
+				mark[res][fa[res]] = 0;
+				lave_in[res]--;
+				lave_out[inver_id[i]]--;
+			}
+			else {
+				mark[fa[res]][res] = fa[res];
+				mark[res][fa[res]] = fa[res];
+				lave_unwalked[res]--;
+				lave_out[res]++;
+				lave_unwalked[inver_id[i]]--;
+				lave_in[inver_id[i]]++;
+			}
+			node_to[inver_id[i]] = res;
+		}
+		puts(&quot;&quot;);
+	}
+}
+</code></pre></p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+char buf[1 &lt;&lt; 21], *p1 = buf, *p2 = buf;
+#ifndef ONLINE_JUDGE
+#define gc() getchar()
+#else
+#define gc() (p1 == p2 &amp;&amp; (p2 = (p1 = buf) + fread(buf, 1, 1 &lt;&lt; 21, stdin), p1 == p2) ? EOF : *p1++)
+#endif
+#define is() (ch &gt;= &#x27;0&#x27; &amp;&amp; ch &lt;= &#x27;9&#x27;)
+#define R register
+
+template &lt; class Type &gt;
+void read(Type&amp; a) {
+	a = 0; bool f = 0; char ch;
+	while (!(ch = gc(), is())) if (ch == &#x27;-&#x27;) f = 1;
+	while (is()) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ &#x27;0&#x27;), ch = gc();
+	a = (f ? -a : a);
+}
+
+template &lt; class Type, class... Args &gt;
+void read(Type&amp; t, Args&amp;... args) {
+	read(t), read(args...);
+}
+
+const int MAXN = 2000 + 5;
+int T, n, max_in, id[MAXN];
+int head[MAXN], nxt[MAXN &lt;&lt; 1];
+int tot, in[MAXN], to[MAXN &lt;&lt; 1];
+struct EdgeNode {
+	int x, y;
+} nodes[MAXN];
+
+EdgeNode make_edge(int x, int y) {
+	EdgeNode res;
+	res.x = x;
+	res.y = y;
+	return res;
+}
+
+void add(int x, int y) {
+	to[++tot] = y;
+	nxt[tot] = head[x];
+	head[x] = tot;
+}
+
+namespace SubtaskForce {
+	int cmp[MAXN], ans[MAXN];
+	bool vis[MAXN];
+	void dfs(int now) {
+		if (now == n) {
+			for (R int i = 1; i &lt;= n; ++i) cmp[id[i]] = i;
+			for (R int i = 1; i &lt;= n; ++i) {
+				if (cmp[i] &lt; ans[i]) {
+					for (R int j = 1; j &lt;= n; ++j) ans[j] = cmp[j];
+					break;
+				}
+				if (cmp[i] &gt; ans[i]) break;
+			}
+			return ;
+		}
+		for (R int i = 1; i &lt; n; ++i) {
+			if (!vis[i]) {
+				vis[i] = 1;
+				swap(id[nodes[i].x], id[nodes[i].y]);
+				dfs(now + 1);
+				swap(id[nodes[i].x], id[nodes[i].y]);
+				vis[i] = 0;
+			}
+		}
+	}
+
+	void main() {
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) ans[i] = n - i + 1;
+		dfs(1);
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+
+namespace SubtaskAss {
+	bool vis[MAXN];
+	int ans[MAXN];
+	struct UninoFindSet {
+		int fa[MAXN];
+
+		void init(int limit) {
+			for (R int i = 1; i &lt;= limit; ++i)
+				fa[i] = i;
+		}
+
+		int find(int x) {
+			if (x ^ fa[x]) fa[x] = find(fa[x]);
+			return fa[x];
+		}
+
+		void merge(int x, int y) {
+			x = find(x);
+			y = find(y);
+			if (x ^ y) fa[x] = y;
+		}
+	} ufs;
+
+	void main() {
+		ufs.init(n);
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) {
+			for (R int j = 1; j &lt;= n; ++j) {
+				if (!vis[j] &amp;&amp; (i == n || ufs.find(j) != ufs.find(id[i]))) {
+					vis[j] = 1;
+					ans[i] = j;
+					ufs.merge(j, id[i]);
+					break;
+				}
+			}
+		}
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+
+namespace SubtaskChain {
+	int rnk[MAXN], ans[MAXN], dfn[MAXN];
+	int sbc_tot, order[MAXN], vis[MAXN];
+
+	void dfs(int x, int fa) {
+		rnk[dfn[x] = ++sbc_tot] = x;
+		for (R int i = head[x]; i; i = nxt[i])
+			if (to[i] ^ fa) dfs(to[i], x);
+	}
+
+	void mark_node(int p1, int p2, int tg) {
+		if (p1 != 1 &amp;&amp; p1 != n) order[p1] = tg + 1;
+		if (p2 != 1 &amp;&amp; p2 != n) order[p2] = tg + 1;
+		for (R int i = (tg ? p1 + 1 : p2 + 1); i &lt; (tg ? p2 : p1); ++i) order[i] = ((tg ^ 1) + 1);
+	}
+
+	int iterate(int x, int tg) {
+		int res = n + 1;
+		if (order[dfn[x]] == tg + 1) return res;
+		for (R int i = dfn[x] + (tg ? -1 : 1); tg ? (i &gt;= 1) : (i &lt;= n); i += (tg ? -1 : 1)) {
+			if (order[i] == (tg ^ 1) + 1) {
+				if (!vis[i]) res = min(res, rnk[i]);
+				break;
+			}
+			if (!order[i] &amp;&amp; !vis[i]) res = min(res, rnk[i]);
+		}
+		return res;
+	}
+    int inver_id[MAXN];
+	void main() {
+		for (R int i = 1; i &lt;= n; ++i) rnk[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) dfn[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) vis[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) order[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) inver_id[id[i]] = i;
+		sbc_tot = 0;
+		for (R int i = 1; i &lt;= n; ++i) {
+			if (in[i] == 1) {
+				dfs(i, 0);
+				break;
+			}
+		}
+		for (R int i = 1; i &lt;= n; ++i) {
+			int left = iterate(inver_id[i], 1);
+			int right = iterate(inver_id[i], 0);
+			if (left &lt; right) mark_node(dfn[inver_id[i]], dfn[left], 0);
+			else left = right, mark_node(dfn[inver_id[i]], dfn[left], 1);
+			ans[i] = left;
+			vis[dfn[left]] = 1;
+		}
+		for (R int i = 1; i &lt;= n; ++i) printf(&quot;%d &quot;, ans[i]);
+		puts(&quot;&quot;);
+	}
+}
+
+namespace SubtaskRandom {
+	int mark[MAXN][MAXN], inver_id[MAXN];
+	int lave_unwalked[MAXN], fa[MAXN];
+	int lave_in[MAXN], lave_out[MAXN];
+	int node_from[MAXN], node_to[MAXN];
+	int header[MAXN][MAXN], footer[MAXN][MAXN];
+	bool vis[MAXN];
+
+	void dfs(int x, int rt) {
+		for (R int i = head[x]; i; i = nxt[i]) {
+			int y = to[i];
+			if (y ^ fa[x]) {
+				fa[y] = x;
+				vis[y] = 1;
+				if (x ^ rt) {
+					if (mark[x][y] == x || mark[fa[x]][x] == fa[x]) vis[y] = 0;
+					if (mark[x][y] == 0 || mark[fa[x]][x] == 0) vis[y] = 0;
+					if (header[x][fa[x]] == node_to[x] &amp;&amp; footer[x][y] == node_from[x]
+						&amp;&amp; lave_out[x] + lave_in[x] + (lave_unwalked[x] &lt;&lt; 1) &gt; 2) vis[y] = 0;
+					if (footer[x][y] == fa[x]) vis[y] = 0;
+				}
+				else {
+					if (mark[x][y] == x) vis[y] = 0;
+					if (mark[x][y] == 0) vis[y] = 0;
+					if (node_from[x]) {
+						if (footer[x][y] == node_from[x] &amp;&amp; lave_unwalked[x] + lave_in[x] + lave_out[x] != 1)
+							vis[y] = 0;
+					}
+				}
+				vis[y] &amp;= vis[x];
+				dfs(y, rt);
+			}
+		}
+		if (rt ^ x) {
+			if (node_from[x]) vis[x] = 0;
+			if (node_to[x]) {
+				if (footer[x][node_to[x]] == fa[x] &amp;&amp; lave_unwalked[x] + lave_in[x] + lave_out[x] != 1)
+					vis[x] = 0;
+			}
+		}
+		else {
+			vis[x] = 0;
+		}
+	}
+
+	void main() {
+		for (R int i = 1; i &lt;= n; ++i) node_from[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) node_to[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_in[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_out[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) lave_unwalked[i] = 0;
+		for (R int i = 1; i &lt;= n; ++i) inver_id[id[i]] = i;
+		for (R int i = 1; i &lt; n; ++i) {
+			lave_unwalked[nodes[i].x]++;
+			lave_unwalked[nodes[i].y]++;
+			mark[nodes[i].x][nodes[i].y] = -1;
+			mark[nodes[i].y][nodes[i].x] = -1;
+			header[nodes[i].x][nodes[i].y] = nodes[i].y;
+			header[nodes[i].y][nodes[i].x] = nodes[i].x;
+			footer[nodes[i].x][nodes[i].y] = nodes[i].y;
+			footer[nodes[i].y][nodes[i].x] = nodes[i].x;
+		}
+		for (R int i = 1; i &lt;= n; ++i) {
+			for (R int j = 1; j &lt;= n; ++j) fa[j] = 0;
+			vis[inver_id[i]] = 1;
+			dfs(inver_id[i], inver_id[i]);
+			int res = 0;
+			for (R int j = 1; j &lt;= n; ++j) {
+				if (vis[j]) {
+					res = j;
+					break;
+				}
+			}
+			printf(&quot;%d &quot;, res);
+			node_from[res] = fa[res];
+			while (fa[res] ^ inver_id[i]) {
+				if (~mark[fa[res]][res]) {
+					mark[fa[res]][res] = mark[res][fa[res]] = 0;
+					lave_in[res]--;
+					lave_out[fa[res]]--;
+				}
+				else {
+					mark[fa[res]][res] = mark[res][fa[res]] = fa[res];
+					lave_unwalked[res]--;
+					lave_out[res]++;
+					lave_unwalked[fa[res]]--;
+					lave_in[fa[res]]++;
+				}
+				int t = res;
+				res = fa[res];
+				header[res][footer[res][t]] = header[res][fa[res]];
+				footer[res][header[res][fa[res]]] = footer[res][t];
+			}
+			if (~mark[fa[res]][res]) {
+				mark[fa[res]][res] = 0;
+				mark[res][fa[res]] = 0;
+				lave_in[res]--;
+				lave_out[inver_id[i]]--;
+			}
+			else {
+				mark[fa[res]][res] = fa[res];
+				mark[res][fa[res]] = fa[res];
+				lave_unwalked[res]--;
+				lave_out[res]++;
+				lave_unwalked[inver_id[i]]--;
+				lave_in[inver_id[i]]++;
+			}
+			node_to[inver_id[i]] = res;
+		}
+		puts(&quot;&quot;);
+	}
+}
+
+signed main() {
+	for (read(T); T; --T) {
+		read(n);
+		for (R int i = 1, x; i &lt;= n; ++i) read(x), id[x] = i;
+		for (R int i = 1; i &lt;= n; ++i) head[i] = in[i] = 0;
+		tot = 0, max_in = 0;
+		for (R int i = 1; i &lt; n; ++i) {
+			int x, y;
+			read(x, y);
+			add(x, y);
+			add(y, x);
+			++in[x], ++in[y];
+			nodes[i] = make_edge(x, y);
+			max_in = max(max_in, max(in[x], in[y]));
+		}
+		if (n &lt;= 10) SubtaskForce::main();
+		else if (max_in == n - 1) SubtaskAss::main();
+		else if (max_in == 2) SubtaskChain::main();
+		else SubtaskRandom::main();
+	}
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

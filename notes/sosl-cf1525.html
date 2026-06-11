@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「CF 1525」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#cf-1525apotion-making" id="toc-cf-1525apotion-making">「CF
+1525A」Potion-making</a></li>
+<li><a href="#cf-1525bpermutation-sort"
+id="toc-cf-1525bpermutation-sort">「CF 1525B」Permutation Sort</a></li>
+<li><a href="#cf-1525crobot-collisions"
+id="toc-cf-1525crobot-collisions">「CF 1525C」Robot Collisions</a></li>
+<li><a href="#cf-1525darmchairs" id="toc-cf-1525darmchairs">「CF
+1525D」Armchairs</a></li>
+<li><a href="#cf-1525eassimilation-iv"
+id="toc-cf-1525eassimilation-iv">「CF 1525E」Assimilation IV</a></li>
+<li><a href="#cf-1525fgoblins-and-gnomes"
+id="toc-cf-1525fgoblins-and-gnomes">「CF 1525F」Goblins And
+Gnomes</a></li>
+</ul>
+</nav>
+
+<h1 id="cf-1525apotion-making">「CF 1525A」Potion-making</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/A">Link</a>.</p>
+<p>显然。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+int gcd(int x,int y){return !y?x:gcd(y,x%y);}
+int main()
+{
+	int T,k;
+	sf(T);
+	while(T--&gt;0)
+	{
+		sf(k);
+		int p1=k,p2=100-k,x=gcd(p1,p2);
+		p1/=x;
+		p2/=x;
+		pf(p1+p2);
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1525bpermutation-sort">「CF 1525B」Permutation Sort</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/B">Link</a>.</p>
+<p>注意到答案只有 $0/1/2/3$，分类讨论即可。</p>
+<p><del>吃了三发罚时</del></p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+int T,n,a[60];
+int main()
+{
+	for(sf(T);T;--T)
+	{
+		sf(n);
+		for(int i=1;i&lt;=n;++i)	sf(a[i]);
+		int flag=1;
+		for(int i=2;i&lt;=n;++i)
+		{
+			if(a[i]!=a[i-1]+1)
+			{
+				flag=0;
+				break;
+			}
+		}
+		if(!flag)
+		{
+			if(a[1]==n &amp;&amp; a[n]==1)	puts(&quot;3&quot;);
+			else if(a[n]==n || a[1]==1)	puts(&quot;1&quot;);
+			else	puts(&quot;2&quot;);
+		}
+		else	puts(&quot;0&quot;);
+	}
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1525crobot-collisions">「CF 1525C」Robot Collisions</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/C">Link</a>.</p>
+<p>显然我不会。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+#define int long long
+#define mp make_pair
+template&lt;typename T&gt;void sf(T &amp;x) {
+    x = 0;
+    T f = 0;
+    char c = getchar();
+
+    for (; c &lt; &#x27;0&#x27; || c &gt; &#x27;9&#x27;; c = getchar())
+        if (c == &#x27;-&#x27;)
+            f = 1;
+
+    for (; c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;; c = getchar())
+        x = (x &lt;&lt; 3) + (x &lt;&lt; 1) + (c^&#x27;0&#x27;);
+
+    if (f)
+        x = -x;
+}
+template&lt;typename T&gt;void pf(T x, char l = &#x27;\n&#x27;) {
+    static T s[100], t;
+
+    if (x &lt; 0)
+        putchar(&#x27;-&#x27;), x = -x;
+
+    do
+        s[++t] = x % 10, x /= 10;
+
+    while (x)
+        ;
+
+    while (t)
+        putchar(s[t--]^&#x27;0&#x27;);
+
+    putchar(l);
+}
+struct st {
+    int a, b, id;
+} Sts[300005], Uji[300005], Qql[300005];
+bool cmp(st A, st B) {
+    return A.a &lt; B.a;
+}
+int reait[300005];
+int n, m;
+int U(int x, int y) {
+    int res = 0;
+
+    if (Sts[x].a &lt; Sts[y].a) {
+        if (Sts[x].b == 0)
+            res += Sts[x].a, Sts[x].a = 0;
+
+        if (Sts[y].b == 1)
+            res += (m - Sts[y].a), Sts[y].a = m;
+
+        return (res + abs(Sts[x].a - Sts[y].a)) / 2;
+    } else {
+        if (Sts[x].b == 1)
+            res += (m - Sts[x].a), Sts[x].a = m;
+
+        if (Sts[y].b == 0)
+            res += Sts[y].a, Sts[y].a = 0;
+
+        return (res + abs(Sts[x].a - Sts[y].a)) / 2;
+    }
+}
+signed main() {
+    int T;
+    sf(T);
+
+    while (T--) {
+        sf(n), sf(m);
+
+        for (int i = 1; i &lt;= n; i++)
+            reait[i] = -1;
+
+        int rks = 0, tss = 0;
+
+        for (int i = 1; i &lt;= n; i++) {
+            sf(Sts[i].a);
+            Sts[i].id = i;
+        }
+
+        for (int i = 1; i &lt;= n; i++) {
+            char res = getchar();
+
+            while (res != &#x27;L&#x27; &amp;&amp; res != &#x27;R&#x27;)
+                res = getchar();
+
+            Sts[i].b = res == &#x27;R&#x27;;
+        }
+
+        for (int i = 1; i &lt;= n; i++) {
+            if (Sts[i].a &amp; 1)
+                Qql[++tss] = Sts[i];
+            else
+                Uji[++rks] = Sts[i];
+        }
+
+        sort(Uji + 1, Uji + rks + 1, cmp);
+        sort(Qql + 1, Qql + tss + 1, cmp);
+        stack &lt;int&gt; Q;
+        Q.push(1);
+
+        for (int i = 2; i &lt;= rks; i++) {
+            if (Uji[i].b == 0 &amp;&amp; !Q.empty()) {
+                int u = Q.top();
+                Q.pop();
+                reait[Uji[i].id] = reait[Uji[u].id] = U(Uji[i].id, Uji[u].id);
+            } else
+                Q.push(i);
+        }
+
+        while (!Q.empty()) {
+            int u = Q.top();
+            Q.pop();
+
+            if (!Q.empty()) {
+                int v = Q.top();
+                Q.pop();
+                reait[Uji[u].id] = reait[Uji[v].id] = U(Uji[u].id, Uji[v].id);
+            }
+        }
+
+        Q.push(1);
+
+        for (int i = 2; i &lt;= tss; i++) {
+            if (Qql[i].b == 0 &amp;&amp; !Q.empty()) {
+                int u = Q.top();
+                Q.pop();
+                reait[Qql[i].id] = reait[Qql[u].id] = U(Qql[i].id, Qql[u].id);
+            } else
+                Q.push(i);
+        }
+
+        while (!Q.empty()) {
+            int u = Q.top();
+            Q.pop();
+
+            if (!Q.empty()) {
+                int v = Q.top();
+                Q.pop();
+                reait[Qql[u].id] = reait[Qql[v].id] = U(Qql[u].id, Qql[v].id);
+            }
+        }
+
+        for (int i = 1; i &lt;= n; i++)
+            printf(&quot;%lld &quot;, reait[i]);
+
+        printf(&quot;\n&quot;);
+    }
+
+    return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1525darmchairs">「CF 1525D」Armchairs</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/D">Link</a>.</p>
+<p>设 $f(i,j)$ 表示考虑把第 $j$ 个人放进前 $i$
+个座位里的方案，转移。</p>
+<p>多久没写 DP 了啊，这种水平的 DP 都写漏一堆东西。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+typedef long long ll;
+template&lt;typename T&gt;void sf(T &amp;x){x=0;T f=0;char c=getchar();for(;c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;;c=getchar())if(c==&#x27;-&#x27;)f=1;for(;c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;;c=getchar())x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;);if(f)x=-x;}
+template&lt;typename T&gt;void pf(T x,char l=&#x27;\n&#x27;){static T s[100],t;if(x&lt;0)putchar(&#x27;-&#x27;),x=-x;do s[++t]=x%10,x/=10;while(x);while(t)putchar(s[t--]^&#x27;0&#x27;);putchar(l);}
+int n,a[5010],fr[5010],t0,oc[5010],t1,op[5010];
+ll dp[5010][5010],ans=std::numeric_limits&lt;ll&gt;::max();
+inline int fs(int x){return x&lt;0?-x:x;}
+int main()
+{
+	sf(n);
+	for(int i=1;i&lt;=n;++i)
+	{
+		sf(a[i]);
+		if(a[i])	oc[++t1]=i;
+		else	fr[++t0]=i;
+	}
+	for(int i=1;i&lt;=t1;++i)	for(int j=0;j&lt;=n;++j)	dp[i][j]=1e18;
+	for(int i=1;i&lt;=t1;++i)	for(int j=1;j&lt;=n;++j) {
+		dp[i][j]=dp[i][j-1];
+		if(!a[j])	dp[i][j]=std::min(dp[i][j],dp[i-1][j-1]+fs(oc[i]-j));
+	}
+	pf(dp[t1][n]);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="cf-1525eassimilation-iv">「CF 1525E」Assimilation IV</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/E">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Oops, something went wrong.
+</code></pre></p>
+</details>
+
+<h1 id="cf-1525fgoblins-and-gnomes">「CF 1525F」Goblins And Gnomes</h1>
+<p><a
+href="https://codeforces.com/problemset/problem/1525/F">Link</a>.</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Oops, something went wrong.
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

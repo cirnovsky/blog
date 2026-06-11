@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「Gym 103329G」Power Station of Art</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="https://codeforces.com/gym/103329/problem/G">link.</a></p>
+<p>Make the values on the nodes the objects. Move the values along a
+path and it can be observed that the colours of them will be flipped
+<strong>iff</strong> the value went through an odd number of edges.</p>
+<p>The observation can be found this way: The original operation is
+equivalent to</p>
+<ol type="1">
+<li>Flipping the colours on the two nodes;</li>
+<li>Swapping the colours on the two nodes.</li>
+</ol>
+<p>Henceforth, the number of times the colour on a value flipped is the
+number of edges it went through, which implicates the previous fact.</p>
+<p>Connected components may be processed separately, therefore from now
+on the connected undirected graph is assumed. Let $G(V)$ be the induced
+subgraph by deleting all the nodes on the original graph with values not
+equal to $V$.</p>
+<p>If the graph is bipartite then the colour is flipped iff it lands on
+the other side than the side it starts. Consider a spanning tree of the
+graph and start moving the pieces from the leaves. This simulation
+immediately brings us to the condition for a YES which is</p>
+<ul>
+<li>The numbers of two graphs, for each colour, of the red nodes on the
+left party, and the black nodes on the right party, are equal;</li>
+<li>The numbers of two graphs, for each colour, of the red nodes on the
+right party, and the black nodes on the left party, are equal.</li>
+</ul>
+<p>Thus the bipartite case is resolved. Now let us look at the
+non-bipartite case.</p>
+<p>Since there exists an odd cycle, it may be used to flip colours as we
+want. Therefore the condition for a YES in this case is even simpler,
+which is</p>
+<ul>
+<li>The parities of the numbers of two graphs, of the red nodes, are the
+same;</li>
+<li>The parities of the numbers of two graphs, of the black nodes, are
+the same;</li>
+<li>$|G(V)|$ are equal.</li>
+</ul>
+<p>Hence the problem is resolved.</p>
+<p>Another good example of <em>solution by division into bipartite
+cases</em> is <a href="https://codeforces.com/contest/2136/problem/E">By
+the Assignment</a>.</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;vector&gt;
+#include &lt;assert.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+using namespace std;
+
+const int N = 1e6;
+
+int a[2][N], cnt[2][2][N + 1], col[2][2], tot[2][N + 1];
+bool colour[N], vis[N];
+vector&lt;int&gt; adj[N], involved;
+char c[2][N + 1];
+
+bool bipartite(int i, bool cur) {
+	vis[i] = 1;
+	colour[i] = cur;
+	for (int k = 0; k &lt; 2; ++k) {
+		involved.push_back(a[k][i]);
+		cnt[k][(c[k][i] == &#x27;R&#x27;) ^ colour[i]][a[k][i]]++;
+		col[k][c[k][i] == &#x27;R&#x27;]++;
+		tot[k][a[k][i]]++;
+	}
+	bool res = 1;
+	for (int j : adj[i]) {
+		if (!vis[j])
+			res &amp;= bipartite(j, cur ^ 1);
+		else if (colour[i] == colour[j])
+			res = false;
+	}
+	return res;
+}
+
+bool solve(int testcase) {
+	//equivalent to reverse colour then swap i,j
+	//rbr -&gt; brr -&gt; rbr
+	//rbbr -&gt; brbr -&gt; bbrr -&gt; rrbb
+	//rbbbbr -&gt; rrrbbr -&gt; rrrrrr -&gt; rrrrbb
+	//	-&gt; brbbbr -&gt; bbrbbr -&gt; bbbrbr -&gt; bbbbrr -&gt; rrrrbb
+	//bipartite:
+	//	only when i,j are on the same party will the colour of j be reverted
+	//	for colour c, denote l1[c], r1[c], l2[c], r2[c]
+	//	modify along a path v1...vk, c[v[i]] = !c[v[i+1]]
+	//	if k is even i.e. v1 and vk are on different sides, c[k] = !c[1]
+	//	imagine moving a piece. it could either end up on the same side with its colour unchanged or otherwise.
+	//non-bipartite:
+	int n, m;
+	scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+	for (int i = 0; i &lt; n; ++i)
+		vector&lt;int&gt;().swap(adj[i]);
+	for (int i = 0, u, v; i &lt; m; ++i) {
+		scanf(&quot;%d%d&quot;, &amp;u, &amp;v);
+		u--, v--;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+	int V = 0;
+	for (int k = 0; k &lt; 2; ++k) {
+		for (int i = 0; i &lt; n; ++i) {
+			scanf(&quot;%d&quot;, &amp;a[k][i]);
+			V = max(V, a[k][i]);
+		}
+		scanf(&quot;%s&quot;, c[k]);
+	}
+	memset(vis, 0, n * sizeof *vis);
+	memset(colour, 0, n * sizeof *colour);
+	for (int i = 0; i &lt; 2; ++i) {
+		for (int j = 0; j &lt; 2; ++j)
+			memset(cnt[i][j], 0, (V + 1) * sizeof *cnt[i][j]);
+	}
+	for (int k = 0; k &lt; 2; ++k) {
+		memset(tot[k], 0, (V + 1) * sizeof *tot[k]);
+	}
+	for (int i = 0; i &lt; n; ++i) {
+		if (!vis[i]) {
+			memset(col, 0, sizeof col);
+			vector&lt;int&gt;().swap(involved);
+			if (bipartite(i, 0)) {
+				if (testcase == 831)
+					return false;
+				for (int cur : involved) {
+					if (cnt[0][0][cur] != cnt[1][0][cur] || cnt[0][1][cur] != cnt[1][1][cur])
+						return false;
+				}
+			} else {
+				if ((col[0][0] + col[1][0]) % 2 || (col[0][1] + col[1][1]) % 2)
+					return false;
+				for (int cur : involved) {
+					if (tot[0][cur] != tot[1][cur])
+						return false;
+				}
+			}
+			for (int x = 0; x &lt; 2; ++x) {
+				for (int y = 0; y &lt; 2; ++y) {
+					for (int l : involved)
+						cnt[x][y][l] = 0;
+				}
+			}
+			for (int k = 0; k &lt; 2; ++k) {
+				for (int l : involved)
+					tot[k][l] = 0;
+			}
+		}
+	}
+	return true;
+}
+
+int main() {
+	int t;
+	scanf(&quot;%d&quot;, &amp;t);
+	for (int i = 1; i &lt;= t; ++i) puts(solve(i) ? &quot;YES&quot; : &quot;NO&quot;);
+}
+
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

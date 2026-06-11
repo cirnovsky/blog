@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「CF 888E」Maximum Subsequence</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a
+href="http://codeforces.com/problemset/problem/888/E">Link</a>.</p>
+<p>给一个数列和 $m$，在数列任选若干个数，使得他们的和对 $m$
+取模后最大。</p>
+<h2 id="solution">Solution</h2>
+<p>记录一下犯下的一个 nt 错误。</p>
+<p>首先我们有一个显然的 DFS
+暴力，每次两种决策，选或不选，所以时间复杂度为 $\Theta(2^{n})$。</p>
+<p>$n$ 的范围是 35，是过不了的，我们可以考虑折半搜索。</p>
+<p>关于折半搜索可以看看 <a
+href="https://www.luogu.com.cn/blog/161849/gen-hao-sou-suo-xiao-ji">我的折半搜索小计</a>。</p>
+<p>暴力搜出
+$[1,\lfloor\frac{n}{2}\rfloor],[\lfloor\frac{n}{2}\rfloor+1,n]$
+的所有答案，记录到两个 vector 里面。</p>
+<p>这一部分的时间复杂度是 $\Theta(2^{\lfloor\frac{n}{2}\rfloor})$。</p>
+<p>考虑合并贡献。</p>
+<p>先考虑一个暴力合并贡献的方法。</p>
+<p>我们记第一次搜索搜出来的答案序列为 $A_{1}$，同理有 $A_{2}$。</p>
+<p>这里的两个答案序列都是在模 $m$ 意义下的。</p>
+<p>那么对于每一个 $A_{1,i}$，我们都可以暴力在 $A_{2}$ 中寻找两者相加模
+$m$ 的最大值。</p>
+<p>那么我们可以分类讨论了，因为序列在模 $m$ 意义下，所以我们对于每一个
+$A_{1,i}$ 找到的 $A_{2,j}$ 使得 $(A_{1,i}+A_{2,j})\bmod m$
+最大，都只有两种情况。</p>
+<p>一种是 $A_{2,j}$ 在 $A_{2}$ 中值域范围在 $[0,m-A_{1,i}-1]$
+的所有值中最大，一种是在 $A_{2}$ 中值域范围在 $[0,m\times2-A_{1,i}-1]$
+的所有值中最大。</p>
+<p>所以我们在这两种情况中取最大即可。</p>
+<p>由于我不理解二分做法，所以我用的是动态开点值域线段树。</p>
+<p>（flag：动态开点不加引用就【】）</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int N=35+5;
+const int H=99999999;
+int n,m,tot=1,root=1,ans,a[N];
+struct Tree
+{
+	int ls,rs,val;
+} nodes[(1&lt;&lt;(N&gt;&gt;1))&lt;&lt;3];
+vector&lt;int&gt; vec[2];
+
+void dfs(int x,int cur,int lim)
+{
+	if(x&gt;lim)
+	{
+		if(lim==(n&gt;&gt;1)) 	vec[0].push_back(cur);
+		else	vec[1].push_back(cur);
+		return ;
+	}
+	dfs(x+1,(cur+a[x])%m,lim);
+	dfs(x+1,cur,lim);
+}
+
+void ins(int &amp;p,int l,int r,int x)
+{
+	if(p==0)	p=++tot;
+	if(l==r)
+	{
+		nodes[p].val=l;
+		return ;
+	}
+	int mid=(l+r)&gt;&gt;1;
+	if(mid&gt;=x)	ins(nodes[p].ls,l,mid,x);
+	else	ins(nodes[p].rs,mid+1,r,x);
+	nodes[p].val=max(nodes[nodes[p].ls].val,nodes[nodes[p].rs].val);
+}
+
+int find(int p,int l,int r,int x,int y)
+{
+	if(l&gt;y||r&lt;x)	return 0;
+	if(l&gt;=x&amp;&amp;r&lt;=y)	return nodes[p].val;
+	int mid=(l+r)&gt;&gt;1,ret=0;
+	if(mid&gt;=x)	ret=max(ret,find(nodes[p].ls,l,mid,x,y));
+	if(mid&lt;y)	ret=max(ret,find(nodes[p].rs,mid+1,r,x,y));
+	return ret;
+}
+
+void output(int p)
+{
+	if(nodes[p].ls==0&amp;&amp;nodes[p].rs==0)
+	{
+		printf(&quot;%d &quot;,nodes[p].val);
+		return ;
+	}
+	output(nodes[p].ls);
+	output(nodes[p].rs);
+}
+
+signed main()
+{
+	scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+	for(int i=1;i&lt;=n;++i)	scanf(&quot;%d&quot;,&amp;a[i]);
+	dfs(1,0,n&gt;&gt;1);
+	dfs((n&gt;&gt;1)+1,0,n);
+	sort(vec[0].begin(),vec[0].end());
+	sort(vec[1].begin(),vec[1].end());
+	for(auto x:vec[1])	ins(root,0,m-1,x);
+	for(auto x:vec[0])	ans=max(ans,max(x+find(1,0,m-1,0,m-x-1),(x+find(1,0,m-1,0,m*2-x-1))%m));
+	printf(&quot;%d\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

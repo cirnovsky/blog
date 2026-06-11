@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「ABC 196」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#abc-196adifference-max"
+id="toc-abc-196adifference-max">「ABC 196A」Difference Max</a></li>
+<li><a href="#abc-196bround-down" id="toc-abc-196bround-down">「ABC
+196B」Round Down</a></li>
+<li><a href="#abc-196cdoubled" id="toc-abc-196cdoubled">「ABC
+196C」Doubled</a></li>
+<li><a href="#abc-196dhanjo" id="toc-abc-196dhanjo">「ABC
+196D」Hanjo</a></li>
+<li><a href="#abc-196efilters" id="toc-abc-196efilters">「ABC
+196E」Filters</a></li>
+<li><a href="#abc-196fsubstring-2" id="toc-abc-196fsubstring-2">「ABC
+196F」Substring 2</a></li>
+</ul>
+</nav>
+
+<h1 id="abc-196adifference-max">「ABC 196A」Difference Max</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_a">Link</a>.</p>
+<p>略。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+long long a,b,c,d;
+int main(){
+	scanf(&quot;%lld %lld %lld %lld&quot;,&amp;a,&amp;b,&amp;c,&amp;d);
+	printf(&quot;%lld\n&quot;,b-c);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-196bround-down">「ABC 196B」Round Down</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_b">Link</a>.</p>
+<p>略。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+#include&lt;cstring&gt;
+char s[10000];
+int main(){
+	scanf(&quot;%s&quot;,s);int len=strlen(s);
+	for(int i=0;i&lt;len;++i)if(s[i]^&#x27;.&#x27;)putchar(s[i]);else break;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-196cdoubled">「ABC 196C」Doubled</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_c">Link</a>.</p>
+<p>分类讨论即可，可能会有点点细节需要注意。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+long long n;
+int dig[20],cnt;
+long long qpow(long long bas,long long fur){long long res=0;for(long long i=1;i&lt;=fur;++i)res=res*10+9;return res;}
+long long getnum(int l,int r){long long res=0;for(int i=r;i&gt;=l;--i)res=res*10+dig[i];return res;}
+int main(){
+	scanf(&quot;%lld&quot;,&amp;n);long long bk=n;do dig[++cnt]=bk%10,bk/=10; while(bk);
+	if(cnt==1)return puts(&quot;0&quot;),0;int lm=(cnt&gt;&gt;1);
+	long long pre=getnum(cnt-lm+1,cnt),suf=getnum(1,lm);
+	if(cnt&amp;1)printf(&quot;%lld\n&quot;,qpow(9,lm));
+	else{
+		if(pre&lt;=suf)printf(&quot;%lld\n&quot;,pre);
+		else printf(&quot;%lld\n&quot;,pre-1);
+	}
+	return 0;
+}
+/*
+23333
+
+3 3 3 3 2
+
+232
+*/
+</code></pre></p>
+</details>
+
+<h1 id="abc-196dhanjo">「ABC 196D」Hanjo</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_d">Link</a>.</p>
+<p>暴搜。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;iostream&gt;
+using namespace std;
+int h,w,a,b,ans;
+void dfs(int solvedNumber,int stateBoard,int leftLongerBlock,int leftCenterBlock)
+{
+	if(solvedNumber==h*w)	++ans;
+	else
+	{
+		if(stateBoard&amp;(1&lt;&lt;solvedNumber))	return dfs(solvedNumber+1,stateBoard,leftLongerBlock,leftCenterBlock);
+		if(leftLongerBlock)
+		{
+			if((solvedNumber%w!=w-1)&amp;&amp;(!(stateBoard&amp;(1&lt;&lt;(solvedNumber+1)))))	dfs(solvedNumber+1,stateBoard|(1&lt;&lt;solvedNumber)|(1&lt;&lt;(solvedNumber+1)),leftLongerBlock-1,leftCenterBlock);
+			if(solvedNumber+w&lt;h*w)	dfs(solvedNumber+1,stateBoard|(1&lt;&lt;solvedNumber)|(1&lt;&lt;(solvedNumber+w)),leftLongerBlock-1,leftCenterBlock);
+		}
+		if(leftCenterBlock)	dfs(solvedNumber+1,stateBoard|(1&lt;&lt;solvedNumber),leftLongerBlock,leftCenterBlock-1);
+	}
+}
+int main()
+{
+	cin &gt;&gt; h &gt;&gt; w &gt;&gt; a &gt;&gt; b;
+	dfs(0,0,a,b); cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+</details>
+
+<h1 id="abc-196efilters">「ABC 196E」Filters</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_e">Link</a>.</p>
+<p>这是个 Segment Tree Beats 的板子，不打了。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">// Oops, something went wrong.
+</code></pre></p>
+</details>
+
+<h1 id="abc-196fsubstring-2">「ABC 196F」Substring 2</h1>
+<p><a
+href="https://atcoder.jp/contests/abc196/tasks/abc196_f">Link</a>.</p>
+<p>你 ABC 考 FFT 字符串匹配。</p>
+<p>定义匹配函数
+$f(x)=\sum_{i=0}^{|T|-1}(S_{x+i}-T_{i})^{2}=\sum_{i=0}^{|T|-1}S^{2}<em>{x+i}-2\sum</em>{i=0}^{|T|-1}S_{x+i}T_{i}+\sum_{i=0}^{|T|-1}T_{i}^{2}$。</p>
+<p>然后反转 $T$ 卷积即可。</p>
+<details>
+
+<p><pre><code class="language-cpp toolbar">#include&lt;cstdio&gt;
+#include&lt;numeric&gt;
+#include&lt;iostream&gt;
+#include&lt;algorithm&gt;
+using namespace std;
+typedef long long LL;
+const int MOD=998244353,INF=numeric_limits&lt;int&gt;::max();
+void exGCD(int one,int ano,int &amp;x,int &amp;y)
+{
+	if(ano==0)	x=1,y=0;
+	else	exGCD(ano,one%ano,y,x),y-=(one/ano)*x;
+}
+int getInv(int val){int res,w; exGCD(val,MOD,res,w); return (res+MOD)%MOD;}
+int qpow(int bas,int fur)
+{
+	int res=1;
+	while(fur)
+	{
+		if(fur&amp;1)	res=LL(res)*bas%MOD;
+		bas=LL(bas)*bas%MOD;
+		fur&gt;&gt;=1;
+	}
+	return res%MOD;
+}
+namespace Poly
+{
+	typedef vector&lt;int&gt; poly;
+	#define len(x) (int((x).size()))
+	int lim,rev[4000010];
+	void ntt(poly &amp;f,int op)
+	{
+		for(int i=0;i&lt;lim;++i)	if(i&lt;rev[i])	swap(f[i],f[rev[i]]);
+		for(int len=2;len&lt;=lim;len&lt;&lt;=1)
+		{
+			int bas=qpow(op==1?3:332748118,(MOD-1)/len);
+			for(int fr=0;fr&lt;lim;fr+=len)
+			{
+				int now=1;
+				for(int ba=fr;ba&lt;fr+(len&gt;&gt;1);++ba,now=LL(now)*bas%MOD)
+				{
+					int tmp=LL(now)*f[ba+(len&gt;&gt;1)]%MOD;
+					f[ba+(len&gt;&gt;1)]=(f[ba]-tmp+MOD)%MOD;
+					f[ba]=(f[ba]+tmp)%MOD;
+				}
+			}
+		}
+		if(op==-1)
+		{
+			int tmp=getInv(lim);
+			for(int i=0;i&lt;lim;++i)	f[i]=LL(f[i])*tmp%MOD;
+		}
+	}
+	poly operator*(poly f,poly g)
+	{
+		int n=len(f)+len(g)-1; lim=1;
+		while(lim&lt;n)	lim&lt;&lt;=1;
+		f.resize(lim),g.resize(lim);
+		for(int i=0;i&lt;lim;++i)	rev[i]=(rev[i&gt;&gt;1]&gt;&gt;1)|((i&amp;1)?(lim&gt;&gt;1):0);
+		ntt(f,1),ntt(g,1);
+		for(int i=0;i&lt;lim;++i)	f[i]=LL(f[i])*g[i]%MOD;
+		ntt(f,-1),f.resize(n);
+		return f;
+	}
+	poly operator*(int x,poly f){for(int i=0;i&lt;len(f);++i)	f[i]=LL(f[i])*x%MOD; return f;}
+	poly operator-(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i&lt;len(f);++i)	f[i]=(f[i]-g[i]+MOD)%MOD;
+		return f;
+	}
+	poly operator+(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i&lt;len(f);++i)	f[i]=(f[i]+g[i])%MOD;
+		return f;
+	}
+}using namespace Poly;
+int main()
+{
+	string S,T;
+	cin &gt;&gt; S &gt;&gt; T; reverse(T.begin(),T.end());
+	poly onesi,anosi,onexsi,anoxsi;
+	#define Sqr(x) ((LL)(x)*(x)%MOD)
+	onesi.push_back(Sqr((*S.begin())-&#x27;0&#x27;));
+	anosi.push_back(Sqr((*T.begin())-&#x27;0&#x27;));
+	for(int i=1;i&lt;len(S);++i)	onesi.push_back(onesi.back()+Sqr(S[i]-&#x27;0&#x27;));
+	for(int i=1;i&lt;len(T);++i)	anosi.push_back(anosi.back()+Sqr(T[i]-&#x27;0&#x27;));
+	for(char c : S)	onexsi.push_back(c-&#x27;0&#x27;); for(char c : T)	anoxsi.push_back(c-&#x27;0&#x27;);
+	poly tmp=2*onexsi*anoxsi; int ans=INF;
+	#define getValue(i) (((i)&lt;(len(T)))?0:onesi[(i)-len(T)])
+	for(unsigned int i=T.size()-1;i&lt;S.size();++i)	ans=min(ans,onesi[i]-getValue(i)+anosi[len(T)-1]-tmp[i]);
+	printf(&quot;%d\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+</details>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

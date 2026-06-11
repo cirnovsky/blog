@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「co-examination - A」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>破壁，组合意义法：</p>
+<p>五种颜色 $\star,a,b,c,d$。</p>
+<ul>
+<li>对于 l.h.s.</li>
+</ul>
+<p>钦定 $k$，在 $3n+k$ 个球中选出 $2n$ 个球染色，在靠左的 $n$ 个球中选
+$k$ 个染成 $a$ 色，剩余 $n-k$ 个 $b$ 色；在靠有的 $n$ 个球中选 $k$
+个染成 $c$ 色，剩余 $n-k$ 个 $d$ 色。</p>
+<ul>
+<li>对于 r.h.s.</li>
+</ul>
+<p>有 $3n$ 个 $\star$ 色球，钦定其中 $n$ 个，再拿出一个全 $0$ 序列，选出
+$n$ 个赋值为
+$1$，此时已经为右式的组合意义了，我们考虑把左右式对起来。</p>
+<p>拿出两个指针 <code>p</code> 和 <code>q</code>，分别指向为 $3n$ 个
+$\star$ 色球中的未钦定球，和 $0/1$ 序列，两指针同步移动。</p>
+<p>当 <code>q</code> 碰到 $1$，把 <code>p</code> 所指的球染成 $b$ 色，当
+<code>p</code> 之前有恰好 $n$ 个「钦定或 $b$ 色」球时停下。那么此时设
+<code>p</code> 前面有 $k$ 个钦定球，$n-k$ 个 $b$ 色球，<code>p</code>
+后面有 $o$ 个球，那么 <code>q</code> 后面还有 $o+k$ 个数，其中恰好有 $k$
+个 $1$。</p>
+<p>把 <code>p</code> 后面的球放在 <code>q</code> 之后 $0$ 的位置上，把
+$1$ 的位置染成 $d$ 色，把 <code>p</code> 前的球和这个拼起来就和 l.h.s.
+对上了。</p>
+<hr />
+<p>呃呃呃，组合恒等式法。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
