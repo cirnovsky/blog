@@ -58,12 +58,24 @@ __*Week 5...*__
 
 周末和小蟹同志在圣淘沙胡吃海塞。
 
-非常不戳，现在 `new_read_file` 支持：
+非常不戳，现在 `new_read_file` 支持多模态读取啦！
 
-1. 图片文件：
-    a. 把 base64 加入主 agent 上下文。
-    b. 对图片提问，将答案加入主 agent 上下文。
-2. 视频文件：
-    a. 把 base64 加入主 agent 上下文（主 agent 不支持）。
-    b. *TODO* 对视频整体理解
-    c. 对视频逐帧理解。
+发现效果一般，多次出现 fallback 到其他 OCR 工具的情况，尽管 `new_read_file` 的视频功能正常。
+
+难道 Agent 会望文生义？
+
+不行不行，还是把多模态功能移出来吧。
+
+我决定在 `one-off` 的基础上，给 `video_understanding` 增加 `by-frame` 模式。
+
+嗯～现在不会无缘无故 fallback 了，估计工具名称对 agent 选择工具的影响比我想象中大。
+
+只要等涛哥同意就可以往 agent-core 里面迁移啦！
+
+难绷了，涛哥放假了。
+
+两周后回来，看来改 agent-core 要搁置一会儿了。那我还能干啥啊，继续写小小 gpt？
+
+此时突然传来筱能的声音，让我和光阳研究 prompt caching，现在 harness 太烧钱了。
+
+Nice！我还以为游手好闲了，开始研究！
