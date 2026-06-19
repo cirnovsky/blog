@@ -10,7 +10,8 @@ fi
 uv run sync.py
 
 if [[ -n "$(git status --porcelain)" ]]; then
-  git commit -am "[post] sync"
+  git add .
+  git commit -m "[post] sync"
   git push origin main
 else
   echo "No changes to commit after sync."
