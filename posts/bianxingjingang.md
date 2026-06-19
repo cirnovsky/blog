@@ -7,4 +7,6 @@ tags: [technical]
 
 在 Transformer 诞生前，文本序列的主流范式是基于 RNN 等的 encoder-decoder 架构。RNN 的基本原理是，
 
-<iframe src="uploads/diagram.html" style="width:100%;height:80vh;border:1px solid #e0e0e0;border-radius:6px;" frameborder="0"></iframe>
+<div style="overflow-x:auto;">
+<iframe src="uploads/diagram.html" style="width:900px;height:80vh;border:1px solid #e0e0e0;border-radius:6px;display:block;" frameborder="0" scrolling="no"></iframe>
+</div>
