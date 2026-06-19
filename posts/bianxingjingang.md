@@ -7,29 +7,24 @@ tags: [technical]
 
 在 Transformer 诞生前，文本序列的主流范式是基于 RNN 等的 encoder-decoder 架构。RNN 的基本原理是，
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Transformer Architecture — Annotated</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+.transformer-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  height: 100vh; display: flex; overflow: hidden; background: #f8f9fa;
+  height: 80vh; display: flex; overflow: hidden; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px;
 }
-#left {
+.transformer-left {
   flex: 0 0 600px; overflow-y: auto;
   background: #fff; border-right: 1px solid #e0e0e0; padding: 8px 6px;
 }
-#right {
+.transformer-right {
   flex: 1; overflow-y: auto; padding: 20px 24px; background: #fff; min-width: 280px;
 }
 .nd { cursor: pointer; }
 .nd .b { transition: filter .1s; }
 .nd:hover .b { filter: brightness(.88); }
 .nd.sel .b { stroke: #4338ca !important; stroke-width: 2.8 !important; }
-.hint { color: #ccc; text-align: center; margin-top: 60px; font-size: 13px; line-height: 2.4; }
+.transformer-container .hint { color: #ccc; text-align: center; margin-top: 60px; font-size: 13px; line-height: 2.4; }
 .notation {
   background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px;
   padding: 11px 15px; font-size: 12px; color: #3730a3; line-height: 2; margin-bottom: 20px;
@@ -59,9 +54,9 @@ body {
   padding: 10px 13px; font-size: 12px; color: #78350f; line-height: 1.55;
 }
 </style>
-</head>
-<body>
-<div id="left">
+
+<div class="transformer-container">
+<div class="transformer-left">
 <svg viewBox="0 0 622 1028" xmlns="http://www.w3.org/2000/svg"
      style="width:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
 <defs>
@@ -353,7 +348,7 @@ body {
 </svg>
 </div>
 
-<div id="right">
+<div class="transformer-right">
   <div class="notation">
     <strong>Notation</strong> (default hyper-parameters from "Attention Is All You Need")<br>
     B = batch &nbsp;·&nbsp; S = source seq len &nbsp;·&nbsp; T = target seq len &nbsp;·&nbsp;
@@ -535,5 +530,4 @@ function S(el, id) {
     ${fml}${tip}`;
 }
 </script>
-</body>
-</html>
+</div>
