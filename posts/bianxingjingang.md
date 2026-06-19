@@ -1,7 +1,7 @@
 ---
 date: 2026-05-26
 title: "变形金刚"
-category: articles
+category: notes
 tags: [technical]
 ---
 
