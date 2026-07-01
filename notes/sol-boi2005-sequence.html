@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>olution -「BalticOI 2004」Sequence</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,71 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<h2 id="description">Description</h2>
+<p><a href="http://222.180.160.110:1024/problem/28828">Link</a>.</p>
+<p>Given is a sequencen $A$ of $n$ intergers.</p>
+<p>Construct a stricly increasing sequence $B$ of $n$ intergers that
+makes the sum of $|B_{i}-A_{i}|$ the smallest.</p>
+<h2 id="solution">Solution</h2>
+<p>First, we make $a_{i}:=a_{i}-i$. Then we just make "strictly
+increasing" become "unstrictly increasing".</p>
+<ol type="1">
+<li><p>for $a_{1}\le a_{2}\le\cdots\le a_{n}$:</p>
+<p>When $B$ is the same as $A$, it gets the minimum answer.</p></li>
+<li><p>for $a_{1}\ge a_{2}\ge\cdots\ge a_{n}$:</p>
+<p>When for each $i$, $B_{i}=A_{\lfloor\frac{n}{2}\rfloor}$, it gets the
+minimum answer.</p></li>
+</ol>
+<p>Maybe we can divide $A$ into m parts.</p>
+<p>Such like: $[l_{1},r_{1}],\cdots,[l_{m},r_{m}]$</p>
+<p>that satisfies: for each $i$, sequence $A[l_{i},r_{i}]$ is unstrictly
+increasing/decreasing.</p>
+<p>So we can get the answer to each interval.</p>
+<p>Let's consider how to merge the answers.</p>
+<p>When we're merging two intervals, we can just get the new median of
+the two intervals.</p>
+<hr />
+<p>So things above are just bullshit.</p>
+<p>Parallel Searching!</p>
+<p>FUCK YOU.</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+const LL INF=1e18;
+int n;
+LL a[1000010],b[1000010],ans;
+void solve(LL l,LL r,int fr,int ba)
+{
+	if(l&gt;=r||fr&gt;ba)	return;
+	LL mid=(l+r)&gt;&gt;1,tmp=0,mn=INF,pos=0;
+	for(int i=fr;i&lt;=ba;++i)	tmp+=abs(a[i]-mid-1);
+	mn=tmp,pos=fr-1;
+	for(int i=fr;i&lt;=ba;++i)
+	{
+		tmp-=abs(a[i]-mid-1);
+		tmp+=abs(a[i]-mid);
+		if(tmp&lt;mn)	mn=tmp,pos=i;
+	}
+	for(int i=fr;i&lt;=pos;++i)	b[i]=mid;
+	for(int i=pos+1;i&lt;=ba;++i)	b[i]=mid+1;
+	solve(l,mid,fr,pos),solve(mid+1,r,pos+1,ba);
 }
-
+int main()
+{
+	scanf(&quot;%d&quot;,&amp;n);
+	for(int i=1;i&lt;=n;++i)	scanf(&quot;%lld&quot;,&amp;a[i]),a[i]-=i;
+	solve(-INF,INF,1,n);
+	for(int i=1;i&lt;=n;++i)	ans+=abs(a[i]-b[i]);
+	printf(&quot;%lld\n&quot;,ans);
+	for(int i=1;i&lt;=n;++i)	printf(&quot;%lld &quot;,b[i]+i);
+	return 0;
+}
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P6156」简单题</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P6156">Link</a>.</p>
+<p>求
+$\sum\limits_{i=1}^n\sum\limits_{j=1}^n(i+j)^kf(\gcd(i,j))\gcd(i,j)$。</p>
+<h2 id="solution">Solution</h2>
+<p>$$ \begin{aligned}
+\textbf{ANS}&amp;=\sum_{i=1}^{n}\sum_{j=1}^{n}(i+j)^{k}\mu^{2}(\gcd(i,j))\gcd(i,j)
+\
+&amp;=\sum_{d=1}^{n}\sum_{i=1}^{n}\sum_{j=1}^{n}(i+j)^{k}\mu^{2}(d)d[\gcd(i,j)=d]
+\
+&amp;=\sum_{d=1}^{n}d^{k+1}\times\mu^{2}(d)\sum_{i=1}^{\lfloor\frac{n}{d}\rfloor}\sum_{j=1}^{\lfloor\frac{n}{d}\rfloor}(i+j)^{k}\sum_{h|i,h|j}\mu(h)
+\
+&amp;=\sum_{d=1}^{n}d^{k+1}\times\mu^{2}(d)\sum_{h=1}^{\lfloor\frac{n}{d}\rfloor}\mu(h)\times
+h^{k}\times\sum_{i=1}^{\lfloor\frac{n}{dh}\rfloor}\sum_{j=1}^{\lfloor\frac{n}{dh}\rfloor}(i+j)^{k}
+\
+&amp;=\sum_{d=1}^{n}d^{k+1}\times\mu^{2}(d)\sum_{h=1}^{\lfloor\frac{n}{d}\rfloor}\mu(h)\times
+h^{k}\times\sum_{i=1}^{\lfloor\frac{n}{dh}\rfloor}\sum_{j=1}^{\lfloor\frac{n}{dh}\rfloor}(i+j)^{k}
+\ \end{aligned} \ $$</p>
+<p>前面两个和式里面显然能算，考虑怎么对于 $x$ 算
+$\sum_{i=1}^{x}\sum_{j=1}^{x}(i+j)^{k}$。考虑对其差分：</p>
+<p>$$ \begin{aligned}
+\left(\sum_{i=1}^{x+1}\sum_{j=1}^{x+1}(i+j)^{k}\right)-\left(\sum_{i=1}^{x}\sum_{j=1}^{x}(i+j)^{k}\right)&amp;=\sum_{i=1}^{x}\sum_{j=1}^{x+1}(i+j)^{k}+\sum_{i=1}^{x+1}(x+1+i)^{k}-\sum_{i=1}^{x}\sum_{j=1}^{x}(i+j)^{k}
+\
+&amp;=\sum_{i=1}^{x}\left(\sum_{j=1}^{x+1}(i+j)^{k}-\sum_{j=1}^{x}(i+j)^{k}\right)+\sum_{i=1}^{x+1}(x+1+i)^{k}
+\ &amp;=\sum_{i=1}^{x}(x+1+i)^{k}+\sum_{i=1}^{x+1}(x+1+i)^{k} \
+\end{aligned} $$</p>
+<p>然后滚个前缀和就可以算了。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+typedef long long LL;
+const int MOD=998244353;
+int norm( LL x ) {
+	if( x&lt;0 ) {
+		x+=MOD;
+	}
+	if( x&gt;=MOD ) {
+		x%=MOD;
+	}
+	return x;
+}
+int n,k,ans;
+int qpow( int bas,int fur ) {
+	int res=1;
+	while( fur ) {
+		if( fur&amp;1 ) {
+			res=norm( LL( res )*bas );
+		}
+		bas=norm( LL( bas )*bas );
+		fur&gt;&gt;=1;
+	}
+	return norm( res+MOD );
+}
+std::tuple&lt;std::vector&lt;int&gt;,std::vector&lt;int&gt;&gt; makePrime( int n ) {
+	std::vector&lt;int&gt; prime,tag( n+1 ),mu( n+1 ),pw( n+1 );
+	pw[0]=1;
+	mu[1]=pw[1]=1;
+	for( int i=2;i&lt;=n;++i ) {
+		if( !tag[i] ) {
+			mu[i]=norm( -1 );
+			prime.emplace_back( i );
+			pw[i]=qpow( i,k );
+		}
+		for( int j=0;j&lt;int( prime.size() ) &amp;&amp; i*prime[j]&lt;=n;++j ) {
+			tag[i*prime[j]]=1;
+			pw[i*prime[j]]=norm( LL( pw[i] )*pw[prime[j]] );
+			if( i%prime[j]==0 ) {
+				mu[i*prime[j]]=0;
+				break;
+			} else {
+				mu[i*prime[j]]=norm( -mu[i] );
+			}
+		}
+	}
+	return std::tie( mu,pw );
+}
+int main() {
+	LL tmp;
+	scanf( &quot;%d %lld&quot;,&amp;n,&amp;tmp );
+	k=tmp%( MOD-1 );
+	std::vector&lt;int&gt; mu,pw,prt( n+1 ),exprt( n+1 ),preSum( n+1 );
+	// prt: i^(k+1)*mu^2(i)
+	// exprt: mu(i)*i^k
+	// preSum sum sum (i+j)^k
+	std::tie( mu,pw )=makePrime( n&lt;&lt;1|1 );
+	for( int i=1;i&lt;=n;++i ) {
+		prt[i]=norm( prt[i-1]+norm( LL( norm( LL( norm( LL( mu[i] )*mu[i] ) )*pw[i] ) )*i ) );
+		exprt[i]=norm( exprt[i-1]+norm( LL( mu[i] )*pw[i] ) );
+	}
+	for( int i=1;i&lt;=( n&lt;&lt;1 );++i ) {
+		pw[i]=norm( pw[i]+pw[i-1] );
+	}
+	for( int i=1;i&lt;=n;++i ) {
+		preSum[i]=norm( norm( preSum[i-1]+norm( pw[i&lt;&lt;1]-pw[i] ) )+norm( pw[(i&lt;&lt;1)-1]-pw[i] ) );
+	}
+	for( int l=1,r;l&lt;=n;l=r+1 ) {
+		r=n/( n/l );
+		int tmp=0;
+		for( int exl=1,exr,m=n/l;exl&lt;=m;exl=exr+1 ) {
+			exr=m/( m/exl );
+			tmp=norm( tmp+norm( LL( norm( exprt[exr]-exprt[exl-1] ) )*preSum[m/exl] ) );
+		}
+		ans=norm( ans+LL( norm( prt[r]-prt[l-1] ) )*tmp );
+	}
+	printf(&quot;%d\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

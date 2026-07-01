@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「CF 2125E」Sets of Complementary Sums</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="https://codeforces.com/contest/2125/problem/E">link.</a></p>
+<p>$$ test $$</p>
+<p>nima <a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>.</p>
+<p><pre><code class="language-cpp toolbar">//dp[i+j+1]+=dp[i]
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int MD = 998244353;
+const int N = 2e5;
+
+int dp[N + 1];
+
+int solve() {
+	int n, x;
+	scanf(&quot;%d%d&quot;, &amp;n, &amp;x);
+	long long tmp = (long long) (n + 1) * (n - 1) - (long long) n * (n + 1) / 2;
+	//need sum(mx + 1 - ai) &lt;= mx + 1
+	//(mx + 1)(n - 1) &lt;= sum(ai)
+	//start with 1, 2, ..., n
+	//adding 1 to j suffix increases (lhs - rhs) by n - j - 1
+	//dp[i] for mx = i, how many sequences s.t. lhs &lt;= rhs
+	//manupilate 1, 2, ..., n
+	//if initially lhs &gt; rhs, need to add 1 to all ai, denote t as the number needed and start with 1+t, 2+t, ..., n+t
+	//dp[n+t] = 1
+	//items are suffixes
+	//complete knapsack
+	//1 2 3    8*2-6
+	//3 4 5    6*2-12
+	if (n == 1) return x;
+	if (n + tmp &gt; x) return 0;
+	assert(tmp &gt;= 0);
+	dp[n + tmp] = 1;
+	for (int i = 0; i &lt; 2; ++i) {
+		for (int j = n + tmp; j + 1 &lt;= x; ++j)
+			dp[j + 1] = (dp[j + 1] + dp[j]) % MD;
+	}
+	for (int i = 1; i &lt;= n - 2; ++i) {
+		for (int j = n + tmp; j + i + 1 &lt;= x; ++j)
+			dp[j + i + 1] = (dp[j + i + 1] + dp[j]) % MD;
+	}
+	int res = 0;
+	for (int i = n + tmp; i &lt;= x; ++i) res = (res + dp[i]) % MD;
+	memset(dp, 0, (x + 1) * sizeof *dp);
+	return res;
+}
+
+int main() {
+	int t;
+	scanf(&quot;%d&quot;, &amp;t);
+	while (t--) printf(&quot;%d\n&quot;, solve());
+}
+</code></pre></p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a
+href="https://codeforces.com/profile/cirnovlove">https://codeforces.com/profile/cirnovlove</a><a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

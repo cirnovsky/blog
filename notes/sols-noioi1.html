@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Set -「NOI Online R1」</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#noi-online-t1-序列"
+id="toc-noi-online-t1-序列">NOI-Online-T1-序列</a></li>
+<li><a href="#noi-online-t2-冒泡排序"
+id="toc-noi-online-t2-冒泡排序">NOI-Online-T2-冒泡排序</a></li>
+<li><a href="#noi-online-t3-最小环"
+id="toc-noi-online-t3-最小环">NOI-Online-T3-最小环</a></li>
+<li><a href="#总结" id="toc-总结">总结</a></li>
+<li><a href="#普及组口胡" id="toc-普及组口胡">普及组口胡</a></li>
+</ul>
+</nav>
+
+<h2 id="noi-online-t1-序列">NOI-Online-T1-序列</h2>
+<p><img src="uploads/27.png" alt="img spfaed" /></p>
+<p>其实这道题是全场最难的……</p>
+<p>我这里给出一种并查集的做法。</p>
+<p>首先我们把操作2中的 $u$ 和 $v$ 合并</p>
+<p>对于操作1我们可以把他转化为操作2来做。</p>
+<p>比如我们针对操作1给出 $(u,v)$ 和 $(v,t)$ 两条边，对 $(u,v)$
+进行同增，对 $(v,t)$ 进行同减。</p>
+<p>这样就变成了 $u++,t--$ 了。</p>
+<p>然后我们把操作2缩点，然后把操作1的边连到操作2缩的点上。</p>
+<p>然后对操作1合并。</p>
+<p>此时，图中的每个点的度数最多为一。</p>
+<p>那么对于一条边 $(x,y)$ 如果 $a_{x}-b_{x}=a_{y}-b_{y}$
+那么就是YES；</p>
+<p>对于一个自环 $(x,x)$ 如果 $(a_{x}-b_{x})$ 为偶数，那么就是YES；</p>
+<p>对于一个度数为零的点 $x$ 如果 $a_{x}=b_{x}$ 那么就是YES；</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+char buf[1 &lt;&lt; 21], *p1 = buf, *p2 = buf;
+#ifndef ONLINE_JUDGE
+#define gc() getchar()
+#else
+#define gc() (p2 == p1 &amp;&amp; (p2 = (p1 = buf) + fread(buf, 1, 1 &lt;&lt; 21, stdin), p1 == p2) ? EOF : *p1++)
+#endif
+#define is_number (ch &gt;= &#x27;0&#x27; &amp;&amp; ch &lt;= &#x27;9&#x27;)
+
+template &lt; typename Type &gt;
+void read(Type&amp; a) {
+    a = 0; bool f = 0; char ch;
+    while (!(ch = gc(), is_number)) if (ch == &#x27;-&#x27;) f = 1;
+    while (is_number) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ &#x27;0&#x27;), ch = gc();
+    a = (f ? -a : a);
+}
+
+template &lt; typename Type, typename... Args &gt;
+void read(Type&amp; t, Args&amp;... args) {
+    read(t), read(args...);
+}
+
+const int MAXN = 2e5 + 5;
+int T, n, m, vis[MAXN];
+int u[MAXN], v[MAXN];
+int a[MAXN], b[MAXN];
+int nxt[MAXN], to[MAXN];
+int head[MAXN], tot;
+struct UnionFindSet {
+	int fa[MAXN];
+
+	void init(int n) {
+		for (int i = 1; i &lt;= n; ++i)
+			fa[i] = i;
+	}
+
+	int find(int x) {
+		if (x ^ fa[x]) fa[x] = find(fa[x]);
+		return fa[x];
+	}
+
+	void merge(int x, int y) {
+		int u = find(x);
+		int v = find(y);
+		if (u ^ v) {
+			fa[v] = u;
+			a[u] += a[v];
+			b[u] += b[v];
+		}
+	}
+} ufs;
+
+void add(int x, int y) {
+	to[++tot] = y;
+	nxt[tot] = head[x];
+	head[x] = tot;
+}
+
+signed main() {
+	for (read(T); T; --T) {
+        read(n, m);
+		tot = 0;
+		memset(head, 0, sizeof head);
+		ufs.init(n);
+		for (int i = 1; i &lt;= n; ++i) read(a[i]);
+		for (int i = 1; i &lt;= n; ++i) read(b[i]);
+		for (int i = 1, opt; i &lt;= m; ++i) {
+		    read(opt, u[i], v[i]);
+			if (opt ^ 1) vis[i] = 1, ufs.merge(u[i], v[i]), --i, --m;
+		}
+		for (int i = 1; i &lt;= m; ++i) {
+			add(ufs.find(u[i]), ufs.find(v[i]));
+			add(ufs.find(v[i]), ufs.find(u[i]));
+		}
+		for (int i = 1; i &lt;= n; ++i) {
+			int t = ufs.find(to[head[i]]);
+			for (int x = nxt[head[i]]; x; x = nxt[x])
+				ufs.merge(t, ufs.find(to[x]));
+		}
+		for (int i = 1; i &lt;= n; ++i) {
+			if (head[i]) {
+				int x = ufs.find(i);
+				int y = ufs.find(to[head[i]]);
+				if (x ^ y) {
+					if ((a[x] - b[x]) ^ (a[y] - b[y])) {
+						puts(&quot;NO&quot;);
+						goto there;
+					}
+				}
+				else {
+					if ((a[x] - b[y]) &amp; 1) {
+						puts(&quot;NO&quot;);
+						goto there;
+					}
+				}
+			}
+			else if (ufs.fa[i] == i) {
+				if (a[i] ^ b[i]) {
+					puts(&quot;NO&quot;);
+					goto there;
+				}
+			}
+		}
+		puts(&quot;YES&quot;);
+		there: ;
+	}
+}
+</code></pre></p>
+<h2 id="noi-online-t2-冒泡排序">NOI-Online-T2-冒泡排序</h2>
+<p>这道题我在考场上的做法很玄，本来是奔着40pts的部分分去的，结果爆零了(至今没找到原因)</p>
+<p>我们设</p>
+<p>$$bigger_{i}=\sum_{j=1}^{i-1}[a_{j}&gt;a_{i}]$$</p>
+<p>显然逆序对数量为 $\sum bigger$</p>
+<p>于是问题就转化为了动态维护 $bigger$。</p>
+<p>手玩几组数据后我们可以发现，每轮冒泡 $bigger$ 都会有一下的变化：</p>
+<p>$$bigger_{i}=\max{bigger_{i}-1,0}$$</p>
+<p>于是树状数组维护即可</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+char buf[1 &lt;&lt; 21], *p1 = buf, *p2 = buf;
+#ifndef ONLINE_JUDGE
+#define gc() getchar()
+#else
+#define gc() (p1 == p2 &amp;&amp; (p2 = (p1 = buf) + fread(buf, 1, 1 &lt;&lt; 21, stdin), p1 == p2) ? EOF : *p1++)
+#endif
+#define is() (ch &gt;= &#x27;0&#x27; &amp;&amp; ch &lt;= &#x27;9&#x27;)
+template &lt; typename Type &gt;
+void read(Type&amp; a) {
+	a = 0; bool f = 0; char ch;
+	while (!(ch = gc(), is())) if (ch == &#x27;-&#x27;) f = 1;
+	while (is()) a = (a &lt;&lt; 3) + (a &lt;&lt; 1) + (ch ^ &#x27;0&#x27;), ch = gc();
+	a = (f ? -a : a);
+}
+
+template &lt; typename Type, typename... Args &gt;
+void read(Type&amp; t, Args&amp;... args) {
+	read(t), read(args...);
+}
+
+using namespace std;
+
+const int MAXN = 2e5 + 5;
+int n, m, bigger[MAXN], bucket[MAXN], a[MAXN];
+long long bit[MAXN], init_inver_tot;
+
+void Update(int x, long long y) {
+	for (; x &lt;= n; x += x &amp; -x) bit[x] += y;
+}
+
+long long GetAnswers(int x) {
+	long long res = 0;
+	for (; x; x -= x &amp; -x) res += bit[x];
+	return res;
+}
+
+signed main() {
+	read(n, m);
+	for (int i = 1; i &lt;= n; ++i) read(a[i]), init_inver_tot += (bigger[i] = i - 1 - GetAnswers(a[i])), bucket[bigger[i]]++, Update(a[i], 1);
+	memset(bit, 0, sizeof bit), Update(1,  init_inver_tot), init_inver_tot = 0;
+	for (int i = 0; i &lt; n; ++i) init_inver_tot += 1LL * bucket[i], Update(i + 1 + 1, init_inver_tot - n);
+	for (int i = 0, op, x; i &lt; m; ++i) {
+		read(op, x);
+		if (n - 1 &lt; x) x = n - 1;
+		if (op ^ 2) {
+			if (a[x + 1] &gt; a[x]) {
+				swap(a[x], a[x + 1]);
+				swap(bigger[x], bigger[x + 1]);
+				Update(1, 1);
+				Update(bigger[x + 1]++ + 2, -1);
+			}
+			else {
+				swap(a[x], a[x + 1]);
+				swap(bigger[x], bigger[x + 1]);
+				Update(1, -1);
+				Update(--bigger[x] + 2, 1);
+			}
+		}
+		else printf(&quot;%lld\n&quot;, GetAnswers(x + 1));
+	}
+	return 0;
+}
+</code></pre></p>
+<h2 id="noi-online-t3-最小环">NOI-Online-T3-最小环</h2>
+<p>全场最水的一道题，但是可怕的心理作用还是让我放弃了这道题。</p>
+<p>首先有一个显然的结论，我们需要把这 $n$ 个数分为 $\gcd(n,k)$
+个环。</p>
+<p><del>虽说是显然但是不画画图还真的玩不动</del></p>
+<p>给一下图示意一下：</p>
+<p><img src="uploads/28.png"
+alt="Annotation 2020-03-11 094939.png" /></p>
+<p>图中那个看起来像个五角星的东西其实就是个环</p>
+<p><img src="uploads/29.png"
+alt="Annotation 2020-03-11 095158.png" /></p>
+<p>这个图中有 $\gcd(n,k)$ 个环，这就是我们的结论。</p>
+<p>具体到实现，我们采用的是预处理出所有答案。</p>
+<p>还有 $k=0$ 的情况需要特殊处理一下</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int MAXN = 5e5 + 5;
+vector &lt; int &gt; integer(MAXN);
+vector &lt; long long &gt; ans(MAXN);
+
+int gcd(int x, int y) {
+	return !y ? x : gcd(y, x % y);
+}
+
+signed main() {
+	int n, k;
+	scanf(&quot;%d %d&quot;, &amp;n, &amp;k);
+	for (int i = 1; i &lt;= n; ++i) scanf(&quot;%d&quot;, &amp;integer.at(i)), ans.at(0) += (long long)integer.at(i) * (long long)integer.at(i);
+	sort(integer.begin() + 1, integer.begin() + 1 + n);
+	for (int i = 1; i &lt;= (n &gt;&gt; 1); ++i) {
+		if (!(n % i)) {
+			int t = n / i;
+			vector &lt; int &gt; process(MAXN);
+			int tot = 0;
+			for (int j = 2; j &lt; t; j += 2) process.at(++tot) = j;
+			process.at(++tot) = t;
+			for (int j = t - 1 - (t &amp; 1); j &gt; 0; j -= 2) process.at(++tot) = j;
+			for (int j = t + 1; j &lt;= n; ++j) process.at(j) = process.at(j - t) + t;
+			for (int j = 1; j &lt;= n; ++j)
+				if (!(j % t)) ans.at(i) += (long long)integer.at(process.at(j)) * (long long)integer.at(process.at(j + 1 - t));
+				else ans.at(i) += (long long)integer.at(process.at(j)) * (long long)(integer.at(process.at(j + 1)));
+		}
+	}
+	for (int i = 0, x; i &lt; k; ++i) scanf(&quot;%d&quot;, &amp;x), printf(&quot;%lld\n&quot;, ans.at(x ? gcd(n, x) : 0));
+	return 0;
+}
+</code></pre></p>
+<h2 id="总结">总结</h2>
+<p>（其实我不是很会写这玩意儿）</p>
+<p>果然心理素质还是不行……错过了T3这样的水题。</p>
+<p>总体来说，把握住机会，把题目都当作大白菜（雾）。</p>
+<p>然后就是多去做题吧，题量多少都不嫌多。</p>
+<p>就这样（</p>
+<h2 id="普及组口胡">普及组口胡</h2>
+<p>说了是口胡所以没代码不保证正确/xyx</p>
+<p>至于题目难度这是NOIOL不是NOIpOL给了<del>搬</del>出题人放飞自我的空间。</p>
+<p>T1：普通NOIp普及难度，各位巨佬随便切</p>
+<p>T2: 基础多项式，会的人就很套路。不会的话就n方dp骗骗分</p>
+<p>T3: 这道题我不太确定，应该是Floyd+矩阵。</p>
+<p>完结撒六花</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
