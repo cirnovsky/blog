@@ -11,7 +11,7 @@ I really thought it was interesting. Shame that I couldn't deliver it clearly to
 
 Regarding XC's question, yes, GEPA's definition of Pareto Front is unconventional. A set like $\{[1, 0], [0, 1], [0.5, 0.5]\}$ is legal Pareto front but in GEPA $[0.5, 0.5]$ will not be in the Pareto front since it's not top-performing in any dimensions.
 
-I'd like to correct myself by pointing out, the nodes on the genetic tree of GEPA is a **set** of prompts instead of a monolithic prompt. GEPA is built for compound AI system, so there are multiple language modules (a good analogy would be sub-agents).
+I'd like to correct myself by pointing out, the nodes on the genetic tree of GEPA are **sets** of prompts instead of monolithic prompts. GEPA is built for compound AI system, so there are multiple language modules (a good analogy would be sub-agents).
 
 GEPA maintains a candidate pool which is a genetic tree. In each round of evolution, we choose one node to mutate. The node is chosen stochastically from a subset of the tree. The subset is Pareto optima.
 
@@ -26,4 +26,4 @@ The merging mechanism leaves me puzzled with some questions.
 1. In two compound AI system, each having language modules exceptional in different field of missions, how to combine them so they result in the better?
 2. GEPA discussed two way merging. Will k-way merging ever be valuable?
 
-[^1] They claimed so, yet the pseudo code didn't reflect appearing-to-be Pareto check.
+[^1]: They claimed so, yet the pseudo code didn't reflect appearing-to-be Pareto check.
