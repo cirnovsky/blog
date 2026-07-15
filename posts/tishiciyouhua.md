@@ -28,6 +28,16 @@ The merging mechanism left me wondering about some questions.
 
 [^1]: They claimed so, yet the pseudo code didn't reflect appearing-to-be Pareto check.
 
+## ACE
+
+This is a framework. They basically fine-tuned the input ("context") fed to LLM in a ReAct loop.
+
+They assumed LLM is able to handle long texts and distill pertinent information. 
+
 ## SkillOpt
+
+The core idea is bounded edits and learning rate borrowed from neural network. Much like GEPA, SkillOpt learns from trajectories and text feedback, but instead of monolithic updates (meaning having LLMs rewrite the entire skill each update), it employs several forms of edits: `insert_after`, `replace`, `delete` etc. In each rollout there are multiple minibatches and every minibatch produces a set of edits. It adds up to lots of edits, capped at $L$ (the learning rate). Prefer edits that fix failures over ones that reinforce success.
+
+They say SkillOpt is for single skill optimization, but I don't see how it cannot generalize to multiple skills or any text prompt. I'm currently experimenting a custom skill evolution architecture resembling SkillOpt with complex skills that involve multiple text parts. Interesting to see how it goes.
 
 ## SkVM

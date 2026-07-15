@@ -121,3 +121,9 @@ Prompt 的调优就应该是个被自动化的过程。人提供种子 prompt，
 Or video games.
 
 所以我想尝试一下 Doom。上周已经在玩 Zork 了。
+
+__*Week ?...*__
+
+好久没写了。
+
+昨天跑 skill omni 自演化，用了 sonnet，烧了 600 美刀。被光阳教育了。不过我 prompt caching 省下来的钱绝对比 600 美刀多多了，应该不会扣我工资吧 😱。
