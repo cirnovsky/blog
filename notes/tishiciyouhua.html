@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>提示词优化</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#gepa" id="toc-gepa">GEPA</a></li>
+<li><a href="#ace" id="toc-ace">ACE</a></li>
+<li><a href="#skillopt" id="toc-skillopt">SkillOpt</a></li>
+<li><a href="#skvm" id="toc-skvm">SkVM</a></li>
+</ul>
+</nav>
+
+<h2 id="gepa">GEPA</h2>
+<p>I really thought it was interesting. Shame that I couldn't deliver it
+clearly to my colleagues. Although I'm pretty sure some of them managed
+to make sense out of it.</p>
+<p>Regarding XC's question, yes, GEPA's definition of Pareto Front is
+unconventional. A set like $\{[1, 0], [0, 1], [0.5, 0.5]\}$ is legal
+Pareto front but in GEPA $[0.5, 0.5]$ will not be in the Pareto front
+since it's not top-performing in any dimensions.</p>
+<p>I'd like to correct myself by pointing out, the nodes on the genetic
+tree of GEPA are <strong>sets</strong> of prompts instead of monolithic
+prompts. GEPA is built for compound AI system, so there are multiple
+language modules (a good analogy would be sub-agents).</p>
+<p>GEPA maintains a candidate pool which is a genetic tree. In each
+round of evolution, we choose one node to mutate. The node is chosen
+stochastically from a subset of the tree. The subset is Pareto
+optima.</p>
+<p>Later a minibatch evaluation would be run on the mutated new
+candidate, if it improved on mean score, it will be added to the
+candidate pool aka the genetic tree, as a descendant of the node it
+mutated from.</p>
+<p>Now comes to merging. The just-as-interesting part.</p>
+<p>Merging is in the same position as mutating. Instead of choosing ONE
+node from the PARETO FRONT, it chooses two nodes from the Pareto optimal
+<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a> subset of the entire tree,
+stochastically. They merge module-by-module, trying to get the
+complementary combination out of the node sets of prompts. In the paper
+they adopted a metric (to evaluate which node's got the desired module
+mutation) that involves common ancestors.</p>
+<p>The merging mechanism left me wondering about some questions.</p>
+<ol type="1">
+<li>In two compound AI systems, each having language modules exceptional
+in different field of missions, how to combine them (a $2^{\#modules}$
+combination) so they result in the better?</li>
+<li>GEPA discussed two way merging. Will k-way merging ever be
+valuable?</li>
+</ol>
+<h2 id="ace">ACE</h2>
+<p>This is a framework. They basically fine-tuned the input ("context")
+fed to LLM in a ReAct loop.</p>
+<p>They assumed LLM is able to handle long texts and distill pertinent
+information.</p>
+<h2 id="skillopt">SkillOpt</h2>
+<p>The core idea is bounded edits and learning rate borrowed from neural
+network. Much like GEPA, SkillOpt learns from trajectories and text
+feedback, but instead of monolithic updates (meaning having LLMs rewrite
+the entire skill each update), it employs several forms of edits:
+<code>insert_after</code>, <code>replace</code>, <code>delete</code>
+etc. In each rollout there are multiple minibatches and every minibatch
+produces a set of edits. It adds up to lots of edits, capped at $L$ (the
+learning rate). Prefer edits that fix failures over ones that reinforce
+success.</p>
+<p>They say SkillOpt is for single skill optimization, but I don't see
+how it cannot generalize to multiple skills or any text prompt. I'm
+currently experimenting a custom skill evolution architecture resembling
+SkillOpt with complex skills that involve multiple text parts.
+Interesting to see how it goes.</p>
+<h2 id="skvm">SkVM</h2>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>They claimed so, yet the pseudo code didn't reflect
+appearing-to-be Pareto check.<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

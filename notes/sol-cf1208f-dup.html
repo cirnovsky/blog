@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1208F - Bits And Pieces</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#1208f---bits-and-pieces"
+id="toc-1208f---bits-and-pieces">1208F - Bits And Pieces</a></li>
+<li><a href="#pe-987-straight-eight" id="toc-pe-987-straight-eight">PE
+987 Straight Eight</a></li>
+</ul>
+</nav>
+
+<h3 id="1208f---bits-and-pieces"><a
+href="https://codeforces.com/problemset/problem/1208/F">1208F - Bits And
+Pieces</a></h3>
+<p>Fix $a[i]$, then we can enumerate a prefix of off-bits in $a[i]$. The
+remaining task is to find the two right most positions that contain the
+prefix we enumerate.</p>
+<p>This can be solved by SOS DP. Let $f[s]$ and $g[s]$ be the first and
+second right most positions that contain $s$.</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+
+void insert(int &amp;first_max, int &amp;second_max, int val) {
+	if (val &gt; first_max) {
+		second_max = first_max;
+		first_max = val;
+	} else if (val &lt; first_max &amp;&amp; val &gt; second_max) {
+		second_max = val;
+	}
+}
+
+int main() {
+	std::cin.tie(nullptr)-&gt;sync_with_stdio(0);
+	int n;
+	std::cin &gt;&gt; n;
+	// fix a[i]
+	// enumerate prefix off-bits of a[i]
+	// f[s] = rightmost a[i] s.t. s \in a[i]
+	// g[s] = second rightmost
+	std::vector&lt;int&gt; a(n);
+	for (auto &amp;x : a) std::cin &gt;&gt; x;
+	int max_val = *std::max_element(a.begin(), a.end());
+	int max_bit = std::log2(max_val) + 1;
+
+	std::vector&lt;int&gt; f(1 &lt;&lt; max_bit, -1), g(1 &lt;&lt; max_bit, -1);
+	for (int i = n; i--;) {
+		int x = a[i];
+		if (f[x] == -1) f[x] = i;
+		else if (g[x] == -1) g[x] = i;
+	}
+	// g[t] &lt; f[t]
+	// f[t] &lt;- f[s]
+	for (int i = 0; i &lt; max_bit; ++i) {
+		for (int s = 0; s &lt; (1 &lt;&lt; max_bit); ++s) {
+			if (s &gt;&gt; i &amp; 1) {
+				int t = s ^ (1 &lt;&lt; i);
+				insert(f[t], g[t], f[s]);
+				insert(f[t], g[t], g[s]);
+			}
+		}
+	}
+	int ans = 0;
+	for (int i = 0; i &lt; n; ++i) {
+		int complement = ((1 &lt;&lt; max_bit) - 1) ^ a[i];
+		int current = 0;
+		for (int k = max_bit; k--;) {
+			if (complement &gt;&gt; k &amp;  1) {
+				int t = current | (1 &lt;&lt; k);
+				if (g[t] &gt; i)
+					current = t;
+			}
+		}
+		ans = std::max(ans, a[i] | current);
+	}
+	std::cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+}
+
+</code></pre></p>
+<h1 id="pe-987-straight-eight"><a
+href="https://projecteuler.net/problem=987">PE 987 Straight
+Eight</a></h1>
+<p>Spent a whole morning on this...</p>
+<p>In a deck of poker cards, we have $14$ ranks and $4$ suits. By
+Pigeonhole, cards with rank $5$ or $10$ are bound to be used up. Let us
+use them as "anchors", meaning every straight corresponds to one of the
+$8$ cards with rank $5$ or $10$. Let $(f_1, \dots, f_8)$ denote the
+eight straights.</p>
+<p>Let us use the Inclusion-Exclusion principle. We only need to appoint
+some of the straights to be straight flushes, and compute the number of
+ways to arrange the rest straights.</p>
+<p>One observation is, if a straight is anchored by a $5$, there are at
+maximum $5$ different <strong>shapes</strong> of it, namely
+$(1,2,3,4,5),(2,3,4,5,6),\dots(5,6,7,8,9)$ and so holds true for a
+straight anchored by a $10$.</p>
+<p>We enumerate the <strong>shapes</strong> of all $8$ straights, there
+are $5^8$ combinations.</p>
+<p><pre><code class="language-python toolbar">def permutate(n, k):
+    res = 1
+    for i in range(k):
+        res *= n-i
+    return res
+
+def calc(f, mask):
+    # @f = the first rank of a flush
+    # Bits in @mask: set if it is a flush
+    k = [4]*13
+    c = [0]*13
+    for idx, i in enumerate(f):
+        if mask&gt;&gt;idx&amp;1:
+            for j in range(i, i+5):
+                k[j%13] -= 1
+        else:
+            for j in range(i, i+5):
+                c[j%13] += 1
+    c[4] = c[9] = k[4] = k[9] = 0 # 4, 9 are taken as &quot;anchors&quot;, so will not contribute to combination calculations
+    res = 1
+    for i in range(13):
+        res *= permutate(k[i], c[i])
+    return res
+
+def dfs(f):
+    if len(f) == 8:
+        res = 0
+        for mask in range(2**8):
+            for i in range(4):
+                if (mask&gt;&gt;i&amp;1) and (mask&gt;&gt;(i+4)&amp;1) and (f[i]+4 &gt;= f[i+4] or (f[i] == 0 and f[i+4] == 9)): # if two flushes overlap
+                    break
+            else: # if for-loop ends naturally
+                sgn = -1 if (mask.bit_count())%2 else 1
+                res += calc(f, mask)*sgn
+        return res
+    else:
+        start = 0
+        res = 0
+        if len(f) &gt;= 4:
+            start = 5
+        for p in range(start, start+5):
+            res += dfs(f+[p])
+        return res
+
+print(dfs([]))
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

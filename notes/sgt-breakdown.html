@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Segment Tree in a Mathematic Way</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>没想到吧。</p>
+<p>其实本文旨在以 <strong>object oriented</strong>
+的方式工程化地描述线段树的抽象结构，大概是在翻译 ACL 的
+<code>lazysegtree</code>。</p>
+<p>在线段树上的结点中，有两种信息，分别称为
+<code>S</code>，<code>F</code>，一个是维护的信息，一个是懒惰标记，又对应两个「空值」<code>e()</code>
+和 <code>id()</code>。</p>
+<p>线段树依赖于两个儿子的值是 <code>S</code>，依赖于父亲的值是
+<code>F</code>，定义一个函数 <code>op(x, y)</code>，其中
+$x,y\in\mathbb{S}$ 表示 $x,y$
+合并的结果，这个规则是自定义的，且需要满足结合律和交换律；以及
+<code>composition(x, y)</code>，其中 $x,y\in\mathbb{F}$，表示把懒惰标记
+$x$ <strong>单向</strong>传递到懒惰标记 $y$
+上后的结果，其规则同样是自定义的。如果不理解为什么是单向请参考 <em>Range
+Affine, Range Sum</em> 问题。</p>
+<p>类似于 <code>composition(x, y)</code> 使得可以让一个在 $\mathbb{F}$
+中的元素传递到另一个属于 $\mathbb{F}$ 的元素身上，我们有
+<code>mapping(x, y)</code> 表示从 $\mathbb{F}$ 到 $\mathbb{S}$
+的映射，其中 $x\in\mathbb{F}$，$y\in\mathbb{S}$。</p>
+<p>其实可以发现所谓的 <code>S</code>
+就是一类<strong>幺半群</strong>（monoid），注意 <code>F</code>
+显然不具有此类性质，但是 <code>F</code> 的
+<code>composition(x, y)</code> 是有<strong>封闭性</strong>的。</p>
+<p><a href="https://www.luogu.com.cn/problem/P3373">例题 P3373，</a><a
+href="https://www.cnblogs.com/orchid-any/articles/15153763.html">示例代码见此处，特征码
+acl-k。</a></p>
+<p>闲话，如果你的代码实现真的分这么细码量会激增哦。（</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

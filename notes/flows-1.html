@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>网络流 1</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>**<a
+href="http://codeforces.com/problemset/problem/1592/F2">「codeforces -
+1592F2」Alice and Recoloring 2</a>**：妙妙题，显然只会操作 $(1, 1)$ 和
+$(n, m)$，分别记作操作 1 和操作
+2。我们希望单点操作，所以考虑差分（trick），只是这个题的差分非常高妙。如果你直接对前缀做二维差分会发现操作
+1 要修改四个点，操作 2 修改一个点，而操作 1 花费 $1$，2 花费
+$2$，所以每个点可能被操作最多两次（考虑一种情况，即 $(1, 1)$，$(1,
+2)$，$(2, 1)$ 是黑点，$(2, 2)$ 是白点）。xf 教我了一种高庙的差分，具体是
+$c_{i, j} = a_{i,j} \oplus a_{i+1, j} \oplus a_{i, j+1} \oplus a_{i+1,
+j+1}$，这样差分操作 2 就修改四个点，操作 1
+修改一个点，这样一个点就最多修改一次了，建出二分图即可。</p>
+<p>最后的做法是，假设我全部用操作 1，然后反悔看最多能用多少次操作
+2（因为会用在 $(i, j)$ 上用操作 2 的情况是 $(i, j)$，$(n, j)$，$(i, m)$
+都是黑点）。</p>
+<p>最后 $(n, m)$ 是需要特判的。</p>
+<p>各种意义上我不会的题，膜拜 xf。</p>
+<p><pre><code class="language-cpp toolbar">char s[600];
+int n, m, a[600][600];
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i=1; i&lt;=n; ++i) {
+        cin &gt;&gt; s;
+        for (int j=1; j&lt;=m; ++j) {
+            a[i][j] = s[j-1] == &#x27;B&#x27;;
+        }
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        for (int j=1; j&lt;=m; ++j) {
+            a[i][j] ^= a[i+1][j]^a[i][j+1]^a[i+1][j+1];
+        }
+    }
+    mf_graph&lt;int&gt; g(n+m+2);
+    const int src = n+m+1, ter = n+m+2;
+    for (int i=1; i&lt;n; ++i) {
+        for (int j=1; j&lt;m; ++j) {
+            if (a[i][j] &amp;&amp; a[n][j] &amp;&amp; a[i][m]) {
+                g.add_edge(i, j+n, 1);
+            }
+        }
+    }
+    for (int i=1; i&lt;=n; ++i) g.add_edge(src, i, 1);
+    for (int i=1; i&lt;=m; ++i) g.add_edge(i+n, ter, 1);
+    int ret = -g.flow(src, ter);
+    a[n][m] ^= (-ret)&amp;1;
+    for (int i=1; i&lt;=n; ++i) {
+        for (int j=1; j&lt;=m; ++j) ret += a[i][j];
+    }
+    cout &lt;&lt; ret &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+<p>**<a
+href="http://codeforces.com/problemset/problem/1146/G">「codeforces -
+1146G」Zoning Restrictions</a>**：还行的题。想到把每个点拆成 $h+1$
+个点，如果你定义状态 $(i, j)$ 表示第 $i$ 个点的高度为 $j$
+会发现并不优秀，改成高度大于等于 $j$ 会好一点。关于这题怎么想到 min-cut
+的，可以这样考虑（which is also a common trick）：全局最理想的答案是
+$h^2 \times
+n$，然而不一定合法，我们以最小的代价去把这个答案调整到合法，得到的一定是最优的答案，因此是
+min-cut。然而这道题我们不会这样去想，这只是一些题的思路。对于这个题我们的想法是把所有的贡献取负，这样就成了最小值（）</p>
+<p>这里涉及另一个思维上的
+trick：最小割的源汇有什么意义？划分出的两个点集有什么意义？在这一题中我们不妨将点集
+$S$ 中的事件称为「成立」，$T$
+中的事件称为「不成立」，这样就赋予了最小割意义。</p>
+<p>这里给出构造网络的方案：$\lang(i, j), (i, j+1), -j^2\rang$，$\lang
+(j, 0), x_i+1, \infty \rang, \forall j \in [l_i, r_i]$，$\lang i, t, c_i
+\rang$。</p>
+<p>考察意义：割掉第一类边的意义即令房子 $i$ 的高度为
+$j$，这对答案的贡献为 $j^2$，我们对答案取了负，所以贡献为
+$-j^2$，如果第二类边有流量则意味着付罚金，因为一个区间只需要付一次罚金，所以我们不能直接割掉第二类边，而是通过第二类边使得割掉第三类边有意义（断掉连通性）。</p>
+<p>当然流量不可能是负的，所以选择给 $-j^2$ 加上 $h^2$，因为 $n$
+幢房子代表的每一条链必然割且仅割一条一类边，所以最后给答案加上 $h^2
+\times n$ 即可。</p>
+<p><pre><code class="language-cpp toolbar">const int inf = 0x3f3f3f3f;
+int n, h, m, id[60][60], qwq;
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; h &gt;&gt; m;
+    for (int i=1; i&lt;=n; ++i) {
+        for (int j=0; j&lt;=h+1; ++j) id[i][j] = ++qwq;
+    }
+    mf_graph&lt;int&gt; g(qwq+m+2);
+    const int src = qwq+m+1, ter = qwq+m+2;
+    for (int i=1; i&lt;=n; ++i) {
+        g.add_edge(src, id[i][0], inf);
+    }
+    for (int i=1; i&lt;=n; ++i) {
+        for (int j=0; j&lt;=h; ++j) g.add_edge(id[i][j], id[i][j+1], h*h-j*j);
+    }
+    for (int i=1,l,r,x,c; i&lt;=m; ++i) {
+        cin &gt;&gt; l &gt;&gt; r &gt;&gt; x &gt;&gt; c;
+        g.add_edge(i+qwq, ter, c);
+        for (int j=l; j&lt;=r; ++j) {
+            g.add_edge(id[j][x+1], i+qwq, inf);
+        }
+    }
+    cout &lt;&lt; h*h*n-g.flow(src, ter) &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+<p><strong><a
+href="http://codeforces.com/problemset/problem/1061/E">「codeforces -
+1061E」Politics</a>**：第一步是想到把 tree 1 放左部 tree 2
+放右部。然后进入这个题的 key
+step：将对于子树的限制（被钦定的结点个数）转化为对一个结点的限制。这里大部分的做法是：对于一个有限制的结点
+$x$，将 $k_x$ 减去 $\displaystyle \sum_{y \in \text{subtree}(x), y \neq
+x} k_y$，从而我们的工作就变成了在「所有 $x$
+的子树中的有限制的结点的上方中钦定一些结点」。于是给出这题的建图（费用流）：$\displaystyle
+\lang s, x \in\textbf V_1,k_x-\sum_{y \in \text{subtree}(x), y \neq x}
+k_y, 0\rang$，$\displaystyle \lang x \in\textbf V_2, t,k_x-\sum_{y \in
+\text{subtree}(x), y \neq x} k_y, 0\rang$，$\lang up_i, up'_i, 1,
+a_i\rang$，其中 v_1 v_2 是两棵树的点集，up_i 是</strong>编号** $i$ 在
+tree 1 中对应的结点的最近有限制祖先，up'_i 同理。</p>
+<p>理解一下，一、二类边都对应每个结点的限制，第三类边就是反过来考虑（我们之前是对祖先
+$x$ 考虑，要在子树中所有有限制的结点的上面钦定结点），现在我们对一个点
+$x$ 考虑它对最近有限制祖先的贡献。如果钦定了编号 $i$，则会对答案造成
+$a_i$ 的贡献，占据 up_i 和 up'_i 的空余可钦定数。</p>
+<p><pre><code class="language-cpp toolbar">mcf_graph&lt;int, int&gt; g;
+int src, ter, qwq, qaq;
+int n, rtx, rty, q1, q2, a[600], bstx[600], bsty[600], upx[600], upy[600], parx[600], pary[600];
+bsi&lt;int&gt; adjx[600], adjy[600];
+int dfsx(int x, int pa, int t) {
+    parx[x] = pa;
+    if (bstx[x]) {
+        t = x;
+    }
+    upx[x] = t;
+    int sum = 0;
+    for (auto y : adjx[x]) {
+        if (y != pa) {
+            sum += dfsx(y, x, t);
+        }
+    }
+    if (bstx[x]) {
+        if (bstx[x] &lt; sum) fucked_up();
+        qwq += bstx[x]-sum;
+        g.add_edge(src, x, bstx[x]-sum, 0);
+        return bstx[x];
+    }
+    return sum;
+}
+int dfsy(int x, int pa, int t) {
+    pary[x] = pa;
+    if (bsty[x]) {
+        t = x;
+    }
+    upy[x] = t;
+    int sum = 0;
+    for (auto y : adjy[x]) {
+        if (y != pa) {
+            sum += dfsy(y, x, t);
+        }
+    }
+    if (bsty[x]) {
+        if (bsty[x] &lt; sum) fucked_up();
+        qaq += bsty[x]-sum;
+        g.add_edge(x+n, ter, bsty[x]-sum, 0);
+        return bsty[x];
+    }
+    return sum;
+}
+int getx(int x, int pa) {
+    int res = 0;
+    for (auto y : adjx[x]) {
+        if (y != pa) res += getx(y, x);
+    }
+    if (bstx[x]) {
+        return bstx[x];
+    }
+    return res;
+}
+int gety(int x, int pa) {
+    int res = 0;
+    for (auto y : adjy[x]) {
+        if (y != pa) res += gety(y, x);
+    }
+    if (bsty[x]) {
+        return bsty[x];
+    }
+    return res;
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; rtx &gt;&gt; rty;
+    for (int i=1; i&lt;=n; ++i) {
+        cin &gt;&gt; a[i];
+    }
+    for (int i=1,x,y; i&lt;n; ++i) {
+        cin &gt;&gt; x &gt;&gt; y;
+        adjx[x] += y, adjx[y] += x;
+    }
+    for (int i=1,x,y; i&lt;n; ++i) {
+        cin &gt;&gt; x &gt;&gt; y;
+        adjy[x] += y, adjy[y] += x;
+    }
+    cin &gt;&gt; q1;
+    for (int i=0,x; i&lt;q1; ++i) {
+        cin &gt;&gt; x &gt;&gt; bstx[x];
+    }
+    cin &gt;&gt; q2;
+    for (int i=0,x; i&lt;q2; ++i) {
+        cin &gt;&gt; x &gt;&gt; bsty[x];
+    }
+    g = mcf_graph&lt;int, int&gt;(n*2+2);
+    src = n*2+1, ter = n*2+2;
+    dfsx(rtx, 0, 0), dfsy(rty, 0, 0);
+    if (qwq != qaq) fucked_up();
+    for (int i=1; i&lt;=n; ++i) {
+        if (upx[i] &amp;&amp; upy[i]) {
+            g.add_edge(upx[i], upy[i]+n, 1, -a[i]);
+        }
+    }
+    auto [X, Y] = g.flow(src, ter);
+    if (X != qwq) fucked_up();
+    cout &lt;&lt; -Y &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
