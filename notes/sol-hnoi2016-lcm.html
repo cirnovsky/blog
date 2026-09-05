@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution -「HNOI 2016」最小公倍数（lacks of code）</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,38 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P3247">Link</a>.</p>
+<p>给出一个带权无向图，边权为 $2^{a}\cdot3^{b}$ 形式。</p>
+<p>给出 $q$ 组形如 $u,v,a,b$ 的询问，问 $u,v$
+中是否存在一条路径使得其边权之 $\text{lcm}$ 为 $2^{a}\cdot3^{b}$。</p>
+<h2 id="solution">Solution</h2>
+<p>考虑 $\text{lcm}$ 的本质，对 $n$ 个数
+$\prod_{i=1}^{k_{1}}p_{1,i}^{c_{1,i}},\prod_{i=1}^{k_{2}}p_{2,i}^{c_{2,i}},\dots,\prod_{i=1}^{k_{n}}p_{n,i}^{c_{n,i}}$
+取 $\text{lcm}$ 就是
+$\prod_{i=1}^{\max{k}}p_{i}^{\max{c}}$（在一个数中存在的 $p$
+且在另一个中不存在的置为 $1$），对于这题即 $2^{\max{a}}\cdot
+3^{\max{b}}$，让两个 $\max$ 分别等于题目给出的 $a,b$。</p>
+<p>现在转化一下题意，在 $u,v$ 中选出一条可非简单路径使得
+$\max{a},\max{b}$ 分别等于给出的 $a,b$。</p>
+<p>有一个 naive 的想法是缩点后 LCT
+维护结果发现不太行。（好像是我不行）</p>
+<p>既然想到了用 LCT 维护连通性那么同样可以想到用 DSU
+来维护，把所有满足条件的边放入一个 DSU 然后看 $u,v$
+是否能被这些边联通。</p>
+<p>有两个关键字欸，我们离线询问排序吧。</p>
+<p>把所有边按照 $a$ 排序，把询问按 $b$ 排序。</p>
+<p>然后对边的标号分块，这样块内边 $a$ 有序。</p>
+<p>然后把每个询问放在满足前面块的 $a$ 都小于等于这个询问的 $a$
+的块里，并且把块内询问 $b$ 排序，然后就可以做了。</p>
+<p>代码狼 BH 今天又口胡题解没代码了。</p>
+<p><pre><code class="language-cpp toolbar">Oops, something went wrong.
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

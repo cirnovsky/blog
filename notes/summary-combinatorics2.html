@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小札 Combinatorics 2</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>对于 Newton
+Expansion，式子本身的证明其实无甚可翻新的花样，但是题还是很有意思的。比如
+<a href="http://codeforces.com/problemset/problem/1332/E"><em>codeforces
+- 1332E Height All the Same</em></a> 这个。</p>
+<p>首先给出几个性质：每个 cell 上的数字奇偶性才是需要关注的；如果
+$n\times m$ 为奇数，永远有解；如果 $n\times m$ 为偶数，当 $\sum\sum
+a_{i,j}\bmod2$ 为偶数时有解。应该都不需要证明。</p>
+<p>奇数的答案不赘，我们可以写出偶数的答案式子：$\displaystyle\sum_{i=0}^{\lfloor\frac{nm}{2}\rfloor}a^{2i}b^{nm-2i}\binom{nm}{2i}$，$a,b$
+分别是 $[l,r]$ 中偶 / 奇的数量。然后你注意这个式子长得很像 Newton
+Expansion 的形式，容易构造出答案为
+$\frac{(a+b)^{nm}+(a+b)^{nm}}{2}$。</p>
+<hr />
+<p>我们来看几个一般的组合恒等式。</p>
+<ol type="1">
+<li>$\displaystyle\binom{n}{k}=\frac{n}{k}\binom{n-1}{k-1}$；</li>
+<li>$\displaystyle\binom{n}{k}=\binom{n-1}{k-1}+\binom{n-1}{k}$；</li>
+<li>$\displaystyle\sum_{k=0}^nk\binom{n}{k}=n2^{n-1}$；</li>
+<li>$\displaystyle\sum_{k=0}^{n}k^2\binom{n}{k}=n(n+1)2^{n-2}$；</li>
+<li>$\displaystyle\sum_{l=0}^n\binom{l}{k}=\binom{n+1}{k+1}\Longrightarrow\sum_{k=0}^n\binom{r+k}{k}=\binom{r+n+1}{r+1}=\binom{r+n+1}{n}$；</li>
+<li>$\displaystyle\binom{n}{k}=(-1)^k\binom{k-n-1}{k}$；</li>
+<li>$\displaystyle\sum_{k=0}^m(-1)^k\binom{n}{k}=(-1)^m\binom{n-1}{m}$；</li>
+<li>$\displaystyle\binom{n}{r}\binom{r}{k}=\binom{n}{k}\binom{n-k}{r-k}$；</li>
+<li>$\displaystyle\sum_{k=0}^r\binom{m}{k}\binom{n}{r-k}=\binom{m+n}{r}$；（Vandermonde
+Convolution）</li>
+</ol>
+<p>我们一个一个的来看。</p>
+<ol type="1">
+<li>这个我无法找到除了代数解释以外的方法来诠释它的含义；</li>
+<li>经典的 Pascal's
+Formula，组合意义即钦定一个物品不选。适用场景很多，经常反过来用；</li>
+<li>带权变下项求和，考虑这样的组合意义：在 $n$ 个物品中选出 $k$
+个，再从这 $k$ 个物品中选出一个组成 1-tuples 的方案数。对应到
+r.h.s.，反过来钦定 1-tuples，然后计算系数。</li>
+<li>同理，组合意义即在 $n$ 个物品中选出 $k$ 个，再从这 $k$
+个物品中<strong>可重</strong>地选出两个物品组成无序 2-tuples
+的方案数。对应到 r.h.s.，反过来钦定
+2-tuples，再考虑系数。需要分类讨论，当选出的物品不相同，为
+$n(n-1)2^{n-2}$，当相同时，为 $n^22^{n-1}$，加在一起即
+$n(3n-1)2^{n-2}$。</li>
+<li>变上项求和，考虑 $n+1$ 个物品，每次钦定第 $1,2,\dots,n+1$
+个不选，左右两式即相等，例题 <a
+href="https://www.codechef.com/problems/CSEQ"><em>codechef - CSEQ Count
+Sequences</em></a>。</li>
+<li>这个式子我理解不能，但是运算有封闭性，再算一次可以变回去。</li>
+<li>用式 6，得 $\displaystyle
+\sum_{k=0}^m(-1)^k\binom{n}{k}=\sum_{k=0}^m\binom{k-n-1}{k}=\sum_{k=0}^m\binom{k-n-1}{}$
+🕊。</li>
+<li>组合意义：${a_{n}}$ 的 $r$-subsets 的 $k$-subsets 数，r.h.s. 即在
+${a_n}$ 中选出 $k$-subsets，再在 ${a_n}\setminus k\text{-subsets}$ 中选
+$r-k$-subsets。</li>
+<li>l.h.s. 和 r.h.s. 的意义都是 ${a_{m+n}}$ 的 $r$-subsets 数。</li>
+</ol>
+<hr />
+<p>来看一些题。</p>
+<ul>
+<li><strong>「acmhdu - 5794」A Simple Chess</strong> <a
+href="http://acm.hdu.edu.cn/showproblem.php?pid=5794">link</a>：首先注意到这个走路的方式就是象棋马走日，然后做一个像
+<a href="http://codeforces.com/problemset/problem/559/C"><em>codeforces
+- 559C Gerald and Giant Chess</em></a> 一样的
+dp，有些细节需要注意。</li>
+<li><strong>「codeforces - 839D」Winter is here</strong> <a
+href="http://codeforces.com/problemset/problem/839/D">link</a>：数数日门题。考虑反过来算每种
+$\gcd$ 的贡献次数。</li>
+</ul>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

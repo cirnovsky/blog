@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P3773」「CTSC 2017」吉夫特</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P3773">Link</a>.</p>
+<p>求满足</p>
+<p>$$\prod <em>{i=2}^{k} \binom{a</em>{b_{i-1}}}{a_{b_i}} \mod 2 =
+\binom{a_{b_1}}{a_{b_2}} \times \binom{a_{b_2}}{a_{b_3}} \times \cdots
+\binom{a_{b_{k-1}}}{a_{b_k}} \mod 2 &gt; 0$$</p>
+<p>的子序列个数。</p>
+<h2 id="solution">Solution</h2>
+<p>哇哦。</p>
+<p>$$ \begin{aligned} &amp;\ \ \ \ \prod_{i=2}^{k}{a_{b_{i}-1}\choose
+a_{b_{i}}} \
+&amp;\equiv\prod_{i=2}^{k}{\lfloor\frac{a_{b_{i}-1}}{2}\rfloor\choose\lfloor\frac{a_{b_{i}}}{2}\rfloor}\times{a_{b_{i}-1}\bmod2\choose
+a_{b_{i}}\bmod2} \end{aligned} (\operatorname{mod} 2) $$</p>
+<p>式子后面的 $\dbinom{a_{b_{i}-1}\bmod2}{a_{b_{i}\bmod2}}$
+一共有四种情况，其中只有 $\dbinom{0}{1}=0$。其他都为 $1$。</p>
+<p>意味着只要出现 $a_{b_{i}-1}\equiv0\bmod2$ 且 $a_{b_{i}}\equiv1\bmod1$
+的情况，整个式子就为零了。</p>
+<p>结论：$\dbinom{n}{m}\equiv0\space(\operatorname{mod}2)$ 当且仅当
+$n\operatorname{bitand}m=m$。</p>
+<p>证明（也许不是特别严谨）：我们可以知道： $$ {n\choose
+m}={\lfloor\frac{n}{2}\rfloor\choose\lfloor\frac{m}{2}\rfloor}\times{n\bmod
+2\choose
+m\bmod2}={\lfloor\frac{\lfloor\frac{n}{2}\rfloor}{2}\rfloor\choose\lfloor\frac{\lfloor\frac{m}{2}\rfloor}{2}\rfloor}\times
+{\lfloor\frac{n}{2}\rfloor\bmod2\choose\lfloor\frac{m}{2}\rfloor\bmod2}\times{n\bmod
+2\choose m\bmod2}=\cdots $$ 我们发现： $$
+{\lfloor\frac{\lfloor\frac{\lfloor\frac{n}{2}\rfloor}{2}\rfloor}{\cdots}\rfloor\choose\lfloor\frac{\lfloor\frac{\lfloor\frac{m}{2}\rfloor}{2}\rfloor}{\cdots}\rfloor}
+$$ 这一坨，就是在一直进行二进制移位，$\operatorname{shr}1$。</p>
+<p>那么我们可以得出一个结论：如果对于我们记 $(n)<em>{k}$ 表示 $n$
+在二进制意义下的第 $k$ 位。$(n)</em>{k}\in[0,1]$</p>
+<p>那么对于 $\forall i$，有 $(n)<em>{i}=0$ 且 $(m)</em>{i}=1$，那么
+$\dbinom{n}{m}\equiv0\space(\operatorname{mod} 2)$。</p>
+<p>所以 $n\operatorname{bitand}m=m$，证毕。</p>
+<p>我们题目要求的是最后算出来是个奇数，那么就不能存在
+$a_{b_{i}-1}\operatorname{bitand}a_{b_{i}}=a_{b_{i}}$。</p>
+<p>也就是 $a_{b_{i}}$ 为 $a_{b_{i}-1}$ 的子集。</p>
+<p>接下来我们可以设计一个 DP，我们设 $f_{i}$ 为以 $a_{i}$
+为开头的答案。</p>
+<p>那么转移就是加法原理： $$ f_{i}=f_{i}+f_{j},j\in a_{i}\wedge
+t_{j}&gt;i $$ 其中 $t_{i}$ 表示 $i$ 在序列中的位置。</p>
+<p>时间复杂度由二项式定理可知是 $\Theta(3^{\log_{2}\max{a_{i}}})$。</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#define mod ( 1000000007 )
+
+const int MAXN = 250000 + 5;
+
+int N;
+int val[MAXN], dp[MAXN];
+int buc[MAXN];
+
+int main( ){
+	scanf( &quot;%d&quot;, &amp;N ); for( int i = 1; i &lt;= N; ++ i ){ scanf( &quot;%d&quot;, &amp;val[i] ); buc[val[i]] = i; }
+	int Ans = 0;
+	for( int i = N; i; -- i ){
+		dp[i] = 1;
+		for( int j = val[i] &amp; ( val[i] - 1 ); j; j = ( j - 1 ) &amp; val[i] ){
+			if( buc[j] &gt; i )	dp[i] = ( dp[i] + dp[buc[j]] ) % mod;
+		}
+		Ans = ( Ans + dp[i] ) % mod;
+	}
+	printf( &quot;%d\n&quot;, ( Ans - N + mod ) % mod );
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

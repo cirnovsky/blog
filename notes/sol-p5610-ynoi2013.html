@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P5610」「YunoOI 2013」大学</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P5610">Link</a>.</p>
+<p>区间查 $x$ 的倍数并除掉，区间查和。</p>
+<h2 id="solution">Solution</h2>
+<p>平衡树。</p>
+<p>首先有个基本的想法就是按 $a_{i}$ 开平衡树，即对于每个 $a_{i}$
+都开一棵平衡树，共5e5棵，第 $i$ 棵平衡树维护的值是所有 $a_{i}$
+的倍数在原数组中的下标，用处后面讲。</p>
+<p>注意到一个小性质，一个正整数 $A$ 最多被整除 $\log_{2}A$
+次，这个很好想，每次都至少减少一半。可以当成一个 trick 记下来。</p>
+<p>整个区间的数最多被除 $\sum_{i=1}^{n}\log_{2}a_{i}$
+次，区间和的操作可以用树状数组操作实现，则整体的操作复杂度为
+$\Theta(\sum_{i=1}^{n}\log_{2}a_{i}+\log_{2}a_{i})$。</p>
+<p>开头提到了对于每个 $a_{i}$
+我们都开一棵平衡树，作用就体现在这里。因为如果要保证正确的时间复杂度，我们需要快速的找到需要执行操作的数。</p>
+<p>这里我采用的是 FHQ-Treap。</p>
+<p>我们可以用两次 <code>split</code> 操作在 $x$
+的平衡树中提取出当前的询问区间，由于我们是以下标为平衡树维护的权值，所以我们用按值分裂即可提取出区间。</p>
+<p>然后我们就在提取出的子树中 DFS 遍历，然后暴力操作，把操作后依然是 $x$
+的倍数的数记录下来，操作完后用这个数组再建一棵临时树然后和之前
+<code>split</code> 出来的子树一起合并回去。</p>
+<p>操作之前记得预处理每个数的所有约数，这个简单，直接用 vector
+即可。</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;algorithm&gt;
+#include &lt;ctime&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+typedef long long t_t;
+
+const int Maxn = 1e5 + 5;
+const int Maxa = 5e5 + 5;
+int n, m, xxx, zip, tot, isa[Maxn], bin[Maxa], root[Maxa];
+struct Treap
+{
+	int l, r, key, val;
+} t[Maxa * 230];
+struct Fenwick_Tree
+{
+	t_t bit[Maxn];
+	
+	void ins(int x, t_t v)
+	{
+		for (; x &lt;= n; x += x &amp; -x) 	bit[x] += v;	
+	}
+	
+	t_t sum(int x)
+	{
+		t_t ret = 0;
+		for (; x; x -= x &amp; -x)	ret += bit[x];
+		return ret;
+	}
+} fwt;
+vector &lt; int &gt; vec[Maxa];
+
+int newnode(int val)
+{
+	t[++tot].val = val;
+	t[tot].key = rand();
+	return tot;
+}
+
+void split(int now, int val, int &amp;x, int &amp;y)
+{
+	if (now == 0)	x = y = 0;
+	else
+	{
+		if (t[now].val &lt;= val)
+		{
+			x = now;
+			split(t[now].r, val, t[now].r, y);
+		}
+		else
+		{
+			y = now;
+			split(t[now].l, val, x, t[now].l);
+		}
+	}
+}
+
+int merge(int x, int y)
+{
+	if (x == 0 || y == 0)	return x | y;
+	if (t[x].key &gt; t[y].key)
+	{
+		t[x].r = merge(t[x].r, y);
+		return x;
+	}
+	else
+	{
+		t[y].l = merge(x, t[y].l);
+		return y;
+	}
+}
+
+int build(int l, int r)
+{
+	if (l &gt; r)	return 0;
+	int mid = (l + r) &gt;&gt; 1;
+	int now = newnode(bin[mid]);
+	t[now].l = build(l, mid - 1);
+	t[now].r = build(mid + 1, r);
+	return now;
+}
+
+void dfs(int now, int val)
+{
+	if (now == 0)	return ;
+	dfs(t[now].l, val);
+	if (isa[t[now].val] % val == 0)
+	{
+		fwt.ins(t[now].val, -isa[t[now].val]);
+		isa[t[now].val] /= val;
+		fwt.ins(t[now].val, isa[t[now].val]);
+	}
+	if (isa[t[now].val] % val == 0)	bin[++zip] = t[now].val;
+	dfs(t[now].r, val);
+}
+
+int tx, ty, tp;
+void change(int l, int r, int x)
+{
+	if (x == 1) 	return ;
+	split(root[x], r, tx, tp);
+	split(tx, l - 1, tx, ty);
+	zip = 0;
+	dfs(ty, x);
+	root[x] = merge(tx, merge(build(1, zip), tp));
+}
+
+signed main()
+{
+	srand((114514 - 1) / 3 - 4);
+	scanf(&quot;%d %d&quot;, &amp;n, &amp;m);
+	for (int i = 1; i &lt;= n; ++i)
+	{
+		scanf(&quot;%d&quot;, &amp;isa[i]);
+		fwt.ins(i, isa[i]);
+		xxx = max(xxx, isa[i]);
+	}
+	for (int i = 1; i &lt;= n; ++i)
+	{
+		for (int j = 1; j * j &lt;= isa[i]; ++j)
+		{
+			if (isa[i] % j == 0)
+			{
+				vec[j].push_back(i);
+				if (j * j != isa[i])	vec[isa[i] / j].push_back(i);
+			}
+		}
+	}
+	for (int i = 1; i &lt;= xxx; ++i)
+	{
+		zip = 0;
+		for (unsigned j = 0; j &lt; vec[i].size(); ++j)	bin[++zip] = vec[i][j];
+		root[i] = build(1, zip);
+	}
+	for (int i = 0; i &lt; m; ++i)
+	{
+		int t, l, r, x;
+		scanf(&quot;%d %d %d&quot;, &amp;t, &amp;l, &amp;r);
+		if (t == 1)
+		{
+			scanf(&quot;%d&quot;, &amp;x);
+			change(l, r, x);
+		}
+		else	printf(&quot;%lld\n&quot;, fwt.sum(r) - fwt.sum(l - 1));
+	}
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

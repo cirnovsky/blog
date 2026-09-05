@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution -「CF 1025D」Recovering BST</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,68 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<h2 id="description">Description</h2>
+<p><a
+href="http://codeforces.com/problemset/problem/1025/D">Link</a>.</p>
+<p>给定一个升序序列，问是否存在一种方法使得这个升序序列构成一棵 BST
+并使一边相连的两点点权互质。</p>
+<h2 id="solution">Solution</h2>
+<p>根据 BST 的性质可知对于一棵以 $u$ 为根的子树 $\text{subtree}(u)$
+对应原序列中的一段区间，于是对于一个区间 $[l,r]$，如果我们选取 $k$
+作为根，那么 $\text{subtree}(u)$ 的形态就固定下来了。</p>
+<p>设 $f(i,j,k)$ 为区间 $[i,j]$ 中以 $k$ 为根是否能够构成一棵 BST。</p>
+<p>这不好，这很差，考虑怎么优化。</p>
+<p>观察发现 $[l,r]$ 的父亲结点一定是 $l-1$ 或 $r+1$，于是重新设
+$f(i,j,0\text{ or }1)$ 表示区间 $[i,j-1]$ 的父结点为 $j$ 是否合法 / 区间
+$[i+1,j]$ 的父结点为 $i$ 是否合法。</p>
+<p>转移即：</p>
+<p>$$ f(i-1,j,1)=f(i-1,j,1)\vee f(i,k,0)\wedge
+f(k,j,1)\wedge(\gcd(a_{i-1},a_{k})\neq1) \ f(i,j+1,0)=f(i,j+1,0)\vee
+f(i,k,0)\wedge f(k,j,1)\wedge(\gcd(a_{j+1},a_{k})\neq1) $$</p>
+<p>$k$ 是区间 DP 的中间点。于是就可以做了，边界与答案显然。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+#define f(i,j,k) (f[i][j][k])
+int n,a[710];
+bool f[710][710][2],flag[710][710];
+int GCD(int one,int ano)
+{
+	if(ano==0)	return one;
+	else	return GCD(ano,one%ano);
 }
-
+int main()
+{
+	scanf(&quot;%d&quot;,&amp;n);
+	for(int i=1;i&lt;=n;++i)	scanf(&quot;%d&quot;,&amp;a[i]);
+	for(int i=1;i&lt;=n;++i)	f(i,i,1)=f(i,i,0)=1;
+	for(int i=1;i&lt;=n;++i)
+	{
+		flag[i][0]=1;
+		for(int j=i;j&lt;=n;++j)
+		{
+			flag[i][j]=flag[j][i]=(GCD(a[i],a[j])!=1);
+			flag[0][j]=1;
+		}
+	}
+	for(int i=n;i;--i)
+	{
+		for(int j=i;j&lt;=n;++j)
+		{
+			for(int k=i;k&lt;=j;++k)
+			{
+				f(i-1,j,1)|=(f(i,k,0)&amp;f(k,j,1)&amp;flag[i-1][k]);
+				f(i,j+1,0)|=(f(i,k,0)&amp;f(k,j,1)&amp;flag[j+1][k]);
+			}
+		}
+	}
+	printf((f(1,n,0)|f(1,n,1))?&quot;Yes\n&quot;:&quot;No\n&quot;);
+	return 0;
+}
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

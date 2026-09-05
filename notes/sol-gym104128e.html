@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「GYM 104128E」Color the Tree</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#desc" id="toc-desc">Desc.</a></li>
+<li><a href="#sol" id="toc-sol">Sol.</a></li>
+</ul>
+</nav>
+
+<hr />
+<p>date: '2023-10-13' title: 'Solution -「GYM 104128E」Color the
+Tree'</p>
+<hr />
+<h2 id="desc">Desc.</h2>
+<p><a href="https://codeforces.com/gym/104128/problem/E">Link.</a></p>
+<p>给出树 $T=(V,E)$, 一个代价数组 $a_0,\dots, a_{n-1}$.
+现欲对该树进行黑白染色, 所有节点初始皆为白色, 每次你可以令节点 $u$
+的<strong>子树</strong>中距离 $u$ 为 $i$ 的节点以 $a_i$ 的代价染为黑色.
+问将整棵树染为黑色的最小代价.</p>
+<p>$n \leqslant 10^5$.</p>
+<h2 id="sol">Sol.</h2>
+<p>朴素做法即, 设 $f_{u, d}$ 为将子树 $u$ 中距离 $u$ 为 $d$
+的节点染为黑色的最小代价, 直接转移即可. $\mathcal O(n^2)$.
+以下是朴素部分的代码:</p>
+<p><pre><code class="language-cpp toolbar">void dfs2(int u) {
+    for (int v : grp[u]) dfs2(v);
+    for (int i=0;i&lt;=m-dep[u];++i) dp[u][i] = a[i];
+    static ll sum[N + 5];
+    memset(sum, 0, (m-dep[u])*8);
+    for (int v : grp[u]) {
+        for (int i=0;i&lt;=m-dep[v];++i) sum[i] += dp[v][i];
+    }
+    for (int i=0;i&lt;m-dep[u];++i) chkmin(dp[u][i+1], sum[i]);
+}
+</code></pre></p>
+<p>然后可以发现, 我们对于不同深度染色最小代价的计算是独立的, 于是枚举
+$d$, 我们求解将原树中深度为 $d$ 的节点染黑的最小代价.
+后面的做法就很暴力了, 直接将深度为 $d$ 的节点拉出来建虚树, 跑朴素 DP
+即可. $\mathcal O(n\log_2 n)$ / $\mathcal O(n)$,
+根据具体实现复杂度不同.</p>
+<p><pre><code class="language-cpp toolbar">void solve() {
+    int n; cin &gt;&gt; n;
+    vi a(n); rds(a);
+    const int LG = __lg(n)+1;
+    vvi mn(LG);
+    mn[0] = a;
+    for (int i=1;i&lt;LG;++i) {
+        mn[i].resize(n-(1&lt;&lt;i)+1);
+        for (int j=0;j&lt;n-(1&lt;&lt;i)+1;++j) mn[i][j] = min(mn[i-1][j], mn[i-1][j+(1&lt;&lt;i-1)]);
+    }
+    auto getMin = [&amp;](int l, int r) {
+        assert(0 &lt;= l &amp;&amp; l &lt;= r &amp;&amp; r &lt; n);
+        int k = __lg(r-l+1);
+        return min(mn[k][l], mn[k][r-(1&lt;&lt;k)+1]);
+    };
+    vvi grp(n);
+    for (int i=1,u,v;i&lt;n;++i) {
+        cin &gt;&gt; u &gt;&gt; v; u--; v--;
+        grp[u].pb(v);
+    }
+    vvi fa(LG, vi(n+1, n));
+    function&lt;void(int)&gt; dfs2 = [&amp;](int u) {
+        for (int i=1;i&lt;LG;++i) fa[i][u] = fa[i-1][fa[i-1][u]];
+        for (int v : grp[u]) fa[0][v] = u, dfs2(v);
+    };
+    dfs2(0);
+    vi dep(n), dfn(n);
+    int timeStamp = 0;
+    function&lt;void(int)&gt; dfs = [&amp;](int u) {
+        dfn[u] = timeStamp++;
+        for (int v : grp[u]) dep[v] = dep[u]+1, dfs(v);
+    }; dep[0] = 1; dfs(0);
+    auto getLca = [&amp;](int u, int v) {
+        if (dep[u] &lt; dep[v]) swap(u, v);
+        for (int i=LG-1;i&gt;=0;--i)
+            if (fa[i][u] &lt; n &amp;&amp; dep[fa[i][u]] &gt;= dep[v]) u = fa[i][u];
+        if (u == v) return u;
+        for (int i=LG-1;i&gt;=0;--i)
+            if (fa[i][u] != fa[i][v]) u = fa[i][u], v = fa[i][v];
+        return fa[0][u];
+    };
+    int m = *max_element(allu(dep));
+    vvi idep(m+1);
+    for (int i=0;i&lt;n;++i) idep[dep[i]].pb(i);
+    ll ans = 0;
+    vvi virt(n);
+    auto createVirtualTree = [&amp;](vi h) {
+        sort(allu(h), [&amp;](int x, int y) {
+            return dfn[x] &lt; dfn[y];
+        });
+        for (int i=0,sz=h.size();i&lt;sz-1;++i) h.pb(getLca(h[i], h[i+1]));
+        sort(allu(h), [&amp;](int x, int y) {
+            return dfn[x] &lt; dfn[y];
+        });
+        h.erase(unique(allu(h)), h.end());
+        for (int i=0,sz=h.size();i&lt;sz-1;++i) virt[getLca(h[i], h[i+1])].pb(h[i+1]);
+        return h[0];
+    };
+    for (int i=m;i&gt;=1;--i) {
+        int rt = createVirtualTree(idep[i]);
+        function&lt;ll(int)&gt; dfs3 = [&amp;](int u) {
+            if (!virt[u].empty()) {
+                ll res = 0;
+                for (int v : virt[u]) res += dfs3(v);
+                virt[u].clear();
+                return min(res, (ll)getMin(i-dep[u], i-1));
+            } else return (ll)getMin(0, i-1);
+        };
+        ans += dfs3(rt);
+    }
+    cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+<hr />
+<blockquote>
+<p>/ 看着蔚蓝的天空被电线分割了 /</p>
+<p>/ 天空下的你和我擦肩过 /</p>
+<p>/ 就像风起风落 /</p>
+<p>/ 曾有一张白纸在面前铺陈着 /</p>
+<p>/ 提起笔勾勒出了轮廓 /</p>
+<p>—— <a href="https://mzh.moegirl.org.cn/%E5%B9%B3%E8%A1%8C">孤寂code -
+<em>平行</em> ft. 洛天依</a></p>
+</blockquote>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

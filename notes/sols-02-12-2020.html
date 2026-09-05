@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Record - Dec. 2st, 2020 - Exam. REC</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<h4 id="prob-1">Prob. 1</h4>
+<p><a href="http://222.180.160.110:1024/contest/1020/problem/1">Desc.
+&amp; Link.</a></p>
+<p>有一个基础想法，即一次操作三可以用一次操作一加上一次操作二来实现，然后他又没让我们最小化操作次数，所以我们令
+$M=\min{A+R,M}$。</p>
+<p>操作的顺序并不影响，所以为了方便我们可以将原数组排个序。</p>
+<p>感觉花费是一个单峰。</p>
+<p>三分吧。</p>
+<p>过了。</p>
+<p>草。</p>
+<h4 id="prob-2">Prob. 2</h4>
+<p><a href="http://222.180.160.110:1024/contest/1020/problem/2">Desc.
+&amp; Link.</a></p>
+<p>能递推吧？</p>
+<p>考虑加入一个点对局势造成的影响。</p>
+<p>首先我们只考虑红色蓝色的情况（剩下的放绿边就行了）。</p>
+<p>这个图是完全图来着？</p>
+<p>转化成 $n\times n$
+棋盘放棋子问题，每格最多放一个，同行同列不能同色（红蓝两 saier）。</p>
+<p>然后不会了。</p>
+<h4 id="prob-3">Prob. 3</h4>
+<p><a href="http://222.180.160.110:1024/contest/1020/problem/3">Desc.
+&amp; Link.</a></p>
+<p>先行离散化，把 $a^{\text{sorted}}$ 记为 $b$。</p>
+<p>由于 $b$ 是 $a$
+的一种排列，不是特别容易想到，但我们可以连个边（记住这种处理方式）。</p>
+<p>我们对 $(b_{i},a_{i})$ 连边（有向边）。</p>
+<p>然后就得到了一个每个节点自己的出入度数相同的图。</p>
+<p>草又不会了。</p>
+<h4 id="prob-4">Prob. 4</h4>
+<p>mmp 这题再不会人就没了。</p>
+<h6 id="subtask-one">Subtask one</h6>
+<p>看见括号先 $-1+1$，起始时每一个括号先假设成绿色。</p>
+<p>先从左往右扫，如果此时右括号的数量大于了左括号的数量，我们就把序列中最前面的两个右括号分别染成红、蓝色，不足则无解。</p>
+<p>后面懒得写了。</p>
+<h6 id="subtask-two">Subtask two</h6>
+<p>考虑 DP。</p>
+<p>数据范围感觉区间 DP。</p>
+<p>对不起我没读题。</p>
+<p>重新考虑。</p>
+<p>不会。</p>
+<p>算了看题解。</p>
+<p>贴个链接吧：<a
+href="https://www.cnblogs.com/klauralee/p/11283704.html">Here</a>。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

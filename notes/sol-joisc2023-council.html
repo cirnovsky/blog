@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「JOISC 2023」議会</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#desc" id="toc-desc">Desc.</a></li>
+<li><a href="#sol" id="toc-sol">Sol.</a></li>
+</ul>
+</nav>
+
+<h2 id="desc">Desc.</h2>
+<p><a href="https://loj.ac/p/3970">Link.</a></p>
+<p>给出 $n$ 个最高位不超过 $m$ 二进制数, 对于每个 $i \in [1, n]$,
+找到一个 $j \neq i$, 使得删去 $i$ 和 $j$ 后, 满足票数超过 $\lfloor \frac
+n2 \rfloor$ 的数位数最大. 某个二进制数的某一位为 $1$
+就相当于给这一位投票.</p>
+<p>$3 \leqslant n \leqslant 3\times 10^5$, $1 \leqslant m \leqslant
+20$.</p>
+<h2 id="sol">Sol.</h2>
+<p><strong>这篇题解写得很玄学, 不好理解, 建议不看.</strong></p>
+<p>考虑如下暴力:</p>
+<p><pre><code class="language-cpp toolbar">int n, m, s[300100], cnt[30];
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    cin &gt;&gt; n &gt;&gt; m;
+    for (int i=0,x;i&lt;n;++i)
+        for (int j=0;j&lt;m;++j) {
+            cin &gt;&gt; x;
+            s[i] |= x&lt;&lt;j;
+            cnt[j] += x;
+        }
+    for (int i=0;i&lt;n;++i) { // enumerating chairman
+        for (int j=0;j&lt;m;++j) cnt[j] -= s[i]&gt;&gt;j&amp;1;
+        int ans = 0;
+        for (int j=0;j&lt;m;++j) ans += cnt[j] &gt;= n/2;
+        int sw = 0; // set waiting to be determined
+        for (int j=0;j&lt;m;++j)
+            sw |= (cnt[j] == n/2)&lt;&lt;j;
+        int ext = 233;
+        for (int j=0;j&lt;n;++j)
+            if (j != i) chkmin(ext, __builtin_popcount(s[j]&amp;sw));
+        cout &lt;&lt; ans-ext &lt;&lt; &quot;\n&quot;;
+        for (int j=0;j&lt;m;++j) cnt[j] += s[i]&gt;&gt;j&amp;1;
+    }
+}
+</code></pre></p>
+<p>那么问题转化为, 对于 $S$, 求 $\min{\mid S \cup T_i \mid}$, 将 $T_i$
+取补集, 则求 $\max{\mid S\cup T_i\mid}$. 令 $g_S$ 表示与 $S$
+的交集最大的 $T_i$ 的 $i$. 由于交集一定是 $S$ 的子集,
+因此可以从子集转移过来. 很难说, 只能意会, DJ 给我讲了半天才懂.</p>
+<p>大概是, 首先求出 $S$ 的某个超集的编号, 这个可以直接用超集和.
+然后以这个为初值, 求解上述的 DP. 当然, 正确的思考顺序是为了上面的 DP
+构造初值, 这才是我们的 Motivation.</p>
+<p><pre><code class="language-cpp toolbar">int n, m, s[300100], cnt[30];
+int f[1&lt;&lt;20], g[1&lt;&lt;20];
+int main() {
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    cin &gt;&gt; n &gt;&gt; m;
+    memset(f, -1, sizeof f);
+    memset(g, -1, sizeof g);
+    for (int i=0;i&lt;n;++i) {
+        for (int j=0,x;j&lt;m;++j) {
+            cin &gt;&gt; x;
+            cnt[j] += x;
+            s[i] |= (x^1)&lt;&lt;j;
+        }
+        if (f[s[i]] == -1) f[s[i]] = i;
+        else g[s[i]] = i;
+    }
+    // == computing f[i], such that @i \in @s[f[i]]
+    for (int i=(1&lt;&lt;m)-1;i&gt;=0;--i) {
+        for (int j=0;j&lt;m;++j) {
+            if (!(i&amp;(1&lt;&lt;j))) {
+                int ni = i|(1&lt;&lt;j);
+                if (f[i] == -1) {
+                    f[i] = f[ni];
+                    if (g[ni] != f[i] &amp;&amp; g[i] == -1) g[i] = g[ni];
+                } else {
+                    if (f[i] != f[ni] &amp;&amp; g[i] == -1) g[i] = f[ni];
+                    else if (f[i] != g[ni] &amp;&amp; g[i] == -1) g[i] = g[ni];
+                }
+            }
+        }
+    }
+    // == end computing f[i]
+    // == computing f[i], such that |i&amp;s[f[i]]| is max
+    for (int i=0;i&lt;1&lt;&lt;m;++i) {
+        for (int j=0;j&lt;m;++j) {
+            if (i&amp;(1&lt;&lt;j)) {
+                int ni = i^(1&lt;&lt;j);
+                vi v;
+                for (int x : {f[i], g[i], f[ni], g[ni]})
+                    if (x &gt; -1) v.pb(x);
+                if (v.empty()) continue;
+                sort(v.begin(), v.end(), [&amp;](int x, int y) {
+                    return __builtin_popcount(s[x]&amp;i) &gt; __builtin_popcount(s[y]&amp;i);
+                });
+                v.erase(unique(v.begin(), v.end()), v.end());
+                f[i] = v[0];
+                if ((int) v.size() &gt; 1) g[i] = v[1];
+            }
+        }
+    }
+    // == end computing f[i]
+    for (int i=0;i&lt;n;++i) {
+        for (int j=0;j&lt;m;++j) cnt[j] -= !(s[i]&gt;&gt;j&amp;1);
+        int ans = 0, cur = 0;
+        for (int j=0;j&lt;m;++j) ans += cnt[j] &gt; n/2;
+        for (int j=0;j&lt;m;++j) cur |= (cnt[j] == n/2)&lt;&lt;j;
+        if (i == f[cur]) ans += __builtin_popcount(cur&amp;s[g[cur]]);
+        else ans += __builtin_popcount(cur&amp;s[f[cur]]);
+        cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+        for (int j=0;j&lt;m;++j) cnt[j] += !(s[i]&gt;&gt;j&amp;1);
+    }
+}
+</code></pre></p>
+<hr />
+<blockquote>
+<p>/ 板斜尿流急，坑深屎落迟。/</p>
+<p>—— <a
+href="https://s.bailushuyuan.org/novel/traditional/chapters/123805">梁实秋
+- <em>忆清华 [上]</em></a></p>
+</blockquote>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

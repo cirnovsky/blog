@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「noi 2022」众数</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="https://loj.ac/p/3847">link．</a></p>
+<p>首先有一个很厉害的转换，某序列若存在题目中定义的中位数，则该数一定是该序列的中位数．感觉这一步挺神仙，我没想出来。这个是原题的必要条件，要做成充要只需要用数据结构检验该数的出现次数是否超过序列的模的一半．</p>
+<p>具体到维护，使用链表维护所有链的形态，使用动态开点权值线段树维护每条链上各个数的出现次数即可．</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;list&gt;
+#include &lt;cstdio&gt;
+#define rep(i,a,b) for (int i(a); i&lt;=(b); ++i)
+#define drep(i,b,a) for (int i(b); i&gt;=(a); --i)
+
+struct istream {
+    istream&amp; operator&gt;&gt;(int&amp; n) {
+        n = 0; char s = getchar(); while (s &lt; &#x27;0&#x27; || s &gt; &#x27;9&#x27;) s = getchar();
+        for (; s&gt;=&#x27;0&#x27;&amp;&amp;s&lt;=&#x27;9&#x27;; s=getchar()) n = n*10+s-48;
+        return *this;
+    }
+} cin;
+
+int n, q, m, rt[1000100], id[1000100];
+std::list&lt;int&gt; ls[1000100];
+
+long long sum[10500100];
+int tid, lch[10500100], rch[10500100], now[1000100], rec[1000100];
+#define mid ((l+r)&gt;&gt;1)
+int upd(int u, int pos, int val, int l = 1, int r = n+q) {
+    if (!u) u = ++tid;
+    sum[u] += val;
+    if (l &lt; r &amp;&amp; mid &gt;= pos) lch[u] = upd(lch[u], pos, val, l, mid);
+    else if (l &lt; r) rch[u] = upd(rch[u], pos, val, mid+1, r);
+    return u;
+}
+int mrg(int u, int v, int l = 1, int r = n+q) {
+    if (!u || !v) return u+v;
+    sum[u] += sum[v];
+    lch[u] = mrg(lch[u], lch[v], l, mid);
+    rch[u] = mrg(rch[u], rch[v], mid+1, r);
+    return u;
+}
+long long qry(int u, int val, int l = 1, int r = n+q) {
+    if (!u) return 0;
+    else if (l == r) return sum[u];
+    else if (mid &gt;= val) return qry(lch[u], val, l, mid);
+    else return qry(rch[u], val, mid+1, r);
+}
+int bisect(long long pos, int l = 1, int r = n+q) {
+    if (l == r) return l;
+    long long t = 0;
+    rep(i,1,m) t += sum[lch[now[i]]];
+    if (t &gt;= pos) {
+        rep(i,1,m) now[i] = lch[now[i]];
+        return bisect(pos, l, mid);
+    } else {
+        rep(i,1,m) now[i] = rch[now[i]];
+        return bisect(pos, mid+1, r);
+    }
+}
+#undef mid
+
+signed main() {
+    cin &gt;&gt; n &gt;&gt; q;
+    rep(i,1,n+q) id[i] = i;
+    for (int i=1,l,x; i&lt;=n; ++i) {
+        cin &gt;&gt; l;
+        rep(j,1,l) {
+            cin &gt;&gt; x;
+            rt[i] = upd(rt[i], x, 1);
+            ls[id[i]].push_back(x);
+        }
+    }
+    for (int op,x,y,z,Q=q; Q--;) {
+        cin &gt;&gt; op &gt;&gt; x;
+        if (op == 1) {
+            cin &gt;&gt; y;
+            ls[id[x]].push_back(y);
+            rt[x] = upd(rt[x], y, 1);
+        } else if (op == 2) {
+            rt[x] = upd(rt[x], ls[id[x]].back(), -1);
+            ls[id[x]].pop_back();
+        } else if (op == 3) {
+            long long U = 0, S = 0;
+            m = x;
+            rep(i,1,m) {
+                cin &gt;&gt; y;
+                now[i] = rec[i] = rt[y];
+                U += ls[id[y]].size();
+            }
+            int M = bisect((U+1)/2);
+            rep(i,1,m) S += qry(rec[i], M);
+            if (S*2 &gt; U) printf(&quot;%d\n&quot;, M);
+            else puts(&quot;-1&quot;);
+        } else { // append @x at the tail of @y
+            cin &gt;&gt; y &gt;&gt; z;
+            std::swap(x, y);
+            rt[z] = mrg(rt[x], rt[y]);
+            if (ls[id[x]].size() &lt; ls[id[y]].size()) {
+                while (!ls[id[x]].empty())
+                    ls[id[y]].push_back(ls[id[x]].front()), ls[id[x]].pop_front();
+                id[z] = id[y];
+            } else {
+                while (!ls[id[y]].empty())
+                    ls[id[x]].push_front(ls[id[y]].back()), ls[id[y]].pop_back();
+                id[z] = id[x];
+            }
+        }
+    }
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

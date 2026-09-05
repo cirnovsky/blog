@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution Set -「LOC 4293」</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,43 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#a-特种训练-train" id="toc-a-特种训练-train">A. 特种训练
+(train)</a></li>
+<li><a href="#b-红色改造-modification"
+id="toc-b-红色改造-modification">B. 红色改造 (modification)</a></li>
+<li><a href="#d-车站爆破-bomb" id="toc-d-车站爆破-bomb">D. 车站爆破
+(bomb)</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
+<hr />
+<p>date: '2023-10-08' title: 'Solution Set -「LOC 4293」'</p>
+<hr />
+<p><a href="http://222.180.160.110:1024/contest/4293/">Link.</a></p>
+<h3 id="a-特种训练-train">A. 特种训练 (train)</h3>
+<p>写不来这种 Ad-hoc 题.</p>
+<h3 id="b-红色改造-modification">B. 红色改造 (modification)</h3>
+<p>可以参考论文 <a href="../posts/sols-20231008/solution.pdf">万成章 -
+<em>Astral Birth 解题报告</em></a></p>
+<p>把相同连续段合并起来, 将原 $0/1$ 序列转化成一个由二元组 $(0/1, c_i)$
+组成的长度为 $m$ 的序列, 问题有<strong>转化一</strong>:</p>
+<ul>
+<li>选出尽量长的子序列, 其段数不超过 $k+1$ ($+1$ 的原因是贡献分为三种,
+打过朴素的 DP 都知道), 则子序列长度和为答案.</li>
+</ul>
+<p>倒过来考虑, 我们需要从中选择一些元素删去, 有以下的 Observation:</p>
+<ul>
+<li><strong>Observation 1</strong>: 我们不会删除相邻的元素.</li>
+</ul>
+<p>那么有<strong>转化二</strong>:</p>
+<ul>
+<li>对于每个 $k$, 选择一些价值之和为 $k$ 的元素并将它们删除,
+要求元素两两不相邻, 且长度之和最小. 元素的价值就是 $1$ 或 $2$,
+第一个和最后一个元素的价值为 $1$, 其余为 $2$.</li>
+</ul>
+<p>然后就是一个经典的反悔贪心问题.</p>
+<h3 id="d-车站爆破-bomb">D. 车站爆破 (bomb)</h3>
+<p>居然可以维护操作序列... 还是见识浅薄...</p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

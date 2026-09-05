@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「模拟赛」草莓蛋糕</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<hr />
+<p>date: '2023-09-28' title: 'Solution -「模拟赛」草莓蛋糕'</p>
+<hr />
+<p>$\max(a_x + a_y, b_y + b_x)$
+的贡献形式不是独立的，并不好进行分析。考虑通过分类讨论将 $\max$
+拆开。若令 $h_i = a_i - b_i$，$h'_i = b_i - a_i$，可以发现若 $h_x
+\geqslant h'_y$ 取值则为 $b_x + b_y$，反之亦然。</p>
+<p>注意到 $h$
+本身自带一个一维偏序关系，于是放到数轴上用线段树维护，每个节点维护
+$a_x$，$a_y$，$b_x$，$b_y$
+的最小值，以及区间的答案。修改操作在线段树的叶子节点维护四个
+<code>std::multiset</code> 即可。</p>
+<p><pre><code class="language-cpp toolbar">const int N = 1e6;
+const int INF = numeric_limits&lt;int&gt;::max();
+int Q, opt[N + 100], cat[N + 100], a[N + 100], b[N + 100];
+using MSET = multiset&lt;ll&gt;;
+struct node {
+    ll mn[4], ans;
+    node() : ans(INF) {
+        for (int i = 0; i &lt; 4; ++i) mn[i] = INF;
+    }
+};
+struct SegmentTree {
+#define NODE int u, int l, int r
+#define mid (((l) + (r)) / 2)
+#define ls (u * 2)
+#define rs (u * 2 + 1)
+#define LC ls, l, mid
+#define RC rs, mid + 1, r
+#define SetAcc(id, i) (*leaves[id][i].begin())
+    const int __n;
+    vector&lt;node&gt; body;
+    vector&lt;array&lt;MSET, 4&gt;&gt; leaves;
+    void pullup(int u) {
+        body[u].ans = min({body[ls].mn[2] + body[rs].mn[0], body[ls].mn[1] + body[rs].mn[3], body[ls].ans, body[rs].ans});
+        for (int i = 0; i &lt; 4; ++i) body[u].mn[i] = min(body[ls].mn[i], body[rs].mn[i]);
+    }
+    void upd(int pos, NODE) {
+        if (l == r) {
+            for (int i = 0; i &lt; 4; ++i) body[u].mn[i] = SetAcc(l, i);
+            body[u].ans = min(SetAcc(l, 0) + SetAcc(l, 2), SetAcc(l, 1) + SetAcc(l, 3));
+        } else mid &gt;= pos ? upd(pos, LC) : upd(pos, RC), pullup(u);
+    }
+public:
+    void upd(int pos) {upd(pos,1,1,__n);}
+    int Ask() {return body[1].ans;}
+    SegmentTree(int n) : __n(n), body(4 * n + 5), leaves(n + 5) {
+        rep (j, 1, n) for (int i = 0; i &lt; 4; ++i) leaves[j][i].emplace(INF);
+    }
+};
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin.tie(nullptr);
+    rd(Q);
+    bsi dat;
+    rep (i, 1, Q) {
+        rd(opt[i], cat[i], a[i], b[i]);
+        dat.pb(cat[i] == 0 ? a[i] - b[i] : b[i] - a[i]);
+    }
+    sort(allu(dat)), dat.resize(distance(dat.begin(), unique(allu(dat))));
+    auto getter = [&amp;](int x) -&gt; int {
+        return distance(dat.begin(), lower_bound(allu(dat), x)) + 1;
+    };
+    const int dataLength = dat.size();
+    SegmentTree treeask(dataLength);
+    rep (i, 1, Q) {
+        int pos = getter(cat[i] == 0 ? a[i] - b[i] : b[i] - a[i]);
+        assert(1 &lt;= pos &amp;&amp; pos &lt;= dataLength);
+        auto&amp; cur = treeask.leaves[pos];
+        int idx = 2 * cat[i];
+        if (opt[i] == 1) cur[idx].emplace(a[i]), cur[idx + 1].emplace(b[i]);
+        else cur[idx].erase(cur[idx].find(a[i])), cur[idx + 1].erase(cur[idx + 1].find(b[i]));
+        treeask.upd(pos);
+        int res = treeask.Ask();
+        if (res &gt;= INF) cout &lt;&lt; &quot;-1\n&quot;;
+        else cout &lt;&lt; res &lt;&lt; &quot;\n&quot;;
+    }
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

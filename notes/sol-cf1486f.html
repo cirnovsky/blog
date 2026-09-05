@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「codeforces - 1486F」Pairs of Paths</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a
+href="http://codeforces.com/problemset/problem/1486/F">link。</a></p>
+<p>还算萌，但是代码有些难写……</p>
+<p>你首先会想要</p>
+<p><pre><code class="language-cpp toolbar">int n, m, fa[20][300100], pa[300100], dep[300100], cnt[900100];
+int ldf[300100], rdf[300100], dfc, qwq;
+vi&lt;int&gt; G[300100];
+struct path {
+    int x, y, sx, sy, lca;
+};
+void dfs(int x, int pre) {
+    fa[0][x] = pa[x] = pre;
+    dep[x] = dep[pre]+1;
+    ldf[x] = ++dfc;
+    for (int i=1; i&lt;20; ++i) {
+        fa[i][x] = fa[i-1][fa[i-1][x]];
+    }
+    for (auto y : G[x]) {
+        if (y != pre) {
+            dfs(y, x);
+        }
+    }
+    rdf[x] = dfc;
+}
+int lca(int x, int y) {
+    if (dep[x] &lt; dep[y]) {
+        swap(x, y);
+    }
+    for (int i=19; i&gt;=0; --i) {
+        if (dep[fa[i][x]] &gt;= dep[y]) {
+            x = fa[i][x];
+        }
+    }
+    if (x == y) {
+        return x;
+    }
+    for (int i=19; i&gt;=0; --i) {
+        if (fa[i][x] != fa[i][y]) {
+            x = fa[i][x], y = fa[i][y];
+        }
+    }
+    return pa[x];
+}
+int jump(int x, int d) {
+    if (d &lt; 0) {
+        return n+(++qwq);
+    }
+    for (int i=19; i&gt;=0; --i) {
+        if ((d&gt;&gt;i)&amp;1) {
+            x = fa[i][x];
+        }
+    }
+    return x;
+}
+int bit[300100];
+void add(int x, int y) {
+    for (; x&lt;=n; x+=x&amp;-x) {
+        bit[x] += y;
+    }
+}
+int qry(int x) {
+    int res = 0;
+    for (; x; x-=x&amp;-x) {
+        res += bit[x];
+    }
+    return res;
+}
+int qry(int l, int r) {
+    return qry(r)-qry(l-1);
+}
+void executer() {
+    cin &gt;&gt; n;
+    for (int i=1,x,y; i&lt;n; ++i) {
+        cin &gt;&gt; x &gt;&gt; y;
+        G[x].push_back(y);
+        G[y].push_back(x);
+    }
+    dfs(1, 0);
+    cin &gt;&gt; m;
+    vi&lt;path&gt; paths(m);
+    for (auto&amp; it : paths) {
+        cin &gt;&gt; it.x &gt;&gt; it.y;
+        it.lca = lca(it.x, it.y);
+        it.sx = jump(it.x, dep[it.x]-dep[it.lca]-1);
+        it.sy = jump(it.y, dep[it.y]-dep[it.lca]-1);
+        if (it.sx &gt; it.sy) {
+            swap(it.sx, it.sy), swap(it.x, it.y);
+        }
+    }
+    sort(paths.begin(), paths.end(), [&amp;](const path&amp; lhs, const path&amp; rhs) {
+        return dep[lhs.lca] &lt; dep[rhs.lca]
+               || (dep[lhs.lca] == dep[rhs.lca] &amp;&amp; lhs.lca &lt; rhs.lca)
+               || (lhs.lca == rhs.lca &amp;&amp; lhs.sx &gt; rhs.sx)
+               || (lhs.sx == rhs.sx &amp;&amp; lhs.sy &gt; rhs.sy);
+    });
+    LL ans = 0;
+    for (int i=0; i&lt;m;) {
+        int j = i;
+        while (j &lt; m-1 &amp;&amp; paths[j+1].lca == paths[j].lca) {
+            j++;
+        }
+        LL now = 0;
+        for (int l=i; l&lt;=j;) {
+            int r = l;
+            while (r &lt; j &amp;&amp; paths[r+1].sx == paths[r].sx) {
+                r++;
+            }
+            for (int k=l; k&lt;=r; ++k) {
+                ans += now-cnt[paths[k].sy];
+            }
+            for (int k=l; k&lt;=r; ++k) {
+                cnt[paths[k].sx]++, cnt[paths[k].sy]++;
+            }
+            now += r-l+1, l = r+1;
+        }
+        for (int k=i; k&lt;=j; ++k) {
+            cnt[paths[k].sx] = cnt[paths[k].sy] = 0;
+        }
+        for (int k=i; k&lt;=j; ++k) {
+            ans += qry(ldf[paths[k].lca], rdf[paths[k].lca]);
+            if (paths[k].sx &lt;= n) {
+                ans -= qry(ldf[paths[k].sx], rdf[paths[k].sx]);
+            }
+            if (paths[k].sy &lt;= n) {
+                ans -= qry(ldf[paths[k].sy], rdf[paths[k].sy]);
+            }
+        }
+        for (int k=i; k&lt;=j; ++k) {
+            add(ldf[paths[k].x], 1), add(ldf[paths[k].y], 1);
+        }
+        i = j+1;
+    }
+    cout &lt;&lt; ans &lt;&lt; &quot;\n&quot;;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

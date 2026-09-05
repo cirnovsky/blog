@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「openjudge / poj - 1057」Chessboard</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="http://poj.openjudge.cn/practice/1057/">link。</a></p>
+<p>调起来真的呕吐，网上又没篇题解。大概是个不错的题。</p>
+<p>首先行和列一定是独立的，所以我们把行列分开考虑。这样的问题就弱化为：在一个长度为
+$n$ 的格子带上，有 $n$ 个物品，每个物品 $x$ 对应一个区间
+$[l_x,r_x]$，分配每个物品的居所使得各住各的，求出其中的固定点。</p>
+<p>把物品放在左部，把格子放在右部，即构造一个二部图。那么问题就是求出其最大匹配的必要边。先考虑如何求这个的最大匹配，这是个经典贪心吧，把每个区间按
+$l$ 排序，然后枚举位置，优先填入 $r$
+小的物品。跑完后（即规定好方向后）对整个图跑缩点，两端点不在同一连通块的边即为必要边。</p>
+<p>这个的边数是 $O(n^2)$
+的，因为连边一下连一个区间，考虑利用这个来优化。线段树的高度不高吧，而且能够用来刻画一个区间，于是用这个东西来优化连边。</p>
+<p>具体一点是，线段树上父亲对两个儿子连边，物品就对线段树上自己的区间连边即可。注意清空的时候带脑子……</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define cmin(x, y) x = min(x, y)
+#define cmax(x, y) x = max(x, y)
+void eof(const char IO) {if(IO == -1) exit(0);}
+template&lt;typename T=int&gt; T read() {
+	T x=0; char IO=getchar(); bool f=0; eof(IO);
+	while(IO&lt;&#x27;0&#x27; || IO&gt;&#x27;9&#x27;)	f|=IO==&#x27;-&#x27;,eof(IO=getchar());
+	while(IO&gt;=&#x27;0&#x27; &amp;&amp; IO&lt;=&#x27;9&#x27;)	x=x*10+(IO&amp;15),eof(IO=getchar());
+	return f?-x:x;
+}
+int n,A[100100],B[100100],C[100100],D[100100],rec1[100100],rec2[100100],tot,ans1[100100],ans2[100100];
+int col[400100],dfn[400100],low[400100],dfsnt,colnt,sta[400100],top,mat[400100],inst[400100];
+priority_queue&lt;pair&lt;int, int&gt;, vector&lt;pair&lt;int, int&gt;&gt;, greater&lt;pair&lt;int, int&gt;&gt;&gt; q;
+struct node{
+	int l,r,id;
+	friend bool operator&lt;(const node&amp; x,const node&amp; y) {return x.l &lt; y.l;}
+} cur[100100];
+vector&lt;node&gt; ans;
+vector&lt;vector&lt;int&gt;&gt; e;
+void DFS(const int now) {
+	inst[sta[++top] = now] = 1;
+	dfn[now] = low[now] = ++dfsnt;
+	for(const int y : e[now]) {
+		if(!dfn[y]) DFS(y),cmin(low[now], low[y]);
+		else if(inst[y]) cmin(low[now], dfn[y]);
+	}
+	if(low[now]^dfn[now]) return;
+	colnt++;
+	int y; do {
+		inst[y = sta[top--]] = 0;
+		col[y] = colnt;
+	} while(y != now);
+}
+#define mem(x, w, n) memset(x, w, n)
+void sweep() {
+	e.clear();
+	mem(col, 0, min(size_t(n*4*30), sizeof(col)));
+	mem(dfn, 0, min(size_t(n*4*30), sizeof(dfn)));
+	mem(low, 0, min(size_t(n*4*30), sizeof(low)));
+	mem(sta, 0, min(size_t(n*4*30), sizeof(sta)));
+	mem(inst, 0, min(size_t(n*4*30), sizeof(inst)));
+	mem(mat, 0, min(size_t(n*4*30), sizeof(mat)));
+	// puts(&quot;DEBUGGING ----------&quot;);
+	// for(int* i : {col, dfn, low, sta, inst}) {
+	// 	for(int j = 0;  j &lt; 233; ++j) printf(&quot; %d&quot;,i[j]);
+	// 	puts(&quot;&quot;);
+	// }
+	// puts(&quot;END___D__D__D____D___D_&quot;);
+	tot = dfsnt = colnt = top = 0;
+	while(q.size()) q.pop();
+}
+int tr[400100],reid[400100];
+void addedge(const int one, const int ano) {
+	// printf(&quot;add:%d %d\n&quot;,one,ano);
+	if(one &gt;= int(e.size())) e.resize(one+1);
+	e[one].push_back(ano);
+}
+void build(const int now, int l, int r) {
+	// printf(&quot;  %d  %d\n&quot;,l,r);
+	tr[now] = ++tot;
+	if(l == r) return reid[l] = tot,void();
+	int mid = (l+r)&gt;&gt;1;
+	build(now&lt;&lt;1, l, mid),build(now&lt;&lt;1|1, mid+1, r);
+	addedge(tr[now], tr[now&lt;&lt;1]),addedge(tr[now], tr[now&lt;&lt;1|1]);
+}
+void lin(int x,int y,int k,const int now = 1,int l = 1,int r = n) {
+	if(l&gt;y || r&lt;x || x&gt;y) return;
+	if(l&gt;=x &amp;&amp; r&lt;=y) return addedge(k, tr[now]),void();
+	int mid = (l+r)&gt;&gt;1;
+	lin(x, y, k, now&lt;&lt;1, l, mid),lin(x, y, k, now&lt;&lt;1|1, mid+1, r);
+}
+bool solve(int rec[], int ans[]) {
+	sweep();
+	static int l[100100], r[100100];
+	for(int i=1; i&lt;=n; ++i) l[i] = cur[i].l,r[i] = cur[i].r;
+	sort(cur + 1, cur + n + 1);
+	for(int i=1, p=1; i&lt;=n; ++i) {
+		while(p &lt;= n &amp;&amp; cur[p].l &lt;= i) q.emplace(cur[p].r, cur[p].id),p++;
+		if(!q.size() || q.top().first&lt;i) return 0;
+		mat[q.top().second] = i;
+		q.pop();
+	}
+	tot = n;
+	build(1, 1, n);
+	// printf(&quot;  tot: %d\n&quot;, tot);
+	// for(int i=1; i&lt;=4*n; ++i) printf(&quot; %d&quot;,tr[i]);
+	// puts(&quot;&quot;);
+	for(int i=1; i&lt;=n; ++i) {
+		addedge(reid[mat[i]], i);
+		lin(l[i], mat[i]-1, i);
+		lin(mat[i]+1, r[i], i);
+	}
+	for(int i=1; i&lt;=tot; ++i) if(!dfn[i]) DFS(i);
+	// for(int i=1; i&lt;=tot; ++i) printf(&quot; %d&quot;,col[i]);
+	for(int i=1; i&lt;=n; ++i) rec[i] = col[i] != col[reid[mat[i]]],ans[i] = mat[i];
+	return 1;
+}
+signed main() {
+	while(n = read(),233) {
+		for(int i=1; i&lt;=n; ++i) A[i] = read(),B[i] = read(),C[i] = read(),D[i] = read();
+		for(int i=1; i&lt;=n; ++i) cur[i] = (node){A[i], C[i], i};
+		if(!solve(rec1, ans1)) {
+			puts(&quot;-1&quot;);
+			goto Fail;
+		}
+		for(int i=1; i&lt;=n; ++i) cur[i] = (node){B[i], D[i], i};
+		if(!solve(rec2, ans2)) {
+			puts(&quot;-1&quot;);
+			goto Fail;
+		}
+		vector&lt;node&gt;().swap(ans);
+		for(int i=1; i&lt;=n; ++i) if(rec1[i] &amp;&amp; rec2[i]) ans.push_back((node){i, ans1[i], ans2[i]});
+		cout&lt;&lt;ans.size()&lt;&lt;endl;
+		for(const auto [x, y, z] : ans) printf(&quot;%d %d %d\n&quot;, x, y, z);
+		Fail:;
+	}
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

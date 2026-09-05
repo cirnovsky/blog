@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「codeforces - 687D」Dividing Kingdom II</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a
+href="http://codeforces.com/problemset/problem/687/D">link。</a></p>
+<p>好题啊。</p>
+<p>首先有一个类 kruskal
+暴力，就是对于每一个询问，把所有边按权值大小排降序，第一个加进去成为奇环的边就是答案。注意我们不需要关注偶环长成什么样子，所以我们实际上维护的是一棵生成树。这个可以用并查集维护结点到根的边的数量来实现。</p>
+<p>因此我们需要关注的边只有 $O(n)$
+条了（生成树），那么维护一个区间的需要关注的边的边集，具体而言就是树边和奇环上的边。考虑用线段树，合并的时候用归并即可。</p>
+<p><pre><code class="language-cpp toolbar">int n, m, q, fa[2100], dst[2100], ms, mh;
+int u[1000100], v[1000100], w[1000100];
+vi&lt;bsi&lt;int&gt;&gt; md;
+bool flag;
+int ldr(int x) {
+    if (x != fa[x]) {
+        int u = ldr(fa[x]);
+        dst[x] ^= dst[fa[x]];
+        return fa[x] = u;
+    }
+    return x;
+}
+int mrg(int x, int y) {
+    int u = ldr(x), v = ldr(y);
+    if (u == v) {
+        if (dst[x] == dst[y]) return 2;
+        return 0;
+    }
+    fa[v] = u;
+    dst[v] = dst[x]^dst[y]^1;
+    return 1;
+}
+bsi&lt;int&gt; mrg(const bsi&lt;int&gt;&amp; lhs, const bsi&lt;int&gt;&amp; rhs) {
+    bsi&lt;int&gt; qwq, res;
+    merge(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), back_inserter(qwq), [&amp;](int x, int y) {
+        return w[x] &gt; w[y];
+    });
+    for (auto i : qwq) {
+        fa[u[i]] = u[i], fa[v[i]] = v[i];
+        dst[u[i]] = dst[v[i]] = 0;
+    }
+    for (auto i : qwq) {
+        int tmp = mrg(u[i], v[i]);
+        if (tmp) res += i;
+        if (tmp == 2) {
+            flag = 1;
+            break;
+        }
+    }
+    return res;
+}
+void upd(int now) {
+    md[now] = mrg(md[now*2], md[now*2+1]);
+}
+int qry(int l, int r) {
+    bsi&lt;int&gt; res;
+    flag = 0;
+    for (l += ms-1, r += ms; l &lt; r; l &gt;&gt;= 1, r &gt;&gt;= 1) {
+        if (l&amp;1) res = mrg(res, md[l++]);
+        if (r&amp;1) res = mrg(md[--r], res);
+    }
+    if (flag) return w[res.back()];
+    return -1;
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin &gt;&gt; n &gt;&gt; m &gt;&gt; q;
+    mh = ceil(log2(m)), ms = 1&lt;&lt;mh;
+    md = vi&lt;bsi&lt;int&gt;&gt;(ms*2, bsi&lt;int&gt;());
+    for (int i=1; i&lt;=m; ++i) {
+        cin &gt;&gt; u[i] &gt;&gt; v[i] &gt;&gt; w[i];
+    }
+    for (int i=1; i&lt;=m; ++i) {
+        md[i+ms-1] = bsi&lt;int&gt;({i});
+    }
+    for (int i=ms-1; i&gt;=1; --i) {
+        upd(i);
+    }
+    for (int l,r; q--;) {
+        cin &gt;&gt; l &gt;&gt; r;
+        cout &lt;&lt; qry(l, r) &lt;&lt; &quot;\n&quot;;
+    }
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

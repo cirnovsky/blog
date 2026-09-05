@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution -「ZJOI 2014」力</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,83 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#descrption" id="toc-descrption">Descrption</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
-<blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
-</blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
+<h2 id="descrption">Descrption</h2>
+<p><a href="https://www.luogu.com.cn/problem/P3338">Link</a>.</p>
+<p>对于每一个 $i$，求出：</p>
+<p>$$
+\sum_{j=1}^{i-1}\frac{a_{j}}{(i-j)^{2}}-\sum_{j=i+1}^{n}\frac{a_{j}}{(i-j)^{2}}
+$$</p>
+<h2 id="solution">Solution</h2>
+<p>令 $f(i)=a_{i},g(i)=\frac{1}{i^{2}}$。</p>
+<p>然后</p>
+<p>$$ \sum_{j=1}^{i-1}f(j)\times g(i-j)-\sum_{j=i+1}^{n}f(j)\times
+g(j-i) $$</p>
+<p>可以 FFT 了。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const double bh_pi=acos(-1);
+int n;
+namespace Poly
+{
+	typedef complex&lt;double&gt; comp;
+	typedef vector&lt;complex&lt;double&gt; &gt; poly;
+	#define len(x) (int((x).size()))
+	int lim,rev[400010];
+	void fft(poly &amp;f,int op)
+	{
+		for(int i=0;i&lt;lim;++i)	if(i&lt;rev[i])	swap(f[i],f[rev[i]]);
+		for(int len=2;len&lt;=lim;len&lt;&lt;=1)
+		{
+			comp bas(cos(2*bh_pi/len),op*sin(2*bh_pi/len));
+			for(int fr=0;fr&lt;lim;fr+=len)
+			{
+				comp now(1,0);
+				for(int ba=fr;ba&lt;fr+(len&gt;&gt;1);++ba,now*=bas)
+				{
+					comp tmp=now*f[ba+(len&gt;&gt;1)];
+					f[ba+(len&gt;&gt;1)]=f[ba]-tmp;
+					f[ba]+=tmp;
+				}
+			}
+		}
+		if(op==-1)	for(int i=0;i&lt;lim;++i)	f[i]/=lim;
+	}
+	poly mulPoly(poly f,poly g)
+	{
+		int n=len(f)+len(g)-1;
+		for(lim=1;lim&lt;=n;lim&lt;&lt;=1);
+		for(int i=0;i&lt;lim;++i)	rev[i]=(rev[i&gt;&gt;1]&gt;&gt;1)|((i&amp;1)?(lim&gt;&gt;1):0);
+		f.resize(lim),g.resize(lim);
+		fft(f,1),fft(g,1);
+		for(int i=0;i&lt;lim;++i)	f[i]*=g[i];
+		fft(f,-1),f.resize(n);
+		return f;
+	}
+}using namespace Poly;
+int main()
+{
+	poly f,g;
+	scanf(&quot;%d&quot;,&amp;n);
+	f.resize(n+1),g.resize(n+1);
+	for(int i=1;i&lt;=n;++i)
+	{
+		double x;
+		scanf(&quot;%lf&quot;,&amp;x);
+		f[i]=comp(x,0);
+	}
+	for(int i=1;i&lt;=n;++i)	g[i]=comp(1.0/i/i,0);
+	poly onetmp=mulPoly(f,g);
+	reverse(next(f.begin()),f.end());
+	poly anotmp=mulPoly(f,g);
+	for(int i=1;i&lt;=n;++i)	printf(&quot;%.3lf\n&quot;,onetmp[i].real()-anotmp[n-i+1].real());
+	return 0;
 }
-
 </code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

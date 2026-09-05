@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「atcoder - 214G」Three Permutations</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>la traduction.</p>
+<p><a
+href="https://atcoder.jp/contests/abc214/tasks/abc214_g">link。</a></p>
+<p>如果我们对于每一个 $k\in[0,n]$ 找到所有满足存在 $k$ 个 $i$ 使得
+$r_i=p_i$ 或 $r_i=q_i$ 条件的排列数量，我们就可以解决此题。</p>
+<p>钦定 $i_1,\dots,i_k$ 使得对于每一个 $j$，满足
+$r_{i_j}=p_{i_j}$。让我们来找到位置 $i_j$ 能填的数的数量。</p>
+<p>对于每一个 $j$，我们把 $(p_{i_j},q_{i_j})$
+看作一条边。我们可以计算「每条边钦定一个点，并且没有两条边钦定同一个点」方案数。</p>
+<p>考虑每一个非自环非独立点的连通块，显然每个点的度数
+$\leqslant2$，那么每个连通块一定是：</p>
+<ul>
+<li>一个环，此时有两种方案；</li>
+<li>一条链，此时有链长度种方案。</li>
+</ul>
+<p>所以方案数是他们的乘积。</p>
+<p>现在，我们得去找到对于每一种 $i_1,\dots,i_k$
+的组合的上述的值。我们考虑一个把所有 $(p_i,q_i)$
+加入的图，并且确认对于每一个连通块，多少边被选择了。令 $K$
+为某个连通块的大小。如果我们知道对于每一个 $0\leqslant k\leqslant
+K$，在当前联通分量中选 $k$ 条边的时每一个 $r_i$ 的填数方案，那就可以简单
+DP 解决。一下，我们假设图是一个环。</p>
+<p>当所有的边都已经被选好，此时有两种方案。否则，此时图是一些链和孤立点的集合，方案数就是他们的大小乘积。这等价于从任意选择的边形成的每个连通分量中选择顶点并标记的方案总数，因此可以用组合数求出。在计数时，我们可以固定未使用边的最小索引，将循环视为计算中的路径。</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

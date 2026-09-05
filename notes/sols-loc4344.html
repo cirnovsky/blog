@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Revision for Elementary Number Theory</title>
+  <title>Solution Set -「LOC 4344」</title>
 
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
@@ -44,61 +44,48 @@
     
 <nav id="TOC">
 <ul>
-<li><a href="#bézouts-identity" id="toc-bézouts-identity">Bézout's
-identity</a></li>
-<li><a href="#extended-euclidean-algorithm"
-id="toc-extended-euclidean-algorithm">Extended Euclidean
-Algorithm</a></li>
+<li><a href="#a-道路-road" id="toc-a-道路-road">A. 道路 (road)</a></li>
+<li><a href="#b-烟花-firework" id="toc-b-烟花-firework">B. 烟花
+(firework)</a></li>
+<li><a href="#d-树上的数-tree" id="toc-d-树上的数-tree">D. 树上的数
+(tree)</a></li>
 </ul>
 </nav>
 
-<p><em>I once knew a thing or two about number theory.</em></p>
-<h1 id="bézouts-identity">Bézout's identity</h1>
-<p>It states that for any two integers $a$ and $b$, there exist integers
-$x$ and $y$ such that $ax+by=\gcd(a,b)$. This reveals that the GCD of
-two integers can <strong>always</strong> be expressed in terms of a
-linear combination of the two integers themselves.</p>
+<p><a href="http://222.180.160.110:1024/contest/4344">Link.</a></p>
+<p>非常无语. 😅</p>
+<h3 id="a-道路-road">A. 道路 (road)</h3>
+<p>总共四种情况, 可分为拐一次弯和拐两次弯, 注意特判同行同列即可.</p>
+<h3 id="b-烟花-firework">B. 烟花 (firework)</h3>
+<p>转化后的题意就是, 每次选择一条边, 将边连接的两点缩成一点,
+求在该点子树中选择不超过 $m$ 个儿子, 儿子们的子树大小之积之和.
+朴素做法就是枚举断边, 令 $f_{i, j}$ 表示在前 $i$ 个儿子中选择了 $j$
+个的积之和, 转移即: $$ f_{i, j} \rightarrowtail f_{i+1,j} \ f_{i, j}
+\times a_i \rightarrowtail f_{i+1,j+1} $$ 其中 $a_i$ 表示第 $i+1$
+个儿子的子树大小 (0-indexed). 第一维可以滚掉.
+发现这个贡献形式是可撤销的, 于是遍历到每条边时,
+将端点之间的贡献消除即可.</p>
+<h3 id="d-树上的数-tree">D. 树上的数 (tree)</h3>
+<p>一步一步翻译题意.</p>
+<ol type="1">
+<li><strong>存在相邻边编号更小</strong>: 由于第一步加入的编号是 $1$,
+就意味着我们一定按从小到大的顺序加载编号,
+否则就会出现中间断开的情况;</li>
+<li><strong>极差之和最小</strong>: 由 (1) 得, 点 $u$
+编号最小的连边一定是父边, 那么编号最大的连边就是子树中最后被加载的儿子与
+$u$ 连边的编号. 由于贡献是极差, 只与差值相关, 因此可以直接应用贪心, 按
+BFS 序从子树大小最小的儿子加到重儿子, 这样就能获得最小的极差.
+那么最小的极差和即为 $\displaystyle \sum_u size_u-size_{son_u}$.</li>
+<li><strong>断边的影响</strong>: 看了一多小时还不会, 先坑了. 🕳</li>
+</ol>
+<hr />
 <blockquote>
-<p><strong>Proof:</strong></p>
-<blockquote>
-<p><strong>Lemma 1</strong>: $\boxed{\gcd(a,b)=\gcd(a,b-a)}$</p>
+<p>/ 路在拥挤的行人中落寞孤独，因为它得不到行人的爱慕。 /</p>
+<p>/ <span class="smallcaps" style="font-variant:small-caps;">The</span>
+road is lonely in its crowd for it is not loved. /</p>
+<p>—— <a href="https://en.wikisource.org/wiki/Stray_Birds">Rabindranath
+Tagore - <em>Stray Birds</em></a></p>
 </blockquote>
-<blockquote>
-<p><strong>Proof</strong>: Let $d=\gcd(a,b)$ and hence $a=pd$, $b=qd$
-and $b-a=(q-p)d$ where $p$ and $q$ are coprime. Therefore,
-$\gcd(a,b)=d\gcd(p,q)=d$ and $\gcd(a,b-a)=d\gcd(p,q-p)$.</p>
-</blockquote>
-<blockquote>
-<p>We only need to prove that $\gcd(p,q-p)=1$ given $\gcd(p,q)=1$. Proof
-by contradiction. Assume $\gcd(p,q-p)=g\neq1$. Hence, $p\bmod g=0$ and
-$(p-q)\bmod g=0=-q\bmod g$ and therefore $g\mid\gcd(p,q)$, which
-contradicts with the assumption. $\blacksquare$</p>
-</blockquote>
-<p>By <strong>Lemma 1</strong> it can be deduced that
-$\gcd(a,b)=\gcd(b,a\bmod b)$.</p>
-</blockquote>
-<p>In addition, it can be also deduced that the Diophantine equation</p>
-<p>$$ ax+by=c $$</p>
-<p>has an integer solutoin <strong>iff</strong> $\gcd(a,b)\mid c$. The
-solution can be obtained by simply multiplying $x$ and $y$ by $\frac
-c{\gcd(a,b)}$.</p>
-<h1 id="extended-euclidean-algorithm">Extended Euclidean Algorithm</h1>
-<p>Start with $(x,y)=(1,0)$ which corresponds to the solution of
-$\gcd(a,b)x+0y=\gcd(a,b)$. Let us assume that we found the coefficients
-$(x_1,y_1)$ for $(b,a\bmod b)$ and see how to find $(x,y)$ for $(a,b)$.
-We have $a\bmod b=a-\lfloor\frac ab\rfloor b$, hence</p>
-<p>$$ g=bx_1+(a-\lfloor\frac ab\rfloor b)y_1=ay_1+b(x_1-\lfloor\frac
-ab\rfloor y_1) $$</p>
-<p>Therefore $(x,y)=(y_1,x_1-\lfloor\frac ab\rfloor y_1)$.</p>
-<p><pre><code class="language-cpp toolbar">PI exgcd(ll a, ll b) {
-	if (b == 0)
-		return PI(1, 0);
-	auto [x, y] = exgcd(b, a % b);
-	return PI(y, x - (a / b) * y);
-}
-
-</code></pre></p>
-<p><em>To be continued.</em></p>
 
     <!--
 	<script src="https://guescus.vercel.app/client.js"

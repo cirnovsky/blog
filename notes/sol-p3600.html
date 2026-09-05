@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P3600」随机数生成器</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#desciption" id="toc-desciption">Desciption</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="desciption">Desciption</h2>
+<p><a href="https://www.luogu.com.cn/problem/P3600">Link</a>.</p>
+<p>给定一个值域在 $[1,x]$ 的长度为 $n$
+的序列（由随机数构成），求给定一组区间中的最小值的最大值的期望。</p>
+<h2 id="solution">Solution</h2>
+<p>记： $$
+w=\max{\min{a_{l_{j}},a_{l_{j}+1},\cdots,a_{r_{j}}}|j\in[1,q]} $$
+因为我们最后取的是 $\max$，不能直接用全概率公式，转化一下： $$
+E(w)=\sum_{i=0}^{\infty}P(w\ge i)=\sum_{i=0}^{\infty}1-P(w&lt;i) $$
+这意味着每一个被询问区间中的最小值都需
+$&lt;i$。也就是说，每一个区间至少需要一个 $&lt;i$ 的数。</p>
+<p>这对于每一个区间来说概率为
+$\frac{i-1}{x}$。又因为区间可能出现相交，所以我们考虑用点去被包含于区间。</p>
+<p>当然，一个区间包含另一个区间，这个区间肯定是没有用的。然后把区间按左右端点分别为第一、第二关键字排序。</p>
+<p>枚举 $w$，设 $f_{i}$ 表示区间右端点在 $i$
+之前的所有区间满足条件的概率。 $$
+f_{i}=\frac{w-1}{x}\times\sum_{j=0}^{i}f_{j}\times(1-\frac{w-1}{x})^{i-j-1}
+$$</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+
+using i64 = long long;
+
+const int MOD = 666623333;
+const int MAXN = 2e3 + 5;
+
+int n, x, q, ar[MAXN];
+i64 f[MAXN][2], ff[MAXN][2];
+
+void imax ( int&amp; a, const int b ) { a = a &lt; b ? b : a; }
+int add ( const int a, const int b, const int p = MOD ) { return a + b &lt; p ? a + b : ( a + b ) % p; }
+int sub ( const int a, const int b, const int p = MOD ) { return a - b &lt; 0 ? a - b + p : a - b; }
+int mul ( const i64 a, const i64 b, const int p = MOD ) { return a * b % p; }
+int cpow ( int bas, int idx = MOD - 2 ) {
+	int res = 1;
+	while ( idx ) {
+		if ( idx &amp; 1 )	res = mul ( res, bas );
+		bas = mul ( bas, bas ), idx &gt;&gt;= 1;
+	}
+	return res % MOD;
+}
+
+int main () {
+	scanf ( &quot;%d%d%d&quot;, &amp;n, &amp;x, &amp;q );
+	for ( int i = 1, tmpl, tmpr; i &lt;= q; ++ i )	scanf ( &quot;%d%d&quot;, &amp;tmpl, &amp;tmpr ), imax ( ar[tmpr + 1], tmpl );
+	for ( int i = 1; i &lt;= n + 1; ++ i )	imax ( ar[i], ar[i - 1] );
+	i64 ix = cpow ( x ), ans = 0;
+	for ( int i = 1; i &lt;= x; ++ i ) {
+		i64 p = mul ( i - 1, ix ) % MOD, ip = cpow ( 1 - p ), s;
+		ff[0][0] = ff[0][1] = 1;
+		for ( int j = 1; j &lt;= n; ++ j )	ff[j][0] = mul ( ff[j - 1][0], 1 - p ) % MOD, ff[j][1] = mul ( ff[j - 1][1], ip ) % MOD;
+		f[0][0] = 0, f[0][1] = 1;
+		for ( int j = 1; j &lt;= n; ++ j ) {
+			f[j][0] = mul ( mul ( p, sub ( f[j - 1][1], ar[j] ? f[ar[j] - 1][1] : 0 ) ) % MOD, ff[j - 1][0] ) % MOD;
+			f[j][1] = add ( mul ( f[j][0], ff[j][1] ) % MOD, f[j - 1][1] ) % MOD;
+		}
+		s = 0;
+		for ( int j = ar[n + 1]; j &lt;= n; ++ j )	s = add ( s, mul ( f[j][0], ff[n - j][0] ) % MOD ) % MOD;
+		ans = sub ( add ( ans, 1 ) % MOD, s );
+	}
+	printf ( &quot;%lld\n&quot;, ans % MOD );
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
