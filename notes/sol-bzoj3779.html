@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「BZOJ 3779」重组病毒</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://darkbzoj.tk/problem/3779">Link</a>.</p>
+<p>Given is a tree. Every node initially has a color which is different
+from others'. (called $col_{x}$)</p>
+<p>Def: $\text{dis}(x,y)$: the number of different colors on the simple
+path between x and y.</p>
+<p>Supporting the following operations:</p>
+<ol type="1">
+<li><code>RELEASE x</code>: For each $y$ on $\text{path}(x,rt)$, make
+$col_{y}$=a new color which doesn't exist before.</li>
+<li><code>RECENTER x</code>: Make $x$ become the new root after running
+<code>RELEASE x</code>.</li>
+<li><code>REQUEST x</code>: Print: for each $y$ in $\text{subtree}(x)$,
+the sum of $\text{dis}(y,rt)$ divided the number of nodes in
+$\text{subtree}(x)$.</li>
+</ol>
+<h2 id="solution">Solution</h2>
+<p>Link Cut Tree.</p>
+<p>We can know that $\text{dis}(x,rt)$ is the number of Fake Edges on
+$\text{path}(x,rt)$ pluses one.</p>
+<p>If we change a Real Edge $(u,v)$, where $dep_{u}&lt;dep_{v}$ into a
+Fake Edge, for each node $x$ in $\text{subtree}(v)$, $\text{dis}(x,rt)$
+will be decreased by $1$.</p>
+<p>Vice versa.</p>
+<p>In order to support such operation: decrease the subtree by $1$, we
+can fix the DFS order of the given tree.</p>
+<p>However, we also need to change the root. How can we fix the DFS
+order of the given tree?</p>
+<p>Let's have a discussion. Denote $x$ for the current operating node,
+$rt$ for the current root.</p>
+<ol type="1">
+<li>if $rt=x$: modify the whole tree directly.</li>
+<li>if $rt$ isn't in $\text{subtree}(x)$: modify
+$\text{subtree}(x)$.</li>
+<li>if $rt$ is in $\text{subtree}(x)$: modify $\text{subtree}(x)$ and
+cancel the modfication of $\text{subtree}(rt)$</li>
+</ol>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long LL;
+vector&lt;int&gt; e[100010];
+int n,m,indfn[100010],outdfn[100010],sjc,fa[100010][20],dep[100010],rtnow=1;
+#define check(x,f) ((indfn[x]&lt;indfn[f])|(indfn[x]&gt;outdfn[f])) // check whether x isn&#x27;t in subtree(f)
+void dfs(int x,int las)
+{
+	dep[x]=dep[las]+1,fa[x][0]=las,indfn[x]=++sjc;
+	for(int i=1;i^20;++i)	fa[x][i]=fa[fa[x][i-1]][i-1];
+	for(unsigned int i=0;i&lt;e[x].size();++i)	if(e[x][i]^las)	dfs(e[x][i],x);
+	outdfn[x]=sjc;
+}
+int getkth(int x,int k)
+{
+	if(k==0)	return x;
+	else
+	{
+		for(int i=0;i^20;++i)	if((k&gt;&gt;i)&amp;1)	x=fa[x][i];
+		return x;
+	}
+}
+struct LinearTree
+{
+	struct node
+	{
+		LL val,tag;
+	}nodes[400010];
+	void turn(int x,int l,int r)
+	{
+		if(nodes[x].tag)
+		{
+			int mid=(l+r)&gt;&gt;1;
+			nodes[x&lt;&lt;1].val+=(mid-l+1)*nodes[x].tag;
+			nodes[x&lt;&lt;1|1].val+=(r-mid)*nodes[x].tag;
+			nodes[x&lt;&lt;1].tag+=nodes[x].tag;
+			nodes[x&lt;&lt;1|1].tag+=nodes[x].tag;
+			nodes[x].tag=0;
+		}
+	}
+	void ins(int l,int r,int x,int fr,int ba,int val)
+	{
+		if(fr&gt;ba||l&gt;ba||r&lt;fr)	return;
+		if(l&gt;=fr&amp;&amp;r&lt;=ba)	nodes[x].val+=(r-l+1)*val,nodes[x].tag+=val;
+		else
+		{
+			int mid=(l+r)&gt;&gt;1;
+			turn(x,l,r);
+			ins(l,mid,x&lt;&lt;1,fr,ba,val);
+			ins(mid+1,r,x&lt;&lt;1|1,fr,ba,val);
+			nodes[x].val=nodes[x&lt;&lt;1].val+nodes[x&lt;&lt;1|1].val;
+		}
+	}
+	LL find(int l,int r,int x,int fr,int ba)
+	{
+		if(fr&gt;ba||l&gt;ba||r&lt;fr)	return 0;
+		if(l&gt;=fr&amp;&amp;r&lt;=ba)	return nodes[x].val;
+		else
+		{
+			int mid=(l+r)&gt;&gt;1;
+			turn(x,l,r);
+			return find(l,mid,x&lt;&lt;1,fr,ba)+find(mid+1,r,x&lt;&lt;1|1,fr,ba);
+		}
+	}
+	void modify(int x,LL val)
+	{
+		if(rtnow==x)	ins(1,n,1,1,n,val);
+		else if(check(rtnow,x))	ins(1,n,1,indfn[x],outdfn[x],val);
+		else
+		{
+			int tmp=getkth(rtnow,dep[rtnow]-dep[x]-1);
+			ins(1,n,1,1,indfn[tmp]-1,val);
+			ins(1,n,1,outdfn[tmp]+1,n,val);
+		}
+	}
+}lrt;
+struct LinkCutTree
+{
+	#define wis(x) (nodes[nodes[x].fa].ch[1]==(x))
+	#define isrt(x) ((nodes[nodes[x].fa].ch[0]^(x))&amp;&amp;(nodes[nodes[x].fa].ch[1]^(x)))
+	struct node
+	{
+		int ch[2],fa;
+		bool rev;
+	}nodes[100010];
+	void turn_down(int x)
+	{
+		if(nodes[x].rev)
+		{
+			swap(nodes[x].ch[0],nodes[x].ch[1]);
+			if(nodes[x].ch[0])	nodes[nodes[x].ch[0]].rev^=1;
+			if(nodes[x].ch[1])	nodes[nodes[x].ch[1]].rev^=1;
+			nodes[x].rev=0;
+		}
+	}
+	void turn_whole(int x)
+	{
+		if(!isrt(x))	turn_whole(nodes[x].fa);
+		turn_down(x);
+	}
+	void rotate(int x)
+	{
+		int f=nodes[x].fa,ff=nodes[f].fa,t=wis(x);
+		nodes[x].fa=ff;
+		if(!isrt(f))	nodes[ff].ch[wis(f)]=x;
+		nodes[f].ch[t]=nodes[x].ch[t^1];
+		nodes[nodes[x].ch[t^1]].fa=f;
+		nodes[x].ch[t^1]=f;
+		nodes[f].fa=x;
+	}
+	void splay(int x)
+	{
+		turn_whole(x);
+		while(!isrt(x))
+		{
+			int f=nodes[x].fa;
+			if(!isrt(f))	rotate((wis(x)^wis(f))?x:f);
+			rotate(x);
+		}
+	}
+	int findleft(int x)
+	{
+		turn_down(x);
+		while(nodes[x].ch[0])	x=nodes[x].ch[0],turn_down(x);
+		return x;
+	}
+	void access(int x)
+	{
+		for(int y=0;x;y=x,x=nodes[x].fa)
+		{
+			splay(x);
+			if(nodes[x].ch[1])	lrt.modify(findleft(nodes[x].ch[1]),1);
+			if(y)	lrt.modify(findleft(y),-1);
+			nodes[x].ch[1]=y;
+		}
+	}
+	void makert(int x){access(x),splay(x),nodes[x].rev^=1;}
+}lct;
+char opt[20];
+int opx;
+template&lt;typename T&gt;
+void read(T &amp;hhh)
+{
+	T x=0,f=1;
+	char c=getchar();
+	while(c&lt;&#x27;0&#x27;||c&gt;&#x27;9&#x27;)
+	{
+		if(c==&#x27;-&#x27;)	f=-1;
+		c=getchar();
+	}
+	while(c&gt;=&#x27;0&#x27;&amp;&amp;c&lt;=&#x27;9&#x27;)	x=(x&lt;&lt;3)+(x&lt;&lt;1)+(c^&#x27;0&#x27;),c=getchar();
+	if(~f)	hhh=x;
+	else	hhh=-x;
+}
+int main()
+{
+	read(n),read(m);
+	for(int i=1,x,y;i&lt;n;++i)
+	{
+		read(x),read(y);
+		e[x].emplace_back(y);
+		e[y].emplace_back(x);
+	}
+	dfs(1,0);
+	for(int i=1;i&lt;=n;++i)	lrt.ins(1,n,1,indfn[i],indfn[i],dep[i]),lct.nodes[i].fa=fa[i][0];
+	while(m--)
+	{
+		scanf(&quot;%s&quot;,opt),read(opx);
+		if(strcmp(opt,&quot;RELEASE&quot;)==0)	lct.access(opx);
+		else if(strcmp(opt,&quot;RECENTER&quot;)==0)	lct.makert(opx),rtnow=opx;
+		else
+		{
+			if(rtnow==opx)	printf(&quot;%.10f\n&quot;,double(lrt.find(1,n,1,1,n))/n);
+			else if(check(rtnow,opx))	printf(&quot;%.10f\n&quot;,double(lrt.find(1,n,1,indfn[opx],outdfn[opx]))/(outdfn[opx]-indfn[opx]+1));
+			else
+			{
+				int tmp=getkth(rtnow,dep[rtnow]-dep[opx]-1);
+				printf(&quot;%.10f\n&quot;,double(lrt.find(1,n,1,1,indfn[tmp]-1)+lrt.find(1,n,1,outdfn[tmp]+1,n))/(indfn[tmp]+n-outdfn[tmp]-1));
+			}
+		}
+	}
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

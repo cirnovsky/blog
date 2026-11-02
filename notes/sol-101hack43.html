@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「hackerrank - 101hack43」K-Inversion Permutations</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="https://www.hackerrank.com/101hack43">link。</a></p>
+<p>原问题即：请你给出不同的序列 ${a_n}$ 的数量，满足 $0\leqslant
+a_i&lt;i$，且 $\sum a_i=k$。</p>
+<p>那么写出 ${a_n}$ 的 ogf，可得答案为：$\displaystyle
+[x^k]\left(G(x)=\sum_{i=0}^{n-1}
+x^i=\frac{1-x^n}{1-x}\right)=\frac{\prod_{i=1}^n(1-x^i)}{(1-x)^n}=\left(\prod_{i=1}^n(1-x^i)\right)\left(\sum_{i=0}^n\binom{n-1+i}{i}
+x^i\right)$。</p>
+<p>前面那个括号是有组合意义的，即有 $n$ 个物品，其第 $i$ 个体积为
+$i$，有个容量 $k$
+的背包，求恰好填满背包的方案数，这个方案数还要乘一个系数 $(-1)^m$，$m$
+为选的物品的个数。</p>
+<p>后面那个你就直接算，前面的可以 dp。考虑这样一个构造过程：</p>
+<blockquote>
+<p>一开始什么数都没有。对已有的数，我们有两种操作，一种是全部加
+$1$，一种是全部加 $1$ 然后再加入一个值为 $1$
+的数。这样执行若干次操作之后构造出来的数列一定满足条件。</p>
+<p><a
+href="https://blog.csdn.net/a_crazy_czy/article/details/72862151"><span>https://blog.csdn.net/a_crazy_czy/article/details/72862151</span></a></p>
+</blockquote>
+<p>然后就设 $f(i,j)$ 为选了 $i$ 个数，目前的和为 $j$
+的方案数，转移很简单，依照两种操作模拟即可。</p>
+<p>太神仙了，我脑子不够用。然后第一维的规模是根号，所以能过了。</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+
+constexpr int kMod = 1e9 + 7;
+constexpr int kN = 1e5, kSqrt = 500;
+int n, k, f[kSqrt + 5][kN + 5], fac[kN * 2 + 5], ifac[kN * 2 + 5];
+
+inline void addeq(int&amp; u, const int v) { (u += v) &gt;= kMod &amp;&amp; (u -= kMod); }
+inline void muleq(int&amp; u, const int v) { u = static_cast&lt;long long&gt;(u) * v % kMod; }
+inline void subeq(int&amp; u, const int v) { (u -= v) &lt; 0 &amp;&amp; (u += kMod); }
+inline int add(int u, const int v) { return (u += v) &lt; kMod ? u : u - kMod; }
+inline int mul(const int u, const int v) { return static_cast&lt;long long&gt;(u) * v % kMod; }
+inline int mpow(int x, int y) {
+	int res = 1;
+	for (; y; y &gt;&gt;= 1, muleq(x, x))
+		if (y &amp; 1) muleq(res, x);
+	return res;
+}
+
+template &lt;typename... Args&gt;
+inline int mul(const int u, const int v, const Args... args) { return mul(u, mul(v, args...)); }
+
+inline void init(const int n) {
+	fac[0] = 1;
+	for (int i = 1; i &lt;= n; ++i) fac[i] = mul(fac[i - 1], i);
+	ifac[n] = mpow(fac[n], kMod - 2);
+	for (int i = n - 1; ~i; --i) ifac[i] = mul(ifac[i + 1], i + 1);
+}
+inline int com(const int x, const int y) { return mul(fac[x], ifac[x - y], ifac[y]); }
+
+signed main() {
+	init(2 * kN);
+	
+	std::cin &gt;&gt; n &gt;&gt; k;
+	f[0][0] = 1;
+	const int kS = std::trunc(std::sqrt(k * 2) + 1);
+	for (int i = 1; i &lt;= kS; ++i)
+		for (int j = 0; j &lt;= k; ++j) {
+			if (j &gt;= i) f[i][j] = add(f[i - 1][j - i], f[i][j - i]);
+			if (j &gt;= n + 1) subeq(f[i][j], f[i - 1][j - n - 1]);
+		}
+	
+	int res = 0;
+	for (int i = 0; i &lt;= kS; ++i)
+		for (int j = 0; j &lt;= k; ++j) addeq(res, mul((i &amp; 1) ? kMod - 1 : 1, f[i][j], com(k - j + n - 1, k - j)));
+	
+	std::cout &lt;&lt; res &lt;&lt; &quot;\n&quot;;
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

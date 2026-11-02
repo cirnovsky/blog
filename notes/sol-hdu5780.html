@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「hdu - 5780」gcd</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a
+href="https://acm.hdu.edu.cn/showproblem.php?pid=5780">link。</a></p>
+<p>钦定 $i&gt;j$，研究得
+$(x^i-1,x^j-1)\rightleftharpoons(x^i-x^j,x^j-1)\rightleftharpoons(x^j(x^{i-j}-1),x^j-1)$，注意到
+$(x^j,x^j-1)=1$ 且当 $(a,c)=1$ 时 $(ab,c)=(a,b)(a,c)$，则原式
+$\rightleftharpoons(x^{i-j}-1,x^j-1)\rightleftharpoons(x^{i\bmod
+j}-1,x^j-1)\rightleftharpoons x^{(i,j)}-1$。</p>
+<p>于是题目即求
+$\left(\sum\limits_{i=1}^n\sum\limits_{j=1}^nx^{(i,j)}\right)-n^2$。注意到
+$1\leqslant(i,j)\leqslant n$，容易想到研究每一个 $(i,j)$
+的贡献次数，设其为 $f(x)$，显然有
+$f(x)=\sum\limits_{i=1}^n\sum\limits_{j=1}^n[(i,j)=x]$，观察得
+$f(x)=2\times\left(\sum\limits_{i=1}^{\lfloor\frac{n}{x}\rfloor}\varphi(i)\right)-1$，则答案为
+$\sum\limits_{i=1}^nx^i\cdot f(i)$，整除分块 &amp;
+等比数列求和优化即可。</p>
+<p><pre><code class="language-cpp toolbar">#include &lt;bits/stdc++.h&gt;
+const int MOD = 1000000007;
+template &lt;typename T&gt;
+T add(T a, T b) {
+  return (a + b) % MOD;
+}
+template &lt;typename T, typename... Args&gt;
+T add(T a, T b, Args... args) {
+  return add(add(a, b), args...);
+}
+template &lt;typename T&gt;
+T sub(T a, T b) {
+  return (a + MOD - b) % MOD;
+}
+template &lt;typename T&gt;
+T mul(T a, T b) {
+  return a * static_cast&lt;long long&gt;(b) % MOD;
+}
+template &lt;typename T, typename... Args&gt;
+T mul(T a, T b, Args... args) {
+  return mul(mul(a, b), args...);
+}
+template &lt;typename T&gt;
+void Add(T &amp;a, T b) {
+  a = add(a, b);
+}
+template &lt;typename T, typename... Args&gt;
+void Add(T &amp;a, T b, Args... args) {
+  Add(a, add(b, args...));
+}
+template &lt;typename T&gt;
+void Sub(T &amp;a, T b) {
+  a = sub(a, b);
+}
+template &lt;typename T&gt;
+void Mul(T &amp;a, T b) {
+  a = mul(a, b);
+}
+template &lt;typename T, typename... Args&gt;
+void Mul(T &amp;a, T b, Args... args) {
+  Mul(a, mul(b, args...));
+}
+int tag[1000100], tot, p[1000100], n, x, ph[1000100], f[1000100];
+void shai(int N) {
+  tag[1] = ph[1] = 1;
+  for (int i = 2; i &lt;= N; ++i) {
+    if (!tag[i]) {
+      p[++tot] = i;
+      ph[i] = i - 1;
+    }
+    for (int j = 1; j &lt;= tot &amp;&amp; i * p[j] &lt;= N; ++j) {
+      tag[i * p[j]] = 1;
+      if (i % p[j] == 0) {
+        ph[i * p[j]] = ph[i] * p[j];
+        break;
+      }
+      ph[i * p[j]] = ph[i] * ph[p[j]];
+    }
+  }
+  for (int i = 1; i &lt;= N; ++i) Add(ph[i], ph[i - 1]);
+  for (int i = 1; i &lt;= N; ++i) f[i] = sub(mul(ph[i], 2), 1);
+}
+int fp(int x, int y) {
+  int res = 1;
+  for (; y; y &gt;&gt;= 1, Mul(x, x))
+    if (y &amp; 1) Mul(res, x);
+  return res;
+}
+int Inv(int x) { return fp(x, MOD - 2); }
+int Sum(int n) { return mul(x, sub(1, fp(x, n)), Inv(sub(1, x))); }
+int Sum(int l, int r) { return sub(Sum(r), Sum(l - 1)); }
+signed main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr), std::cout.tie(nullptr);
+  int T;
+  shai(1e6);
+  for (std::cin &gt;&gt; T; T; --T) {
+    std::cin &gt;&gt; x &gt;&gt; n;
+    if (x == 1) {
+      std::cout &lt;&lt; &quot;0\n&quot;;
+      continue;
+    }
+    int res = 0;
+    for (int l = 1, r; l &lt;= n; l = r + 1) {
+      r = n / (n / l);
+      Add(res, mul(Sum(l, r), f[n / l]));
+    }
+    std::cout &lt;&lt; sub(res, mul(n, n)) &lt;&lt; &#x27;\n&#x27;;
+  }
+  return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

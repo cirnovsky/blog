@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「luogu - P3158」「cqoi 2011」放棋子</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p><a href="https://www.luogu.com.cn/problem/P3158">link。</a></p>
+<p>解读一下，大概就是一种颜色放进去就会占据一行一列，dp
+状态就好想了：$f_{i,j,k}$ 表示恰好用完前 $k$ 种颜色的所有棋子，占据了
+$i$ 行 $j$
+列的方案数。你把已经被占据的行列挪到㮟㮟角角，这就导出了一个子问题，在一个
+$(n-i)\times(m-j)$ 的矩形中，使用恰好 $u$
+个棋子（注意不是种类，这也是子问题和原问题的区别）占据其中一些行列的方案数。</p>
+<p>容易发现，我们比较关心的是占据的行列数，而其与整个 $(n-i)\times(m-j)$
+矩形的关联并不强（因为我们都可以把选出来的挪到㮟㮟角角），设占据了 $x$
+行 $y$ 列，最后把方案数乘 $\binom{n}{x}\binom{m}{y}$ 即可。于是设
+$f'<em>{i,j,k}$ 表示用恰好 $k$ 个棋子填满 $i\times j$
+矩形的方案数。转移逐行考虑，上一行就填了 $j$ 个棋子，设当前行填了 $h$
+个棋子，有 $l$ 列是和上一行共享，则当前行有 $j+h-l$
+个格子有棋子，于是可以写出
+$f'</em>{i,j+h-l,k+h}=\sum\sum\binom{j+h-l}{,j}\binom{j}{l}f'_{i-1,j,k}$。</p>
+<p>看回到 $f$ 的转移，考虑新棋子所占据的行列数 $h,l$，则有
+$f_{i-h,j-l,k}=\sum\sum\binom{i}{h}\binom{j}{l}f_{i,j,k-1}f'_{h,l,a_k}$。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+typedef long long ll;
+const int MOD=1e9+9;
+int n,m,c,a[20],mx,coef[40][40]; ll fac[110],ifac[110],dp[11][50][50],dpsub[50][50][1000],ans;
+inline ll C(const int i,const int j) { assert(i&gt;=j); return coef[i][j]; }
+char buf[1&lt;&lt;21],*p1=buf,*p2=buf;
+#define Gc() (p1==p2 &amp;&amp; (p2=(p1=buf)+fread(buf,1,1&lt;&lt;21,stdin),p1==p2)?EOF:*p1++)
+int Gi() {
+	int x=0; char c=Gc(); bool f=0;
+	while(c&lt;&#x27;0&#x27; || c&gt;&#x27;9&#x27;)	f|=(c==&#x27;-&#x27;),c=Gc();
+	while(c&gt;=&#x27;0&#x27; &amp;&amp; c&lt;=&#x27;9&#x27;)	x=x*10+(c&amp;15),c=Gc();
+	return f?-x:x;
+}
+signed main() {
+	for(int i=0; i&lt;=35; ++i) {
+		coef[i][0]=1;
+		for(int j=1; j&lt;=i; ++j)	coef[i][j]=(coef[i-1][j-1]+coef[i-1][j])%MOD;
+	}
+	n=Gi(); m=Gi(); c=Gi();
+	for(int i=1; i&lt;=c; ++i)	mx=max(mx,a[i]=Gi());
+	dpsub[0][0][0]=1;
+	for(int i=1; i&lt;=n; ++i) {
+		for(int j=0; j&lt;=m; ++j) {
+			for(int k=0; k&lt;=mx; ++k) {
+				for(int h=1; h&lt;=m; ++h) {
+					for(int l=0; l&lt;=min(h,j); ++l) {
+						if(j+h-l&lt;=m)	(dpsub[i][j+h-l][k+h]+=C(j+h-l,j)*C(j,l)%MOD*dpsub[i-1][j][k]%MOD)%=MOD;
+					}
+				}
+			}
+		}
+	}
+	dp[0][n][m]=1;
+	for(int k=1; k&lt;=c; ++k) {
+		for(int i=1; i&lt;=n; ++i) {
+			for(int j=1; j&lt;=m; ++j) {
+				for(int h=1; h&lt;=i; ++h) {
+					for(int l=1; l&lt;=j; ++l)	(dp[k][i-h][j-l]+=C(i,h)*C(j,l)%MOD*dp[k-1][i][j]%MOD*dpsub[h][l][a[k]]%MOD)%=MOD;
+				}
+			}
+		}
+	}
+	for(int i=0; i&lt;=n; ++i) {
+		for(int j=0; j&lt;=m; ++j)	ans+=dp[c][i][j],ans%=MOD;
+	}
+	printf(&quot;%lld\n&quot;,ans);
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

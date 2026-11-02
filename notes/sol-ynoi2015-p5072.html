@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「洛谷 P5072」「YunoOI 2015」盼君勿忘</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="https://www.luogu.com.cn/problem/P5072">Link</a>.</p>
+<p>无修支持查询：查询一个区间 $[l,r]$ 中所有子序列分别去重后的和 $\bmod\
+p$</p>
+<h2 id="solution">Solution</h2>
+<p>这是<a
+href="https://www.luogu.com.cn/blog/161849/post-ji-lie-shuo-ju-jie-gou-yi-bai-ti">数据结构一百题</a>的第50题（一半了哦）的纪念题解。</p>
+<p>无修改操作，基本确定大方向莫队。</p>
+<p>考虑查询的问题，我们可以转化一下。即求区间内每个数出现的次数。</p>
+<p>一个区间 $[l,r]$ 的子序列数量为：</p>
+<p>$$\sum_{i=0}^{r-l+1}C^{i}_{r-l+1}=2^{r-l+1}$$</p>
+<p>比如一个数在区间 $[l,r]$ 出现了 $k$ 次，那么一共有 $2^{r-l+1-k}$
+个子序列不包含这个数。这个很好理解，从组合数的意义可知。那么就有
+$2^{r-l+1}-2^{r-l+1-k}$ 个子序列包含了这个数。</p>
+<p>那么我们就可以用莫队维护<strong>区间中出现了 $k$
+次的所有数的和</strong>，然后乘上一个 $2^{r-l+1}-2^{r-l+1-k}$
+就是它的贡献了。</p>
+<p>问题又来了：每次询问的模数是不确定的，我们需要每次都需要 $\Theta(n)$
+处理一遍2的幂。</p>
+<p>有没有什么方法能把处理这个东西的复杂度降到 $\Theta(\sqrt{n})$
+或以下呢？</p>
+<p><del>对此SyadouHayami表示我们可以打个高精。</del></p>
+<p>方法是有的。</p>
+<p>我们可以每次询问都处理出 $2^{1},2^{2},\cdots,2^{\sqrt{n}}$ ，以及
+$2^{2\sqrt{n}},2^{3\sqrt{n}},\cdots,2^{n}$，都只需要
+$\Theta(\sqrt{n})$。当然，都是在模 $p$
+的意义下的。我们分别记为<code>pow1</code>和<code>pow2</code>。</p>
+<p>那么
+$2^{x}\operatorname{mod}p=(pow1_{x\operatorname{mod}\sqrt{n}}\times
+pow2_{\lfloor x\div\sqrt{n}\rfloor})\operatorname{mod}p$。</p>
+<p>于是就解决问题了。</p>
+<p>我的代码遇到了一下两个玄学问题，贴出来给同样情况的人看看：</p>
+<ol type="1">
+<li><p>链表部分的<code>prev</code>和<code>next</code>如果放在结构体里会T。</p></li>
+<li><p><code>pow1</code>,<code>pow2</code>,<code>sum</code>,<code>cnt</code>几个数组的定义如果放在最开头和<code>isa</code>以及<code>ans</code>两个数组一起会RE。</p></li>
+</ol>
+<p><pre><code class="language-cpp toolbar">#include &lt;cstdio&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;queue&gt;
+
+using namespace std;
+
+const int Maxn = 1e5 + 10;
+const int Size = 320;
+int n, m, isa[ Maxn ], ans[ Maxn ];
+struct Query_Node
+{
+	int l, r, p, id, pos;
+} Q[ Maxn ];
+struct Linked_List
+{
+	int tot, prev[ Maxn ], next[ Maxn ];
+	Linked_List( ) { tot = 0; }
+
+	void insert( int x )
+	{
+		next[ tot ] = x;
+		prev[ x ] = tot;
+		tot = x;
+	}
+
+	void erase( int x )
+	{
+		if( tot == x )	tot = prev[ x ];
+		else
+		{
+			next[ prev[ x ] ] = next[ x ];
+			prev[ next[ x ] ] = prev[ x ];
+		}
+		prev[ x ] = next[ x ] = 0;
+	}
+} llt;
+
+bool cmp( Query_Node rhs, Query_Node shr )
+{
+	if( rhs.pos != shr.pos )	return rhs.l &lt; shr.l;
+	else	return rhs.r &lt; shr.r;
+}
+
+int pow1[ Maxn ], pow2[ Maxn ];
+void Pare_Two( int p )
+{
+	pow1[ 0 ] = pow2[ 0 ] = 1;
+	for( int i = 1; i &lt;= Size; ++ i ) 	pow1[ i ] = 1ll * 2 * pow1[ i - 1 ] % p;
+	for( int i = 1; i &lt;= Size; ++ i )	pow2[ i ] = 1ll * pow1[ Size ] * pow2[ i - 1 ] % p;
+}
+
+int Get_Two( int x, int p )
+{
+	return 1ll * pow1[ x % Size ] * pow2[ x / Size ] % p;
+}
+
+int sum[ Maxn ], cnt[ Maxn ];
+void Make_Cont( int x, int f )
+{
+	int pos = isa[ x ];
+	sum[ cnt[ pos ] ] -= pos;
+	if ( ! sum[ cnt[ pos ] ] ) llt.erase( cnt[ pos ] );
+	if( f == 1 ) ++cnt[ pos ];
+	else --cnt[ pos ];
+	if ( ! sum[ cnt[ pos ] ] ) llt.insert( cnt[ pos ] );
+	sum[ cnt[ pos ] ] += pos;
+}
+
+void Contribute( )
+{
+	int l = 1, r = 0;
+	for( int i = 1; i &lt;= m; ++ i )
+	{
+		Pare_Two( Q[ i ].p );
+		while( l &gt; Q[ i ].l ) Make_Cont( --l, 1 );
+		while( l &lt; Q[ i ].l ) Make_Cont( l++, 0 );
+		while( r &gt; Q[ i ].r ) Make_Cont( r--, 0 );
+		while( r &lt; Q[ i ].r ) Make_Cont( ++r, 1 );
+		for( int s = llt.next[ 0 ]; s; s = llt.next[ s ] )
+		{
+			int val = 1ll * sum[ s ] * ( Get_Two( r - l + 1, Q[ i ].p ) - Get_Two( r - l + 1 - s, Q[ i ].p ) + Q[ i ].p ) % Q[ i ].p;
+			ans[ Q[ i ].id ] += val;
+			ans[ Q[ i ].id ] %= Q[ i ].p;
+		}
+	}
+}
+
+signed main( )
+{
+	scanf( &quot;%d %d&quot;, &amp;n, &amp;m );
+	for( int i = 1; i &lt;= n; ++ i )	scanf( &quot;%d&quot;, &amp;isa[ i ] );
+	for( int i = 1; i &lt;= m; ++ i )
+	{
+		int l, r, p;
+		scanf( &quot;%d %d %d&quot;, &amp;l, &amp;r, &amp;p );
+		Q[ i ].l = l, Q[ i ].r = r;
+		Q[ i ].p = p, Q[ i ].id = i;
+		Q[ i ].pos = l / Size;
+	}
+	sort( Q + 1, Q + 1 + m, cmp );
+	Contribute( );
+	for( int i = 1; i &lt;= m; ++ i )
+		printf( &quot;%d\n&quot;, ans[ i ] );
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

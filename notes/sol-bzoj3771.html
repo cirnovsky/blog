@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution -「BZOJ 3771」Triple</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+<nav id="TOC">
+<ul>
+<li><a href="#description" id="toc-description">Description</a></li>
+<li><a href="#solution" id="toc-solution">Solution</a></li>
+</ul>
+</nav>
+
+<h2 id="description">Description</h2>
+<p><a href="http://222.180.160.110:1024/problem/11038">Link</a>.</p>
+<p>给你一个序列，你每次可以取 $1\sim3$
+个数然后计算和，问你对于每一种和，方案数是多少。</p>
+<h2 id="solution">Solution</h2>
+<p>设一个 OGF
+$A(x)=\sum_{i=0}^{+\infty}a_{i}x^{i}$，指数为物品的价值，$a_{i}$
+为出现的次数。</p>
+<p>也就是说，$\sum a_{i}$ 就是选个一个数的答案。</p>
+<p>再来考虑选两个数。$A^{2}(x)$ 显然会有重复。</p>
+<p>重复有两种情况，第一种是 $i\times j$ 和 $j\times i$，这个简单，除个
+$2!$ 即可。</p>
+<p>还有就是 $i\times i$ 的情况，那么再设一个表示一个斧头选两次的 OGF
+$B(x)=\sum_{i=0}^{+\infty}b_{i}x^{2i}$。</p>
+<p>那么选两个数的答案为 $\frac{A^{2}(x)-B(x)}{2!}$。</p>
+<p>再来考虑选三个数，基本同理地设
+$C(x)=\sum_{i=0}^{+\infty}c_{i}x^{3i}$。</p>
+<p>然后选三个数的答案为
+$\frac{A^{3}(x)-3A(x)B(x)+2C(x)}{3!}$，这个容斥就是考虑 $\sf aab,baa$ 和
+$\sf abc,acb$ 情况的重复。</p>
+<p>做完了。</p>
+<p><pre><code class="language-cpp toolbar">#include&lt;bits/stdc++.h&gt;
+using namespace std;
+namespace Poly
+{
+	typedef complex&lt;double&gt; comp;
+	typedef vector&lt;complex&lt;double&gt; &gt; poly;
+	#define len(x) (int((x).size()))
+	const double bh_pi=acos(-1),eps=1e-3;
+	int lim,rev[500010];
+	void fft(poly &amp;f,int op)
+	{
+		for(int i=0;i&lt;lim;++i)	if(i&lt;rev[i])	swap(f[i],f[rev[i]]);
+		for(int len=2;len&lt;=lim;len&lt;&lt;=1)
+		{
+			comp bas(cos(2*bh_pi/len),op*sin(2*bh_pi/len));
+			for(int fr=0;fr&lt;lim;fr+=len)
+			{
+				comp now(1,0);
+				for(int ba=fr;ba&lt;fr+(len&gt;&gt;1);++ba,now*=bas)
+				{
+					comp tmp=now*f[ba+(len&gt;&gt;1)];
+					f[ba+(len&gt;&gt;1)]=f[ba]-tmp;
+					f[ba]+=tmp;
+				}
+			}
+		}
+		if(op==-1)	for(int i=0;i&lt;lim;++i)	f[i]/=lim;
+	}
+	poly mulPoly(poly f,poly g)
+	{
+		int n=len(f)+len(g)-1;
+		for(lim=1;lim&lt;n;lim&lt;&lt;=1);
+		for(int i=0;i&lt;lim;++i)	rev[i]=(rev[i&gt;&gt;1]&gt;&gt;1)|((i&amp;1)?(lim&gt;&gt;1):0);
+		f.resize(lim),g.resize(lim);
+		fft(f,1),fft(g,1);
+		for(int i=0;i&lt;lim;++i)	f[i]*=g[i];
+		fft(f,-1),f.resize(n);
+		return f;
+	}
+	poly addPoly(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i&lt;n;++i)	f[i]+=g[i];
+		return f;
+	}
+	poly decPoly(poly f,poly g)
+	{
+		int n=max(len(f),len(g));
+		f.resize(n),g.resize(n);
+		for(int i=0;i&lt;n;++i)	f[i]-=g[i];
+		return f;
+	}
+	poly mulPoly(poly f,double x)
+	{
+		for(int i=0;i&lt;len(f);++i)	f[i]*=x;
+		return f;
+	}
+	poly divPoly(poly f,double x)
+	{
+		for(int i=0;i&lt;len(f);++i)	f[i]/=x;
+		return f;
+	}
+}using namespace Poly;
+int main()
+{
+	int waste,x;
+	scanf(&quot;%d&quot;,&amp;waste);
+	poly one,two,thr;
+	while(waste--)
+	{
+		scanf(&quot;%d&quot;,&amp;x);
+		if(x&gt;=len(one))	one.resize(x+1);
+		if((x&lt;&lt;1)&gt;=len(two))	two.resize(x&lt;&lt;1|1);
+		if((x&lt;&lt;1)+x&gt;=len(thr))	thr.resize((x&lt;&lt;1)+x+1);
+		one[x]=comp(one[x].real()+1,0);
+		two[x&lt;&lt;1]=comp(two[x&lt;&lt;1].real()+1,0);
+		thr[(x&lt;&lt;1)+x]=comp(thr[(x&lt;&lt;1)+x].real()+1,0);
+	}
+	poly ans=addPoly(addPoly(one,divPoly(decPoly(mulPoly(one,one),two),2)),divPoly(addPoly(decPoly(mulPoly(mulPoly(one,one),one),mulPoly(mulPoly(one,two),3)),mulPoly(thr,2)),6));
+	for(int i=0;i&lt;len(ans);++i)	if(int(ans[i].real()+eps))	printf(&quot;%d %d\n&quot;,i,int(ans[i].real()+eps));
+	return 0;
+}
+</code></pre></p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>

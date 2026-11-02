@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>「sdoi2019 - D2T2」移动金币</title>
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+    integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+    integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+    crossorigin="anonymous"></script>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+    integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+  <script src="/src/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/src/styles/prism.css">
+  <link rel="stylesheet" href="/src/styles/fonts.css">
+  <link rel="stylesheet" href="/src/styles/style.css">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      $("#giscus").load("/src/html/giscus.html")
+      $("#header").load("/src/html/header.html")
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false,
+        errorColor: "#cc0000"
+      });
+    })
+  </script>
+</head>
+
+<body>
+  <script src="/src/js/prism.js"></script>
+  <div class="content">
+    <div id="header"></div>
+    
+
+<p>对 @command_block 没有 implementation
+做法的细化。理论来说可以通过，但因为我实现得较劣无法通过。：(</p>
+<p>把金币中的空隙看作石子，就是一个阶梯 Nim 的模型（有总共 $n-m$
+个石子，$m+1$
+个石堆，其中最左边有一个独立的石堆）。于是问题转化为满足偶数编号的石堆石子数异或和非零的初始方案数。</p>
+<p>取补集后可以给出这样一个 DP：令 $f(k,i,j,v\in{0,1})$ 表示考虑第 $k$
+个二进制位，决策好了 $i$ 个石堆，恰好 $j$ 个石子被分配，当前填 $0$ / $1$
+的方案数。</p>
+<p>转移，考虑根据 $k$
+来分层，然后每个层独立地转移，最后来合并。具体来说，$f(k,i,j,v)\rightarrow
+f(k,i+1,j,v)$，并且 $f(k,i,j,v)\rightarrow
+f(k,i+1,j+2^k,v\oplus[i+1\equiv0\pmod2])$，即考虑填 $0$ 还是 $1$。令第
+$k$ 层合并后的结果为 $s(k,i,j,v)$，最后的答案即
+$\binom{n}{m}-s(\lfloor\log_2a_i\rfloor,m+1,n-m,0)$。合并的过程是
+$s(k,m+1,j,0)=\sum\limits_i f(k,m+1,i,0)\times s(k-1,m+1,j,0)$。</p>
+<p>边界即 $f(k,0,0,0)=1,s(0,m+1,j,0)=f(0,m+1,j,0)$。</p>
+<p>时间复杂度 $\Theta(nm\log_2n)$。<a
+href="https://paste.ubuntu.com/p/W5fWTvqh7Q/">这是一份比较朴素的实现方法，可以帮助理解，并不能通过此题。</a></p>
+<p>然后你会发现可能由于内存访问不连续等原因，朴素的实现并不能通过此题较大的数据。</p>
+<p>考虑交换数组顺序，利用分奇偶讨论转移的特殊性来乘一个 $\frac{1}{2}$
+的常数等方法卡常，有效，但不完全有效。</p>
+<p>但是确实过不去，希望哪天来个卡常大师给卡进去。（</p>
+
+    <!--
+	<script src="https://guescus.vercel.app/client.js"
+		data-repo="cirnovsky/guescus"
+		data-repo-id="R_kgDOQbx5Sg"
+		data-category="General"
+		data-category-id="DIC_kwDOQbx5Ss4CyUPj"
+		data-mapping="pathname"
+		data-reactions-enabled="1"
+		data-emit-metadata="0"
+		data-theme="light"
+		async>
+	</script> -->
+    <script src="https://giscus.app/client.js" data-repo="cirnovsky/blog-comments" data-repo-id="R_kgDOKmz0Wg"
+      data-category="General" data-category-id="DIC_kwDOKmz0Ws4Caiud" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="gruvbox" data-lang="en"
+      crossorigin="anonymous" async></script>
+  </div>
+</body>
+
+</html>
